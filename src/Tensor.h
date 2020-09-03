@@ -37,48 +37,28 @@ namespace dnnbasic
 	public:
 		tensor(std::vector<uint32_t> dim) : tensor(dim, std::vector<std::string>(dim.size()))
 		{ }
+		tensor(std::vector<uint32_t> dimensions, std::vector<std::string> names)
 		{
-			if (dim.size() == 0)
+			if (dimensions.size() == 0)
 			{
 				throw std::exception("Cannot make tensor with 0 dimensions.");
 			}
 
-			uint32_t length = 1;
-			for each (uint32_t var in dim)
+			if (dimensions.size() != names.size())
 			{
-				if (var == 0)
-				{
-					throw std::exception("Dimension cannot be 0.");
-				}
-
-				length *= var;
-				dimension.push_back(namedDim(var));
+				throw std::exception("Number of dimensions and dimension names do not match.");
 			}
 
-			this->arr = cudabasic::span<T>(new T[length], length);
-			
-		}
-		tensor(std::vector<uint32_t> dim, std::vector<std::string> names)
-		{
-			if (dim.size() == 0)
+			if (std::any_of(dimensions.begin(), dimensions.end(), [](auto& dim) { return dim == 0; }))
 			{
-				throw std::exception("Cannot make tensor with 0 dimensions.");
-			}
-
-			if (dim.size() != names.size())
-			{
-				throw std::exception("Names or dimension size mismatch.");
+				throw std::exception("Dimensions with size 0 are not allowed in a tensor.");
 			}
 
 			uint32_t length = 1;
-			for (size_t i = 0; i < dim.size(); i++)
+			for (size_t i = 0; i < dimensions.size(); i++)
 			{
-				if (dim[i] == 0)
-				{
-					throw std::exception("Dimension cannot be 0.");
-				}
-				length *= dim[i];
-				dimension.push_back(namedDim(dim[i], names[i]));
+				length *= dimensions[i];
+				dimension.push_back(namedDim(dimensions[i], names[i]));
 			}
 
 			this->arr = cudabasic::span<T>(new T[length], length);
