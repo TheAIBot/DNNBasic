@@ -27,7 +27,7 @@ namespace dnnbasic
 		std::vector<namedDim> dimension;
 		cudabasic::span<T> arr;
 		std::vector<tensor<T>*> connections;
-		addConnection(tensor<T>* newConnection) 
+		void addConnection(tensor<T>* newConnection) 
 		{
 			connections.push_back(newConnection);
 		}
@@ -35,7 +35,7 @@ namespace dnnbasic
 	public:
 		tensor(std::vector<uint32_t> dim)
 		{
-			if (dim.size()==0)
+			if (dim.size() == 0)
 			{
 				throw std::exception("Cannot make tensor with 0 dimensions.");
 			}
@@ -43,15 +43,16 @@ namespace dnnbasic
 			uint32_t length = 1;
 			for each (uint32_t var in dim)
 			{
-				if (var==0)
+				if (var == 0)
 				{
 					throw std::exception("Dimension cannot be 0.");
 				}
+
 				length *= var;
 				dimension.push_back(namedDim(var));
 			}
 
-			this->arr = cudabasic::span<T>(new T[length],length);
+			this->arr = cudabasic::span<T>(new T[length], length);
 			
 		}
 		tensor(std::vector<uint32_t> dim, std::vector<std::string> names)
@@ -78,14 +79,13 @@ namespace dnnbasic
 			}
 
 			this->arr = cudabasic::span<T>(new T[length], length);
-
 		}
 		~tensor() noexcept(false) 
 		{
 			delete[] arr.begin();
 		};
 
-		tensor<T>* operator*(const tensor<T>& input) 
+		tensor<T>* operator*(tensor<T>& input) 
 		{
 			if (input.dimension.size() != this->dimension.size())
 			{
@@ -106,22 +106,37 @@ namespace dnnbasic
 
 			tensor<T>* child = new tensor<T>(new_dim, new_name);
 			child->addConnection(this);
-			child->addConnection(input);
+			child->addConnection(&input);
 
 			// make kernel call
 
 			return child;
 
 		}
-		void makeRandom() 
+
+		T& operator[](const uint32_t i)
+		{
+			return arr[i];
+		}
+
+		T& operator[](const uint32_t i) const
+		{
+			return arr[i];
+		}
+
+		void makeRandom(T min, T max) 
 		{
 			std::default_random_engine rngGen;
-			std::uniform_real_distribution<T> dist(minValue, maxValue);
+			std::uniform_real_distribution<T> dist(min, max);
 
-			for (size_t i = 0; i < arr.size(); i++)
+			for (uint32_t i = 0; i < arr.size(); i++)
 			{
 				this->arr[i] = dist(rngGen);
 			}
+		}
+		uint32_t elementCount() const
+		{
+			return arr.size();
 		}
 		void transpose();
 		void permute();
