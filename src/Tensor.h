@@ -13,6 +13,7 @@ namespace dnnbasic
 	{
 		std::string name;
 		uint32_t dim;
+
 		namedDim(uint32_t dim, std::string name = "")
 		{
 			this->name = name;
@@ -27,13 +28,15 @@ namespace dnnbasic
 		std::vector<namedDim> dimension;
 		cudabasic::span<T> arr;
 		std::vector<tensor<T>*> connections;
+
 		void addConnection(tensor<T>* newConnection) 
 		{
 			connections.push_back(newConnection);
 		}
 
 	public:
-		tensor(std::vector<uint32_t> dim)
+		tensor(std::vector<uint32_t> dim) : tensor(dim, std::vector<std::string>(dim.size()))
+		{ }
 		{
 			if (dim.size() == 0)
 			{
