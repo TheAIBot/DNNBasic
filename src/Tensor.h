@@ -34,6 +34,24 @@ namespace dnnbasic
 			connections.push_back(newConnection);
 		}
 
+		static bool hasSameDimensions(tensor<T>& a, tensor<T>& b)
+		{
+			if (a.dimension.size() != b.dimension.size())
+			{
+				return false;
+			}
+
+			for (size_t i = 0; i < a.dimension.size(); i++)
+			{
+				if (a.dimension[i].dim != b.dimension[i].dim)
+				{
+					return false;
+				}
+			}
+
+			return true;
+		}
+
 	public:
 		tensor(std::vector<uint32_t> dim) : tensor(dim, std::vector<std::string>(dim.size()))
 		{ }
@@ -68,41 +86,42 @@ namespace dnnbasic
 			delete[] arr.begin();
 		};
 
-		tensor<T>* operator*(tensor<T>& input) 
-		{
-			if (input.dimension.size() != this->dimension.size())
-			{
-				throw std::exception("Dimension of input doesn't match dimension of tensor.");
-			}
+		//tensor<T>* operator*(tensor<T>& input) 
+		//{
+		//	if (!hasSameDimensions(*this, input))
+		//	{
+		//		throw std::exception("Dimensions of input tensor doesn't match dimensions of tensor.");
+		//	}
 
-			std::vector<uint32_t> new_dim;
-			std::vector<std::string> new_name;
-			for (size_t i = 0; i < input.dimension.size(); i++)
-			{
-				if (this->dimension[i].dim != input.dimension[i].dim)
-				{
-					throw std::exception("Input output dimension mismatch.");
-				}
-				new_dim.push_back(this->dimension[i].dim);
-				new_name.push_back(this->dimension[i].name);
-			}
+		//	std::vector<uint32_t> new_dim;
+		//	std::vector<std::string> new_name;
+		//	for (size_t i = 0; i < dimension.size(); i++)
+		//	{
+		//		new_dim.push_back(dimension[i].dim);
+		//		new_name.push_back(dimension.front().name != "" ? dimension[i].name : input.dimension[i].name);
+		//	}
 
-			tensor<T>* child = new tensor<T>(new_dim, new_name);
-			child->addConnection(this);
-			child->addConnection(&input);
+		//	tensor<T>* child = new tensor<T>(new_dim, new_name);
+		//	child->addConnection(this);
+		//	child->addConnection(&input);
 
-			// make kernel call
+		//	// make kernel call
+		//	for (size_t i = 0; i < child->elementCount(); i++)
+		//	{
+		//		(*child)[i] = (*this)[i] * input[i];
+		//	}
 
-			return child;
+		//	return child;
+		//}
 
-		}
+		template<typename U> friend tensor<U>* operator*(tensor<U>&, tensor<U>&);
 
 		T& operator[](const uint32_t i)
 		{
 			return arr[i];
 		}
 
-		T& operator[](const uint32_t i) const
+		const T& operator[](const uint32_t i) const
 		{
 			return arr[i];
 		}
@@ -126,5 +145,34 @@ namespace dnnbasic
 		void view();
 		void resize();
 	};
+
+	template<typename T>
+	tensor<T>* operator*(tensor<T>& left, tensor<T>& right)
+	{
+		if (!tensor<T>::hasSameDimensions(left, right))
+		{
+			throw std::exception("Dimensions of input tensor doesn't match dimensions of tensor.");
+		}
+
+		std::vector<uint32_t> new_dim;
+		std::vector<std::string> new_name;
+		for (size_t i = 0; i < left.dimension.size(); i++)
+		{
+			new_dim.push_back(left.dimension[i].dim);
+			new_name.push_back(left.dimension.front().name != "" ? left.dimension[i].name : right.dimension[i].name);
+		}
+
+		tensor<T>* child = new tensor<T>(new_dim, new_name);
+		child->addConnection(&left);
+		child->addConnection(&right);
+
+		// make kernel call
+		for (size_t i = 0; i < child->elementCount(); i++)
+		{
+			(*child)[i] = left[i] * right[i];
+		}
+
+		return child;
+	}
 	
 }
