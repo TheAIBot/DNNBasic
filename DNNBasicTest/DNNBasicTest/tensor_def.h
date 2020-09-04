@@ -67,7 +67,17 @@ namespace dnnbasic
 			delete[] arr.begin();
 		};
 
+		//template<typename U> friend tensor<U>* operator+(tensor<U>&, tensor<U>&);
+		//template<typename U> friend tensor<U>* operator+(T&, tensor<U>&);
+		//template<typename U> friend tensor<U>* operator+(tensor<U>&, T&);
+
+		//template<typename U> friend tensor<U>* operator-(tensor<U>&, tensor<U>&);
+		//template<typename U> friend tensor<U>* operator-(T&, tensor<U>&);
+		//template<typename U> friend tensor<U>* operator-(tensor<U>&, T&);
+
 		template<typename U> friend tensor<U>* operator*(tensor<U>&, tensor<U>&);
+		//template<typename U> friend tensor<U>* operator*(T&, tensor<U>&);
+		//template<typename U> friend tensor<U>* operator*(tensor<U>&, T&);
 
 		T& operator[](const uint32_t i)
 		{
