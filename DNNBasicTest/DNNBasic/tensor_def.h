@@ -25,7 +25,7 @@ namespace dnnbasic
 	{
 	private:
 		std::vector<namedDim> dimension;
-		cudabasic::span<T> arr;
+		
 		std::vector<tensor<T>*> connections;
 
 		void addConnection(tensor<T>* newConnection)
@@ -34,7 +34,8 @@ namespace dnnbasic
 		}
 
 	public:
-		tensor(std::vector<uint32_t> dims) : tensor(dims, std::vector<std::string>(dim.size()))
+		cudabasic::span<T> arr;
+		tensor(std::vector<uint32_t> dims) : tensor(dims, std::vector<std::string>(dims.size()))
 		{ }
 		tensor(std::vector<uint32_t> dims, std::vector<T> values) : tensor(dims, std::vector<std::string>(dims.size()), values)
 		{ 

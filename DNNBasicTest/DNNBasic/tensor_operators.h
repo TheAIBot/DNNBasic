@@ -5,6 +5,7 @@
 #include <cstdint>
 #include "span.h"
 #include "tensor_def.h"
+#include "tensor_kernels.cuh"
 
 namespace dnnbasic
 {
@@ -101,10 +102,12 @@ namespace dnnbasic
 		child->addConnection(&right);
 
 		// make kernel call
-		for (uint32_t i = 0; i < child->elementCount(); i++)
-		{
-			(*child)[i] = left[i] * right[i];
-		}
+		//tensorMul<T>::multiply(left, right, *child);
+		multiply(left, right, *child);
+		//for (uint32_t i = 0; i < child->elementCount(); i++)
+		//{
+		//	(*child)[i] = left[i] * right[i];
+		//}
 
 		return child;
 	}

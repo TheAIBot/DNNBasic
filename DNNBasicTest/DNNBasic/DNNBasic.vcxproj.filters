@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="cudabasic">
+      <UniqueIdentifier>{9696634c-b5da-434c-87f0-70560c5a05d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dnnbasic">
+      <UniqueIdentifier>{a64eaf53-7ffd-4c07-bcc0-f993aa5c557c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\CudaBasicClasses\cpuGpuArray.h">
+      <Filter>cudabasic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\CudaBasicClasses\cpuGpuObject.h">
+      <Filter>cudabasic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\CudaBasicClasses\cpuGpuTransporter.h">
+      <Filter>cudabasic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\CudaBasicClasses\cudaBasics.h">
+      <Filter>cudabasic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\CudaBasicClasses\cudaBench.h">
+      <Filter>cudabasic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\CudaBasicClasses\cudaStream.h">
+      <Filter>cudabasic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\CudaBasicClasses\cudaTimer.h">
+      <Filter>cudabasic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\CudaBasicClasses\gpuArray.h">
+      <Filter>cudabasic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\CudaBasicClasses\matrix.h">
+      <Filter>cudabasic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\CudaBasicClasses\span.h">
+      <Filter>cudabasic</Filter>
+    </ClInclude>
+    <ClInclude Include="FBPropagation.h">
+      <Filter>dnnbasic</Filter>
+    </ClInclude>
+    <ClInclude Include="Functions.h">
+      <Filter>dnnbasic</Filter>
+    </ClInclude>
+    <ClInclude Include="Layer.h">
+      <Filter>dnnbasic</Filter>
+    </ClInclude>
+    <ClInclude Include="Tensor.h">
+      <Filter>dnnbasic</Filter>
+    </ClInclude>
+    <ClInclude Include="tensor_def.h">
+      <Filter>dnnbasic</Filter>
+    </ClInclude>
+    <ClInclude Include="tensor_kernels.cuh">
+      <Filter>dnnbasic</Filter>
+    </ClInclude>
+    <ClInclude Include="tensor_operators.h">
+      <Filter>dnnbasic</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\CudaBasicClasses\cudaBasics.cpp">
+      <Filter>cudabasic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\CudaBasicClasses\cudaStream.cpp">
+      <Filter>cudabasic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\CudaBasicClasses\cudaTimer.cpp">
+      <Filter>cudabasic</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="tensor_kernels.cu">
+      <Filter>dnnbasic</Filter>
+    </CudaCompile>
+  </ItemGroup>
+</Project>

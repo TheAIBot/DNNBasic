@@ -108,15 +108,15 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(VCInstallDir)UnitTest\include;..\..\..\CudaBasicClasses;..\..\src;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(VCInstallDir)UnitTest\include;..\..\..\CudaBasicClasses;..\DNNBasic;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <UseFullPaths>true</UseFullPaths>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>$(VCInstallDir)UnitTest\lib;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.0\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>cudart.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cudart_static.lib;DNNBasic.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(VCInstallDir)UnitTest\lib;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.0\lib\x64;..\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -159,9 +159,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\CudaBasicClasses\cudaBasics.cpp" />
-    <ClCompile Include="..\..\..\CudaBasicClasses\cudaStream.cpp" />
-    <ClCompile Include="..\..\..\CudaBasicClasses\cudaTimer.cpp" />
     <ClCompile Include="TensorTests.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -175,12 +172,15 @@
     <ClInclude Include="..\..\..\CudaBasicClasses\gpuArray.h" />
     <ClInclude Include="..\..\..\CudaBasicClasses\matrix.h" />
     <ClInclude Include="..\..\..\CudaBasicClasses\span.h" />
-    <ClInclude Include="..\..\src\FBPropagation.h" />
-    <ClInclude Include="..\..\src\Functions.h" />
-    <ClInclude Include="..\..\src\Layer.h" />
-    <ClInclude Include="..\..\src\Tensor.h" />
-    <ClInclude Include="tensor_def.h" />
-    <ClInclude Include="tensor_operators.h" />
+    <ClInclude Include="..\DNNBasic\FBPropagation.h" />
+    <ClInclude Include="..\DNNBasic\Functions.h" />
+    <ClInclude Include="..\DNNBasic\Layer.h" />
+    <ClInclude Include="..\DNNBasic\Tensor.h" />
+    <ClInclude Include="..\DNNBasic\tensor_def.h" />
+    <ClInclude Include="..\DNNBasic\tensor_operators.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\DNNBasic\tensor_kernels.cuh" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
