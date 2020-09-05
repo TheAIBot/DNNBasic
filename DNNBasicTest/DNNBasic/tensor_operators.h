@@ -59,15 +59,7 @@ namespace dnnbasic
 		auto leftValues = left.getValuesOnCPU();
 		auto rightValues = right.getValuesOnCPU();
 
-		for (size_t i = 0; i < left.elementCount(); i++)
-		{
-			if (leftValues[i] != rightValues[i])
-			{
-				return false;
-			}
-		}
-
-		return true;
+		return leftValues == rightValues;
 	}
 
 	template<typename T>
