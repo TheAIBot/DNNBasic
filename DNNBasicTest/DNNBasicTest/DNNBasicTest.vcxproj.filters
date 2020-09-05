@@ -13,69 +13,81 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\cudabasic">
+      <UniqueIdentifier>{ee0da4a7-4e9b-43e2-889c-7db9549ec4d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cudabasic">
+      <UniqueIdentifier>{b1925685-bb36-4869-8144-5a60137da2e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\dnnbasic">
+      <UniqueIdentifier>{7c4435dd-b7dc-4b64-b22f-3f2fa63086e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\dnnbasic\tensor_parts">
+      <UniqueIdentifier>{ab94289e-1de1-44a9-afc0-722a5c9339a0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DNNBasicTest.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="pch.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\CudaBasicClasses\cudaBasics.cpp">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\cudabasic</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\CudaBasicClasses\cudaStream.cpp">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\cudabasic</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\CudaBasicClasses\cudaTimer.cpp">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\cudabasic</Filter>
+    </ClCompile>
+    <ClCompile Include="TensorTests.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="pch.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\FBPropagation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Functions.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\src\Tensor.h">
+      <Filter>Header Files\dnnbasic</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Layer.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\dnnbasic</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Tensor.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\src\Functions.h">
+      <Filter>Header Files\dnnbasic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\FBPropagation.h">
+      <Filter>Header Files\dnnbasic</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\CudaBasicClasses\cpuGpuArray.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\cudabasic</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\CudaBasicClasses\cpuGpuObject.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\cudabasic</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\CudaBasicClasses\cpuGpuTransporter.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\cudabasic</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\CudaBasicClasses\cudaBasics.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\cudabasic</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\CudaBasicClasses\cudaBench.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\cudabasic</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\CudaBasicClasses\cudaStream.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\cudabasic</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\CudaBasicClasses\cudaTimer.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\cudabasic</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\CudaBasicClasses\gpuArray.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\cudabasic</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\CudaBasicClasses\matrix.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\cudabasic</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\CudaBasicClasses\span.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\cudabasic</Filter>
+    </ClInclude>
+    <ClInclude Include="tensor_def.h">
+      <Filter>Header Files\dnnbasic\tensor_parts</Filter>
+    </ClInclude>
+    <ClInclude Include="tensor_operators.h">
+      <Filter>Header Files\dnnbasic\tensor_parts</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

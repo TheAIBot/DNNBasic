@@ -105,17 +105,18 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(VCInstallDir)UnitTest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(VCInstallDir)UnitTest\include;..\..\..\CudaBasicClasses;..\..\src;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <UseFullPaths>true</UseFullPaths>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(VCInstallDir)UnitTest\lib;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.0\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>cudart.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -161,13 +162,7 @@
     <ClCompile Include="..\..\..\CudaBasicClasses\cudaBasics.cpp" />
     <ClCompile Include="..\..\..\CudaBasicClasses\cudaStream.cpp" />
     <ClCompile Include="..\..\..\CudaBasicClasses\cudaTimer.cpp" />
-    <ClCompile Include="DNNBasicTest.cpp" />
-    <ClCompile Include="pch.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="TensorTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\CudaBasicClasses\cpuGpuArray.h" />
@@ -184,7 +179,8 @@
     <ClInclude Include="..\..\src\Functions.h" />
     <ClInclude Include="..\..\src\Layer.h" />
     <ClInclude Include="..\..\src\Tensor.h" />
-    <ClInclude Include="pch.h" />
+    <ClInclude Include="tensor_def.h" />
+    <ClInclude Include="tensor_operators.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
