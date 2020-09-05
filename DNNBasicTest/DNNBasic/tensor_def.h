@@ -36,7 +36,6 @@ namespace dnnbasic
 		}
 
 	public:
-		//cudabasic::span<T> arr;
 		tensor(std::vector<uint32_t> dims) : tensor(dims, std::vector<std::string>(dims.size()))
 		{ }
 		tensor(std::vector<uint32_t> dims, std::vector<T> values) : tensor(dims, std::vector<std::string>(dims.size()), values)
