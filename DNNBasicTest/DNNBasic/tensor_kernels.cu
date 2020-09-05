@@ -1,4 +1,5 @@
 #include "tensor_kernels.cuh"
+#include "cudaBasics.h"
 
 namespace dnnbasic
 {
@@ -14,24 +15,11 @@ namespace dnnbasic
 	}
 
 	template<>
-	void multiply<float>(tensor<float>& left, tensor<float>& right, tensor<float>& result)
+	void tensorMultiply<float>(tensor<float>& left, tensor<float>& right, tensor<float>& result)
 	{
 		dim3 blockDim(256);
 		dim3 gridDim((left.elementCount() + (blockDim.x - 1)) / blockDim.x);
 
-		cudabasic::cpuGpuArray<float> inputA(left.elementCount());
-		cudabasic::cpuGpuArray<float> inputB(right.elementCount());
-		cudabasic::cpuGpuArray<float> output(left.elementCount());
-
-		std::copy(left.arr.begin(), left.arr.end(), inputA.getCPUArray().begin());
-		std::copy(right.arr.begin(), right.arr.end(), inputB.getCPUArray().begin());
-
-		inputA.copyToGPU();
-		inputB.copyToGPU();
-
-		cudabasic::executeKernel(multiplyGPU, blockDim, gridDim, inputA.getGPUArray(), inputB.getGPUArray(), output.getGPUArray());
-
-		cudabasic::span<float> mulResult = output.copyFromGPU();
-		std::copy(mulResult.begin(), mulResult.end(), result.arr.begin());
+		cudabasic::executeKernel(multiplyGPU, blockDim, gridDim, left.getGPUArray(), right.getGPUArray(), result.getGPUArray());
 	}
 }

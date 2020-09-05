@@ -71,9 +71,12 @@ namespace dnnbasic
 			throw std::exception("Dimensions of left hand side tensor do not match dimension of right hand side tensor.");
 		}
 
-		for (size_t i = 0; i < left.arr.size(); i++)
+		auto leftValues = left.getValuesOnCPU();
+		auto rightValues = right.getValuesOnCPU();
+
+		for (size_t i = 0; i < left.elementCount(); i++)
 		{
-			if (left.arr[i] != right.arr[i])
+			if (leftValues[i] != rightValues[i])
 			{
 				return false;
 			}
@@ -102,12 +105,7 @@ namespace dnnbasic
 		child->addConnection(&right);
 
 		// make kernel call
-		//tensorMul<T>::multiply(left, right, *child);
-		multiply(left, right, *child);
-		//for (uint32_t i = 0; i < child->elementCount(); i++)
-		//{
-		//	(*child)[i] = left[i] * right[i];
-		//}
+		tensorMultiply(left, right, *child);
 
 		return child;
 	}
