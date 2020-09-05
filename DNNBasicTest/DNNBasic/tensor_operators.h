@@ -32,7 +32,7 @@ namespace dnnbasic
 	}
 
 	template<typename T>
-	static tensor<T>* createTensorWithSameDims(tensor<T>& a, tensor<T>& b)
+	static tensor<T>* createTensorWithSameDims(const tensor<T>& a, const tensor<T>& b)
 	{
 		auto& aDims = a.getDimensions();
 		auto& bDims = b.getDimensions();
@@ -46,21 +46,6 @@ namespace dnnbasic
 		}
 
 		return new tensor<T>(new_dim, new_name);
-	}
-
-
-	template<typename T>
-	bool operator==(tensor<T>& left, tensor<T>& right)
-	{
-		const auto& leftC = left;
-		const auto& rightC = right;
-		return leftC == rightC;
-	}
-
-	template<typename T>
-	bool operator!=(tensor<T>& left, tensor<T>& right)
-	{
-		return !(left == right);
 	}
 
 	template<typename T>
@@ -93,7 +78,7 @@ namespace dnnbasic
 
 
 	template<typename T>
-	tensor<T>* operator*(tensor<T>& left, tensor<T>& right)
+	tensor<T>* operator*(const tensor<T>& left, const tensor<T>& right)
 	{
 		if (!hasSameDimensions(left, right))
 		{

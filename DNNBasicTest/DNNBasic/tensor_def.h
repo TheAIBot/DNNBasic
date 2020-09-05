@@ -28,9 +28,9 @@ namespace dnnbasic
 	private:
 		std::vector<namedDim> dimension;
 		cudabasic::gpuArray<T> arr;
-		std::vector<tensor<T>*> connections;
+		std::vector<const tensor<T>*> connections;
 
-		void addConnection(tensor<T>* newConnection)
+		void addConnection(const tensor<T>* newConnection)
 		{
 			connections.push_back(newConnection);
 		}
@@ -75,32 +75,20 @@ namespace dnnbasic
 			}
 		}
 
-		template<typename U> friend bool operator==(tensor<U>&, tensor<U>&);
-		template<typename U> friend bool operator!=(tensor<U>&, tensor<U>&);
 		template<typename U> friend bool operator==(const tensor<U>&, const tensor<U>&);
 		template<typename U> friend bool operator!=(const tensor<U>&, const tensor<U>&);
 
-		//template<typename U> friend tensor<U>* operator+(tensor<U>&, tensor<U>&);
-		//template<typename U> friend tensor<U>* operator+(T&, tensor<U>&);
-		//template<typename U> friend tensor<U>* operator+(tensor<U>&, T&);
+		//template<typename U> friend tensor<U>* operator+(const tensor<U>&, const tensor<U>&);
+		//template<typename U> friend tensor<U>* operator+(const T&, const tensor<U>&);
+		//template<typename U> friend tensor<U>* operator+(const tensor<U>&, const T&);
 
-		//template<typename U> friend tensor<U>* operator-(tensor<U>&, tensor<U>&);
-		//template<typename U> friend tensor<U>* operator-(T&, tensor<U>&);
-		//template<typename U> friend tensor<U>* operator-(tensor<U>&, T&);
+		//template<typename U> friend tensor<U>* operator-(const tensor<U>&, const tensor<U>&);
+		//template<typename U> friend tensor<U>* operator-(const T&, const tensor<U>&);
+		//template<typename U> friend tensor<U>* operator-(const tensor<U>&, const T&);
 
-		template<typename U> friend tensor<U>* operator*(tensor<U>&, tensor<U>&);
-		//template<typename U> friend tensor<U>* operator*(T&, tensor<U>&);
-		//template<typename U> friend tensor<U>* operator*(tensor<U>&, T&);
-
-		//T& operator[](const uint32_t i)
-		//{
-		//	return arr[i];
-		//}
-
-		//T operator[](const uint32_t i) const
-		//{
-		//	return arr[i];
-		//}
+		template<typename U> friend tensor<U>* operator*(const tensor<U>&, const tensor<U>&);
+		//template<typename U> friend tensor<U>* operator*(const T&, const tensor<U>&);
+		//template<typename U> friend tensor<U>* operator*(const tensor<U>&, const T&);
 
 		void makeRandom(T min, T max)
 		{
