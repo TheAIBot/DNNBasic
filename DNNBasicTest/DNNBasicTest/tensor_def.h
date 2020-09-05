@@ -34,9 +34,20 @@ namespace dnnbasic
 		}
 
 	public:
-		tensor(std::vector<uint32_t> dim) : tensor(dim, std::vector<std::string>(dim.size()))
+		tensor(std::vector<uint32_t> dims) : tensor(dims, std::vector<std::string>(dim.size()))
 		{ }
-		tensor(std::vector<uint32_t> dimensions, std::vector<std::string> names)
+		tensor(std::vector<uint32_t> dims, std::vector<T> values) : tensor(dims, std::vector<std::string>(dims.size()), values)
+		{ 
+			if (values.size() > arr.size())
+			{
+				throw std::exception("Initializtion vector contain too many values.");
+			}
+
+			std::copy(values.begin(), values.end(), arr.begin());
+		}
+		tensor(std::vector<uint32_t> dimensions, std::vector<std::string> names) : tensor(dimensions, names, std::vector<T>())
+		{ }		
+		tensor(std::vector<uint32_t> dimensions, std::vector<std::string> names, std::vector<T> values)
 		{
 			if (dimensions.size() == 0)
 			{
@@ -67,6 +78,11 @@ namespace dnnbasic
 			delete[] arr.begin();
 		};
 
+		template<typename U> friend bool operator==(tensor<U>&, tensor<U>&);
+		template<typename U> friend bool operator!=(tensor<U>&, tensor<U>&);
+		template<typename U> friend bool operator==(const tensor<U>&, const tensor<U>&);
+		template<typename U> friend bool operator!=(const tensor<U>&, const tensor<U>&);
+
 		//template<typename U> friend tensor<U>* operator+(tensor<U>&, tensor<U>&);
 		//template<typename U> friend tensor<U>* operator+(T&, tensor<U>&);
 		//template<typename U> friend tensor<U>* operator+(tensor<U>&, T&);
@@ -84,7 +100,7 @@ namespace dnnbasic
 			return arr[i];
 		}
 
-		const T& operator[](const uint32_t i) const
+		T operator[](const uint32_t i) const
 		{
 			return arr[i];
 		}

@@ -9,7 +9,7 @@
 namespace dnnbasic
 {
 	template<typename T>
-	static bool hasSameDimensions(tensor<T>& a, tensor<T>& b)
+	static bool hasSameDimensions(const tensor<T>& a, const tensor<T>& b)
 	{
 		auto& aDims = a.getDimensions();
 		auto& bDims = b.getDimensions();
@@ -31,7 +31,7 @@ namespace dnnbasic
 	}
 
 	template<typename T>
-	static tensor<T>* createTensorWithSameDims(tensor<T>& a, tensor<T> b)
+	static tensor<T>* createTensorWithSameDims(tensor<T>& a, tensor<T>& b)
 	{
 		auto& aDims = a.getDimensions();
 		auto& bDims = b.getDimensions();
@@ -47,6 +47,47 @@ namespace dnnbasic
 		return new tensor<T>(new_dim, new_name);
 	}
 
+
+	template<typename T>
+	bool operator==(tensor<T>& left, tensor<T>& right)
+	{
+		const auto& leftC = left;
+		const auto& rightC = right;
+		return leftC == rightC;
+	}
+
+	template<typename T>
+	bool operator!=(tensor<T>& left, tensor<T>& right)
+	{
+		return !(left == right);
+	}
+
+	template<typename T>
+	bool operator==(const tensor<T>& left, const tensor<T>& right)
+	{
+		if (!hasSameDimensions(left, right))
+		{
+			throw std::exception("Dimensions of left hand side tensor do not match dimension of right hand side tensor.");
+		}
+
+		for (size_t i = 0; i < left.arr.size(); i++)
+		{
+			if (left.arr[i] != right.arr[i])
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	template<typename T>
+	bool operator!=(const tensor<T>& left, const tensor<T>& right)
+	{
+		return !(left == right);
+	}
+
+
 	template<typename T>
 	tensor<T>* operator*(tensor<T>& left, tensor<T>& right)
 	{
@@ -60,7 +101,7 @@ namespace dnnbasic
 		child->addConnection(&right);
 
 		// make kernel call
-		for (size_t i = 0; i < child->elementCount(); i++)
+		for (uint32_t i = 0; i < child->elementCount(); i++)
 		{
 			(*child)[i] = left[i] * right[i];
 		}
