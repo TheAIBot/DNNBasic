@@ -4,9 +4,9 @@
 namespace dnnbasic
 {
 	template<typename T>
-	__global__ void multiplyGPU(cudabasic::span<T> left, cudabasic::span<T> right, cudabasic::span<T> output)
+	__global__ void multiplyGPU(const cudabasic::span<T> left, const cudabasic::span<T> right, cudabasic::span<T> output)
 	{
-		uint32_t index = blockIdx.x * blockDim.x + threadIdx.x;
+		const uint32_t index = blockIdx.x * blockDim.x + threadIdx.x;
 		if (index >= left.size())
 		{
 			return;
@@ -14,10 +14,10 @@ namespace dnnbasic
 		output[index] = left[index] * right[index];
 	}
 
-	void tensorMultiply(tensor<float>& left, tensor<float>& right, tensor<float>& result)
+	void tensorMultiply(const tensor<float>& left, const tensor<float>& right, const tensor<float>& result)
 	{
-		dim3 blockDim(256);
-		dim3 gridDim((left.elementCount() + (blockDim.x - 1)) / blockDim.x);
+		const dim3 blockDim(256);
+		const dim3 gridDim((left.elementCount() + (blockDim.x - 1)) / blockDim.x);
 
 		cudabasic::executeKernel(multiplyGPU, blockDim, gridDim, left.getGPUArray(), right.getGPUArray(), result.getGPUArray());
 	}

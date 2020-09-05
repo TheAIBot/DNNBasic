@@ -8,5 +8,5 @@
 
 namespace dnnbasic
 {
-	void tensorMultiply(tensor<float>& left, tensor<float>& right, tensor<float>& result);
+	void tensorMultiply(const tensor<float>& left, const tensor<float>& right, const tensor<float>& result);
 }
