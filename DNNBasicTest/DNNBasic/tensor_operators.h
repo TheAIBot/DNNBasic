@@ -150,4 +150,44 @@ namespace dnnbasic
 
 		return child;
 	}
+
+	template<typename T>
+	tensor<T>* operator-(const tensor<T>& left, const tensor<T>& right)
+	{
+		if (!hasSameDimensions(left, right))
+		{
+			throw std::exception("Dimensions of left hand side tensor do not match dimension of right hand side tensor.");
+		}
+
+		tensor<T>* child = createTensorWithSameDims(left, right);
+
+		// make kernel call
+		tensorSubtract(left, right, *child);
+
+		return child;
+	}
+
+	template<typename T>
+	tensor<T>* operator-(const tensor<T>& left, const T& right)
+	{
+		return right - left;
+	}
+
+	template<typename T>
+	tensor<T>* operator-(const T& left, const tensor<T>& right)
+	{
+		tensor<T>* child = createTensor(right);
+
+		// make kernel call
+		tensorSubtract(left, right, *child);
+
+		return child;
+	}
+
+	template<typename T>
+	tensor<T>* operator-(const tensor<T>& left)
+	{
+		const T right = { 0 };
+		return right - left;
+	}
 }

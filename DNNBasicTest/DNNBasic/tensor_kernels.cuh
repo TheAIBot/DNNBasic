@@ -13,4 +13,7 @@ namespace dnnbasic
 
 	void tensorAdd(const tensor<float>& left, const tensor<float>& right, const tensor<float>& result);
 	void tensorAdd(const float left, const tensor<float>& right, const tensor<float>& result);
+
+	void tensorSubtract(const tensor<float>& left, const tensor<float>& right, const tensor<float>& result);
+	void tensorSubtract(const float left, const tensor<float>& right, const tensor<float>& result);
 }
