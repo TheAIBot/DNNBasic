@@ -74,7 +74,7 @@ namespace DNNBasicTest
 			Assert::AreEqual(expected, *actual);
 		}
 
-		TEST_METHOD(TensorAddsScalar)
+		TEST_METHOD(TensorAddScalar)
 		{
 			dnnbasic::tensor<float> a({ 2, 1, 3 }, { 1, 2, 3, 4, 5, 6 });
 			float b = 7;
@@ -87,11 +87,54 @@ namespace DNNBasicTest
 
 		TEST_METHOD(ScalarAddTensor)
 		{
-			dnnbasic::tensor<float> a({ 2, 1, 3 }, { 1, 2, 3, 4, 5, 6 });
-			float b = 27;
+			float a = 27;
+			dnnbasic::tensor<float> b({ 2, 1, 3 }, { 1, 2, 3, 4, 5, 6 });
 
 			dnnbasic::tensor<float> expected({ 2, 1, 3 }, { 28, 29, 30, 31, 32, 33 });
 			auto* actual = a + b;
+
+			Assert::AreEqual(expected, *actual);
+		}
+
+		TEST_METHOD(TensorSubTensor)
+		{
+			dnnbasic::tensor<float> a({ 2, 1, 3 }, { 1, 2, 3, 4, 5, 6 });
+			dnnbasic::tensor<float> b({ 2, 1, 3 }, { 3, 4, 5, 6, 7, 8 });
+
+			dnnbasic::tensor<float> expected({ 2, 1, 3 }, { -2, -2, -2, -2, -2, -2 });
+			auto* actual = a - b;
+
+			Assert::AreEqual(expected, *actual);
+		}
+
+		TEST_METHOD(TensorSubScalar)
+		{
+			dnnbasic::tensor<float> a({ 2, 1, 3 }, { 1, 2, 3, 4, 5, 6 });
+			float b = 13;
+
+			dnnbasic::tensor<float> expected({ 2, 1, 3 }, { -12, -11, -10, -9, -8, -7 });
+			auto* actual = a - b;
+
+			Assert::AreEqual(expected, *actual);
+		}
+
+		TEST_METHOD(ScalarSubTensor)
+		{
+			float a = 47;
+			dnnbasic::tensor<float> b({ 2, 1, 3 }, { 1, 2, 3, 4, 5, 6 });
+
+			dnnbasic::tensor<float> expected({ 2, 1, 3 }, { 46, 45, 44, 43, 42, 41 });
+			auto* actual = a - b;
+
+			Assert::AreEqual(expected, *actual);
+		}
+
+		TEST_METHOD(TensorSub)
+		{
+			dnnbasic::tensor<float> a({ 2, 1, 3 }, { 1, 2, 3, 4, 5, 6 });
+
+			dnnbasic::tensor<float> expected({ 2, 1, 3 }, { -1, -2, -3, -4, -5, -6});
+			auto* actual = -a;
 
 			Assert::AreEqual(expected, *actual);
 		}
