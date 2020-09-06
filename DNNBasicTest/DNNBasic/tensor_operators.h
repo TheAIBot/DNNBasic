@@ -78,8 +78,6 @@ namespace dnnbasic
 		}
 
 		tensor<T>* child = createTensorWithSameDims(left, right);
-		child->addConnection(&left);
-		child->addConnection(&right);
 
 		// make kernel call
 		tensorMultiply(left, right, *child);
@@ -87,4 +85,19 @@ namespace dnnbasic
 		return child;
 	}
 
+	template<typename T>
+	tensor<T>* operator+(const tensor<T>& left, const tensor<T>& right)
+	{
+		if (!hasSameDimensions(left, right))
+		{
+			throw std::exception("Dimensions of left hand side tensor do not match dimension of right hand side tensor.");
+		}
+
+		tensor<T>* child = createTensorWithSameDims(left, right);
+
+		// make kernel call
+		tensorAdd(left, right, *child);
+
+		return child;
+	}
 }

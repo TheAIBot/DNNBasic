@@ -78,7 +78,7 @@ namespace dnnbasic
 		template<typename U> friend bool operator==(const tensor<U>&, const tensor<U>&);
 		template<typename U> friend bool operator!=(const tensor<U>&, const tensor<U>&);
 
-		//template<typename U> friend tensor<U>* operator+(const tensor<U>&, const tensor<U>&);
+		template<typename U> friend tensor<U>* operator+(const tensor<U>&, const tensor<U>&);
 		//template<typename U> friend tensor<U>* operator+(const T&, const tensor<U>&);
 		//template<typename U> friend tensor<U>* operator+(const tensor<U>&, const T&);
 
