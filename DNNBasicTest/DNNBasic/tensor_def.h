@@ -87,8 +87,8 @@ namespace dnnbasic
 		//template<typename U> friend tensor<U>* operator-(const tensor<U>&, const T&);
 
 		template<typename U> friend tensor<U>* operator*(const tensor<U>&, const tensor<U>&);
-		//template<typename U> friend tensor<U>* operator*(const T&, const tensor<U>&);
-		//template<typename U> friend tensor<U>* operator*(const tensor<U>&, const T&);
+		template<typename U> friend tensor<U>* operator*(const T&, const tensor<U>&);
+		template<typename U> friend tensor<U>* operator*(const tensor<U>&, const T&);
 
 		void makeRandom(T min, T max)
 		{

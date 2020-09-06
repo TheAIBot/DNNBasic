@@ -49,6 +49,22 @@ namespace dnnbasic
 	}
 
 	template<typename T>
+	static tensor<T>* createTensor(const tensor<T>& a) 
+	{
+		auto& aDims = a.getDimensions();
+
+		std::vector<uint32_t> new_dim;
+		std::vector<std::string> new_name;
+		for (size_t i = 0; i < aDims.size(); i++)
+		{
+			new_dim.push_back(aDims[i].dim);
+			new_name.push_back(aDims[i].name);
+		}
+
+		return new tensor<T>(new_dim, new_name);
+	}
+
+	template<typename T>
 	bool operator==(const tensor<T>& left, const tensor<T>& right)
 	{
 		if (!hasSameDimensions(left, right))
@@ -78,6 +94,23 @@ namespace dnnbasic
 		}
 
 		tensor<T>* child = createTensorWithSameDims(left, right);
+
+		// make kernel call
+		tensorMultiply(left, right, *child);
+
+		return child;
+	}
+
+	template<typename T>
+	tensor<T>* operator*(const tensor<T>& left, const T& right)
+	{
+		return right * left;
+	}
+
+	template<typename T>
+	tensor<T>* operator*(const T& left, const tensor<T>& right)
+	{
+		tensor<T>* child = createTensor(right);
 
 		// make kernel call
 		tensorMultiply(left, right, *child);
