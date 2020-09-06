@@ -133,4 +133,21 @@ namespace dnnbasic
 
 		return child;
 	}
+
+	template<typename T>
+	tensor<T>* operator+(const tensor<T>& left, const T& right)
+	{
+		return right + left;
+	}
+
+	template<typename T>
+	tensor<T>* operator+(const T& left, const tensor<T>& right)
+	{
+		tensor<T>* child = createTensor(right);
+
+		// make kernel call
+		tensorAdd(left, right, *child);
+
+		return child;
+	}
 }
