@@ -49,7 +49,7 @@ namespace dnnbasic
 	}
 
 	template<typename T>
-	static tensor<T>* createTensor(const tensor<T>& a) 
+	static tensor<T>* createTensorWithSameDims(const tensor<T>& a) 
 	{
 		auto& aDims = a.getDimensions();
 
@@ -84,7 +84,6 @@ namespace dnnbasic
 		return !(left == right);
 	}
 
-
 	template<typename T>
 	tensor<T>* operator*(const tensor<T>& left, const tensor<T>& right)
 	{
@@ -110,7 +109,7 @@ namespace dnnbasic
 	template<typename T>
 	tensor<T>* operator*(const T& left, const tensor<T>& right)
 	{
-		tensor<T>* child = createTensor(right);
+		tensor<T>* child = createTensorWithSameDims(right);
 
 		// make kernel call
 		tensorMultiply(left, right, *child);
@@ -143,7 +142,7 @@ namespace dnnbasic
 	template<typename T>
 	tensor<T>* operator+(const T& left, const tensor<T>& right)
 	{
-		tensor<T>* child = createTensor(right);
+		tensor<T>* child = createTensorWithSameDims(right);
 
 		// make kernel call
 		tensorAdd(left, right, *child);
@@ -176,7 +175,7 @@ namespace dnnbasic
 	template<typename T>
 	tensor<T>* operator-(const T& left, const tensor<T>& right)
 	{
-		tensor<T>* child = createTensor(right);
+		tensor<T>* child = createTensorWithSameDims(right);
 
 		// make kernel call
 		tensorSubtract(left, right, *child);
