@@ -169,7 +169,8 @@ namespace dnnbasic
 	template<typename T>
 	tensor<T>* operator-(const tensor<T>& left, const T& right)
 	{
-		return left + -right;
+		T q = -right;
+		return left + q;
 	}
 
 	template<typename T>
