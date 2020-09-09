@@ -1,6 +1,10 @@
-#include "CppUnitTest.h"
-#include "Tensor.h"
+#include <CppUnitTest.h>
 #include <string>
+#include <typeinfo>
+#include <codecvt>
+#include "Tensor.h"
+
+
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -24,113 +28,19 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 	TEST_METHOD(float ## methodName) { methodName<float>(); } \
 	TEST_METHOD(double ## methodName) { methodName<double>(); }
 
-namespace Microsoft
+namespace Microsoft::VisualStudio::CppUnitTestFramework
 {
-	namespace VisualStudio
+	template<typename T>
+	static std::wstring ToString(const dnnbasic::tensor<T>& t)
 	{
-		namespace CppUnitTestFramework
-		{
-			template<> 
-			static std::wstring ToString<dnnbasic::tensor<uint8_t>>(const dnnbasic::tensor<uint8_t>& t)
-			{ 
-				return L"FloatTensor"; 
-			}
-			template<>
-			static std::wstring ToString<const dnnbasic::tensor<uint8_t>&>(const dnnbasic::tensor<uint8_t>& t)
-			{ 
-				return L"FloatTensor"; 
-			}
-			template<>
-			static std::wstring ToString<dnnbasic::tensor<uint16_t>>(const dnnbasic::tensor<uint16_t>& t)
-			{
-				return L"FloatTensor";
-			}
-			template<>
-			static std::wstring ToString<const dnnbasic::tensor<uint16_t>&>(const dnnbasic::tensor<uint16_t>& t)
-			{
-				return L"FloatTensor";
-			}
-			template<>
-			static std::wstring ToString<dnnbasic::tensor<uint32_t>>(const dnnbasic::tensor<uint32_t>& t)
-			{
-				return L"FloatTensor";
-			}
-			template<>
-			static std::wstring ToString<const dnnbasic::tensor<uint32_t>&>(const dnnbasic::tensor<uint32_t>& t)
-			{
-				return L"FloatTensor";
-			}
-			template<>
-			static std::wstring ToString<dnnbasic::tensor<uint64_t>>(const dnnbasic::tensor<uint64_t>& t)
-			{
-				return L"FloatTensor";
-			}
-			template<>
-			static std::wstring ToString<const dnnbasic::tensor<uint64_t>&>(const dnnbasic::tensor<uint64_t>& t)
-			{
-				return L"FloatTensor";
-			}
-			template<>
-			static std::wstring ToString<dnnbasic::tensor<int8_t>>(const dnnbasic::tensor<int8_t>& t)
-			{
-				return L"FloatTensor";
-			}
-			template<>
-			static std::wstring ToString<const dnnbasic::tensor<int8_t>&>(const dnnbasic::tensor<int8_t>& t)
-			{
-				return L"FloatTensor";
-			}
-			template<>
-			static std::wstring ToString<dnnbasic::tensor<int16_t>>(const dnnbasic::tensor<int16_t>& t)
-			{
-				return L"FloatTensor";
-			}
-			template<>
-			static std::wstring ToString<const dnnbasic::tensor<int16_t>&>(const dnnbasic::tensor<int16_t>& t)
-			{
-				return L"FloatTensor";
-			}
-			template<>
-			static std::wstring ToString<dnnbasic::tensor<int32_t>>(const dnnbasic::tensor<int32_t>& t)
-			{
-				return L"FloatTensor";
-			}
-			template<>
-			static std::wstring ToString<const dnnbasic::tensor<int32_t>&>(const dnnbasic::tensor<int32_t>& t)
-			{
-				return L"FloatTensor";
-			}
-			template<>
-			static std::wstring ToString<dnnbasic::tensor<int64_t>>(const dnnbasic::tensor<int64_t>& t)
-			{
-				return L"FloatTensor";
-			}
-			template<>
-			static std::wstring ToString<const dnnbasic::tensor<int64_t>&>(const dnnbasic::tensor<int64_t>& t)
-			{
-				return L"FloatTensor";
-			}
-			template<>
-			static std::wstring ToString<dnnbasic::tensor<float>>(const dnnbasic::tensor<float>& t)
-			{
-				return L"FloatTensor";
-			}
-			template<>
-			static std::wstring ToString<const dnnbasic::tensor<float>&>(const dnnbasic::tensor<float>& t)
-			{
-				return L"FloatTensor";
-			}
-			template<>
-			static std::wstring ToString<dnnbasic::tensor<double>>(const dnnbasic::tensor<double>& t)
-			{
-				return L"FloatTensor";
-			}
-			template<>
-			static std::wstring ToString<const dnnbasic::tensor<double>&>(const dnnbasic::tensor<double>& t)
-			{
-				return L"FloatTensor";
-			}
-		}
+		//get type name as a string
+		std::string typeName = typeid(T).name();
+
+		//convert typeName to wstring
+		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+		std::wstring typeNameW = converter.from_bytes(typeName);
+
+		return typeNameW + L" Tensor";
 	}
 }
 
