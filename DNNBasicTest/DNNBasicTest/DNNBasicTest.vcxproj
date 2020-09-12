@@ -161,7 +161,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="TensorTests.cpp" />
+    <ClCompile Include="tensor_elementwise_operator_tests.cpp" />
+    <ClCompile Include="tensor_matrix_operator_tests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\CudaBasicClasses\cpuGpuArray.h" />
@@ -182,6 +183,7 @@
     <ClInclude Include="..\DNNBasic\tensor_def.h" />
     <ClInclude Include="..\DNNBasic\tensor_elementwise_operators.h" />
     <ClInclude Include="..\DNNBasic\tensor_matrix_operators.h" />
+    <ClInclude Include="test_tools.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\DNNBasic\tensor_elementwise_kernels.cuh" />

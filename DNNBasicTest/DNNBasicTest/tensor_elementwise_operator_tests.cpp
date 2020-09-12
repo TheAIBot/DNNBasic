@@ -3,29 +3,12 @@
 #include <typeinfo>
 #include <codecvt>
 #include "Tensor.h"
+#include "test_tools.h"
 
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
-#define TEST_ALL_OP_TYPES(methodName) \
-	TEST_METHOD(uint8_t ## methodName) { methodName<uint8_t>(); } \
-	TEST_METHOD(uint16_t ## methodName) { methodName<uint16_t>(); } \
-	TEST_METHOD(uint32_t ## methodName) { methodName<uint32_t>(); } \
-	TEST_METHOD(uint64_t ## methodName) { methodName<uint64_t>(); } \
-	TEST_METHOD(int8_t ## methodName) { methodName<int8_t>(); } \
-	TEST_METHOD(int16_t ## methodName) { methodName<int16_t>(); } \
-	TEST_METHOD(int32_t ## methodName) { methodName<int32_t>(); } \
-	TEST_METHOD(int64_t ## methodName) { methodName<int64_t>(); } \
-	TEST_METHOD(float ## methodName) { methodName<float>(); } \
-	TEST_METHOD(double ## methodName) { methodName<double>(); }
 
-#define TEST_SIGNED_OP_TYPES(methodName) \
-	TEST_METHOD(int8_t ## methodName) { methodName<int8_t>(); } \
-	TEST_METHOD(int16_t ## methodName) { methodName<int16_t>(); } \
-	TEST_METHOD(int32_t ## methodName) { methodName<int32_t>(); } \
-	TEST_METHOD(int64_t ## methodName) { methodName<int64_t>(); } \
-	TEST_METHOD(float ## methodName) { methodName<float>(); } \
-	TEST_METHOD(double ## methodName) { methodName<double>(); }
 
 namespace Microsoft::VisualStudio::CppUnitTestFramework
 {
@@ -45,100 +28,9 @@ namespace Microsoft::VisualStudio::CppUnitTestFramework
 
 namespace DNNBasicTest
 {
-	TEST_CLASS(TensorTests)
+	TEST_CLASS(tensorElementwiseOpTests)
 	{
 	public:
-		
-		template<typename T>
-		void matrixMatrixProduct2x2() 
-		{
-			dnnbasic::tensor<T> a({ 2, 2 }, { 1,0,0,1 });
-			dnnbasic::tensor<T> b({ 2, 2 }, { 4,1,1,2 });
-
-			dnnbasic::tensor<T> expected({ 2, 2 }, { 4,1,1,2 });
-			auto* actual = dnnbasic::matMul(a, b);
-
-			Assert::AreEqual(expected, *actual);
-		}
-		TEST_ALL_OP_TYPES(matrixMatrixProduct2x2)
-
-		template<typename T>
-		void matrixMatrixProduct3x3()
-		{
-			dnnbasic::tensor<T> a({ 3, 2 }, 
-				{ 
-					5,7,
-					4,8,
-					6,1 
-				});
-			dnnbasic::tensor<T> b({ 2, 3 }, 
-				{ 
-					7,5,4,
-					7,9,6 
-				});
-
-			dnnbasic::tensor<T> expected({ 3, 3 }, 
-				{ 
-					84,88,62,
-					84,92,64,
-					49,39,30 
-				});
-			auto* actual = dnnbasic::matMul(a, b);
-
-			Assert::AreEqual(expected, *actual);
-		}
-		TEST_ALL_OP_TYPES(matrixMatrixProduct3x3)
-
-		template<typename T>
-		void matrixMatrixMulVector()
-		{
-			dnnbasic::tensor<T> a({ 3, 2 },
-				{
-					5,7,
-					4,8,
-					6,1
-				});
-			dnnbasic::tensor<T> b({ 2 },
-				{
-					7,
-					7
-				});
-
-			dnnbasic::tensor<T> expected({ 3 },
-				{
-					84,
-					84,
-					49
-				});
-			auto* actual = dnnbasic::matMul(a, b);
-
-			Assert::AreEqual(expected, *actual);
-		}
-		TEST_ALL_OP_TYPES(matrixMatrixMulVector)
-
-		template<typename T>
-		void matrixVectorMulMatrix()
-		{
-			dnnbasic::tensor<T> a({ 2 },
-				{
-					5, 7
-				});
-			dnnbasic::tensor<T> b({ 2, 3 },
-				{
-					7, 5, 4,
-					7, 9, 6
-				});
-
-			dnnbasic::tensor<T> expected({ 3 },
-				{
-					84, 88, 62
-				});
-			auto* actual = dnnbasic::matMul(a, b);
-
-			Assert::AreEqual(expected, *actual);
-		}
-		TEST_ALL_OP_TYPES(matrixVectorMulMatrix)
-
 		template<typename T>
 		void tensorMulTensor()
 		{
