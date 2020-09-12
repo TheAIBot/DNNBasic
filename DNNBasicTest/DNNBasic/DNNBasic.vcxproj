@@ -24,9 +24,11 @@
     <ClInclude Include="FBPropagation.h" />
     <ClInclude Include="Functions.h" />
     <ClInclude Include="Layer.h" />
+    <ClInclude Include="matrix.h" />
     <ClInclude Include="Tensor.h" />
     <ClInclude Include="tensor_def.h" />
-    <ClInclude Include="tensor_kernels.cuh" />
+    <ClInclude Include="tensor_elementwise_kernels.cuh" />
+    <ClInclude Include="tensor_matrix_kernels.cuh" />
     <ClInclude Include="tensor_operators.h" />
   </ItemGroup>
   <ItemGroup>
@@ -35,7 +37,8 @@
     <ClCompile Include="..\..\..\CudaBasicClasses\cudaTimer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="tensor_kernels.cu" />
+    <CudaCompile Include="tensor_elementwise_kernels.cu" />
+    <CudaCompile Include="tensor_matrix_kernels.cu" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{E758B47C-B0F3-4E31-8DA1-5D4C0379AD84}</ProjectGuid>

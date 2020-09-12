@@ -7,6 +7,7 @@
 #include <numeric>
 #include "span.h"
 #include "gpuArray.h"
+#include "tensor_matrix_kernels.cuh"
 
 namespace dnnbasic
 {
@@ -33,6 +34,43 @@ namespace dnnbasic
 		void addConnection(const tensor<T>* newConnection)
 		{
 			connections.push_back(newConnection);
+		}
+
+		static bool canMatrixMultiply(const tensor<T>& a, const tensor<T>& b)
+		{
+			auto& aDims = a.getDimensions();
+			auto& bDims = b.getDimensions();
+
+			if (aDims.size() != 2 || bDims.size() != 2)
+			{
+				return false;
+			}
+
+			if (aDims[1].dim != bDims[0].dim)
+			{
+				return false;
+			}
+
+			return true;
+		}
+
+		static tensor<T>* createTensorWithMatrixMultiplyDims(const tensor<T>& a, const tensor<T>& b)
+		{
+			auto& aDims = a.getDimensions();
+			auto& bDims = b.getDimensions();
+
+			std::vector<uint32_t> new_dim;
+			std::vector<std::string> new_name;
+
+			new_dim.push_back(aDims[0].dim);
+			new_dim.push_back(bDims[1].dim);
+
+			for (size_t i = 0; i < aDims.size(); i++)
+			{
+				new_name.push_back(aDims.front().name != "" ? aDims[i].name : bDims[i].name);
+			}
+
+			return new tensor<T>(new_dim, new_name);
 		}
 
 	public:
@@ -109,5 +147,27 @@ namespace dnnbasic
 		void permute();
 		void view();
 		void resize();
+		const matrix<T> getMatrixConst() const
+		{
+			return matrix<T>(arr.getGPUArrayConst().begin(), dimension[0].dim, dimension[1].dim);
+		}
+		matrix<T> getMatrix() const
+		{
+			return matrix<T>(arr.getGPUArrayConst().begin(), dimension[0].dim, dimension[1].dim);
+		}
+		tensor<T>* matMul(const tensor<T>& right) const
+		{
+			if (!canMatrixMultiply(this, right))
+			{
+				throw std::exception("Left hand side tensor cannot matrix multiply with right hand side tensor.");
+			}
+
+			tensor<T>* child = createTensorWithMatrixMultiplyDims(this, right);
+
+			// make kernel call
+			tensorMatrixMultiply(this, right, *child);
+
+			return child;
+		}
 	};
 }
