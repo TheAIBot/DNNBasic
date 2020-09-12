@@ -8,10 +8,11 @@ namespace dnnbasic
 	__global__ void matrixMultiplication(const matrix<T> a, const matrix<T> b, matrix<T> c, const uint32_t num_sub_blocks, const uint32_t blockSize)
 	{
 		//Define some shared memory for a sub block of matrices A an B
-		__shared__ T sharedArray1[32*32]; __shared__ T sharedArray2[32*32];
+		extern __shared__ __align__(sizeof(T)) int8_t sharedArray[];
+		T* sharedMemT = reinterpret_cast<T*>(sharedArray);
 
-		matrix<T> As(sharedArray1, blockSize, blockSize);
-		matrix<T> Bs(sharedArray2, blockSize, blockSize);
+		matrix<T> As(sharedMemT, blockSize, blockSize);
+		matrix<T> Bs(sharedMemT + blockSize * blockSize, blockSize, blockSize);
 
 		// Block index
 		const uint32_t bx = blockIdx.x;
@@ -78,11 +79,11 @@ namespace dnnbasic
 		
 		const uint32_t blockSize = 32; 
 		const dim3 blockDim(blockSize, blockSize);
-		//const uint32_t sharedMemory = sizeof(T) * blockSize * blockSize * 2;
+		const uint32_t sharedMemory = sizeof(T) * blockSize * blockSize * 2;
 		const dim3 gridDim(integerCeilDivision(matrixWidth, blockDim.x), integerCeilDivision(matrixHeight, blockDim.y));
 		const uint32_t num_sub_blocks = integerCeilDivision(left.getDimensions()[0].dim, blockSize);
 		
-		cudabasic::executeKernel(matrixMultiplication<T>, blockDim, gridDim, left.getMatrixConst(), right.getMatrixConst(), result.getMatrix(), num_sub_blocks, blockSize);
+		cudabasic::executeKernel(matrixMultiplication<T>, blockDim, gridDim, sharedMemory, left.getMatrixConst(), right.getMatrixConst(), result.getMatrix(), num_sub_blocks, blockSize);
 	}
 	void tensorMatrixMul(const tensor<bool>& left, const tensor<bool>& right, const tensor<bool>& result){tensorMatrixMulInternal(left, right, result);}
 	void tensorMatrixMul(const tensor<uint8_t>& left, const tensor<uint8_t>& right, const tensor<uint8_t>& result) { tensorMatrixMulInternal(left, right, result); }
