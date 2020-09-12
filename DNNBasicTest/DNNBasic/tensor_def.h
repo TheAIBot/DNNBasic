@@ -36,43 +36,6 @@ namespace dnnbasic
 			connections.push_back(newConnection);
 		}
 
-		static bool canMatrixMultiply(const tensor<T>& a, const tensor<T>& b)
-		{
-			auto& aDims = a.getDimensions();
-			auto& bDims = b.getDimensions();
-
-			if (aDims.size() != 2 || bDims.size() != 2)
-			{
-				return false;
-			}
-
-			if (aDims[1].dim != bDims[0].dim)
-			{
-				return false;
-			}
-
-			return true;
-		}
-
-		static tensor<T>* createTensorWithMatrixMultiplyDims(const tensor<T>& a, const tensor<T>& b)
-		{
-			auto& aDims = a.getDimensions();
-			auto& bDims = b.getDimensions();
-
-			std::vector<uint32_t> new_dim;
-			std::vector<std::string> new_name;
-
-			new_dim.push_back(aDims[0].dim);
-			new_dim.push_back(bDims[1].dim);
-
-			for (size_t i = 0; i < aDims.size(); i++)
-			{
-				new_name.push_back(aDims.front().name != "" ? aDims[i].name : bDims[i].name);
-			}
-
-			return new tensor<T>(new_dim, new_name);
-		}
-
 	public:
 		tensor(std::vector<uint32_t> dims) : tensor(dims, std::vector<std::string>(dims.size()))
 		{ }
@@ -156,7 +119,5 @@ namespace dnnbasic
 			return matrix<T>(arr.getGPUArrayConst().begin(), dimension[0].dim, dimension[1].dim);
 		}
 
-		template<typename U>
-		friend tensor<U>* matMul(const tensor<U>& right);
 	};
 }

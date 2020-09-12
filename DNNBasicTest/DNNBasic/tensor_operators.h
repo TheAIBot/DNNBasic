@@ -193,17 +193,56 @@ namespace dnnbasic
 	}
 
 	template<typename T>
-	tensor<T>* matMul(const tensor<T>& right)
+	bool canMatrixMultiply(const tensor<T>& a, const tensor<T>& b)
 	{
-		if (!canMatrixMultiply(*this, right))
+		auto& aDims = a.getDimensions();
+		auto& bDims = b.getDimensions();
+
+		if (aDims.size() != 2 || bDims.size() != 2)
+		{
+			return false;
+		}
+
+		if (aDims[1].dim != bDims[0].dim)
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	template<typename T>
+	tensor<T>* createTensorWithMatrixMultiplyDims(const tensor<T>& a, const tensor<T>& b)
+	{
+		auto& aDims = a.getDimensions();
+		auto& bDims = b.getDimensions();
+
+		std::vector<uint32_t> new_dim;
+		std::vector<std::string> new_name;
+
+		new_dim.push_back(aDims[0].dim);
+		new_dim.push_back(bDims[1].dim);
+
+		for (size_t i = 0; i < aDims.size(); i++)
+		{
+			new_name.push_back(aDims.front().name != "" ? aDims[i].name : bDims[i].name);
+		}
+
+		return new tensor<T>(new_dim, new_name);
+	}
+
+	template<typename T>
+	tensor<T>* matMul(const tensor<T>& left, const tensor<T>& right)
+	{
+		if (!canMatrixMultiply(left, right))
 		{
 			throw std::exception("Left hand side tensor cannot matrix multiply with right hand side tensor.");
 		}
 
-		tensor<T>* child = createTensorWithMatrixMultiplyDims(*this, right);
+		tensor<T>* child = createTensorWithMatrixMultiplyDims(left, right);
 
 		// make kernel call
-		tensorMatrixMultiply(*this, right, *child);
+		tensorMatrixMul(left, right, *child);
 
 		return child;
 	}
