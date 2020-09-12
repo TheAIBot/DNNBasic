@@ -90,6 +90,56 @@ namespace DNNBasicTest
 		TEST_ALL_OP_TYPES(matrixMatrixProduct3x3)
 
 		template<typename T>
+		void matrixMatrixMulVector()
+		{
+			dnnbasic::tensor<T> a({ 3, 2 },
+				{
+					5,7,
+					4,8,
+					6,1
+				});
+			dnnbasic::tensor<T> b({ 2 },
+				{
+					7,
+					7
+				});
+
+			dnnbasic::tensor<T> expected({ 3 },
+				{
+					84,
+					84,
+					49
+				});
+			auto* actual = dnnbasic::matMul(a, b);
+
+			Assert::AreEqual(expected, *actual);
+		}
+		TEST_ALL_OP_TYPES(matrixMatrixMulVector)
+
+		template<typename T>
+		void matrixVectorMulMatrix()
+		{
+			dnnbasic::tensor<T> a({ 2 },
+				{
+					5, 7
+				});
+			dnnbasic::tensor<T> b({ 2, 3 },
+				{
+					7, 5, 4,
+					7, 9, 6
+				});
+
+			dnnbasic::tensor<T> expected({ 3 },
+				{
+					84, 88, 62
+				});
+			auto* actual = dnnbasic::matMul(a, b);
+
+			Assert::AreEqual(expected, *actual);
+		}
+		TEST_ALL_OP_TYPES(matrixVectorMulMatrix)
+
+		template<typename T>
 		void tensorMulTensor()
 		{
 			dnnbasic::tensor<T> a({ 2, 1, 3 }, {1, 2, 3, 4, 5, 6});

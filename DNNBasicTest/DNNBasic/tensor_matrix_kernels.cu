@@ -72,28 +72,28 @@ namespace dnnbasic
 	}
 
 	template <typename T>
-	void tensorMatrixMulInternal(const tensor<T>& left, const tensor<T>& right, const tensor<T>& result)
+	void tensorMatrixMulInternal(const matrix<T>& left, const matrix<T>& right, matrix<T>& result)
 	{
-		const int matrixWidth = result.getDimensions()[0].dim;
-		const int matrixHeight = result.getDimensions()[1].dim;
+		const int matrixWidth = result.getColumns();
+		const int matrixHeight = result.getRows();
 		
 		const uint32_t blockSize = 32; 
 		const dim3 blockDim(blockSize, blockSize);
 		const uint32_t sharedMemory = sizeof(T) * blockSize * blockSize * 2;
 		const dim3 gridDim(integerCeilDivision(matrixWidth, blockDim.x), integerCeilDivision(matrixHeight, blockDim.y));
-		const uint32_t num_sub_blocks = integerCeilDivision(left.getDimensions()[0].dim, blockSize);
+		const uint32_t num_sub_blocks = integerCeilDivision(left.getColumns(), blockSize);
 		
-		cudabasic::executeKernel(matrixMultiplication<T>, blockDim, gridDim, sharedMemory, left.getMatrixConst(), right.getMatrixConst(), result.getMatrix(), num_sub_blocks, blockSize);
+		cudabasic::executeKernel(matrixMultiplication<T>, blockDim, gridDim, sharedMemory, left, right, result, num_sub_blocks, blockSize);
 	}
-	void tensorMatrixMul(const tensor<bool>& left, const tensor<bool>& right, const tensor<bool>& result){tensorMatrixMulInternal(left, right, result);}
-	void tensorMatrixMul(const tensor<uint8_t>& left, const tensor<uint8_t>& right, const tensor<uint8_t>& result) { tensorMatrixMulInternal(left, right, result); }
-	void tensorMatrixMul(const tensor<uint16_t>& left, const tensor<uint16_t>& right, const tensor<uint16_t>& result) { tensorMatrixMulInternal(left, right, result); }
-	void tensorMatrixMul(const tensor<uint32_t>& left, const tensor<uint32_t>& right, const tensor<uint32_t>& result) { tensorMatrixMulInternal(left, right, result); }
-	void tensorMatrixMul(const tensor<uint64_t>& left, const tensor<uint64_t>& right, const tensor<uint64_t>& result) { tensorMatrixMulInternal(left, right, result); }
-	void tensorMatrixMul(const tensor<int8_t>& left, const tensor<int8_t>& right, const tensor<int8_t>& result) { tensorMatrixMulInternal(left, right, result); }
-	void tensorMatrixMul(const tensor<int16_t>& left, const tensor<int16_t>& right, const tensor<int16_t>& result) { tensorMatrixMulInternal(left, right, result); }
-	void tensorMatrixMul(const tensor<int32_t>& left, const tensor<int32_t>& right, const tensor<int32_t>& result) { tensorMatrixMulInternal(left, right, result); }
-	void tensorMatrixMul(const tensor<int64_t>& left, const tensor<int64_t>& right, const tensor<int64_t>& result) { tensorMatrixMulInternal(left, right, result); }
-	void tensorMatrixMul(const tensor<float>& left, const tensor<float>& right, const tensor<float>& result) { tensorMatrixMulInternal(left, right, result); }
-	void tensorMatrixMul(const tensor<double>& left, const tensor<double>& right, const tensor<double>& result) { tensorMatrixMulInternal(left, right, result); }
+	void tensorMatrixMul(const matrix<bool>& left, const matrix<bool>& right, matrix<bool>& result){tensorMatrixMulInternal(left, right, result);}
+	void tensorMatrixMul(const matrix<uint8_t>& left, const matrix<uint8_t>& right, matrix<uint8_t>& result) { tensorMatrixMulInternal(left, right, result); }
+	void tensorMatrixMul(const matrix<uint16_t>& left, const matrix<uint16_t>& right, matrix<uint16_t>& result) { tensorMatrixMulInternal(left, right, result); }
+	void tensorMatrixMul(const matrix<uint32_t>& left, const matrix<uint32_t>& right, matrix<uint32_t>& result) { tensorMatrixMulInternal(left, right, result); }
+	void tensorMatrixMul(const matrix<uint64_t>& left, const matrix<uint64_t>& right, matrix<uint64_t>& result) { tensorMatrixMulInternal(left, right, result); }
+	void tensorMatrixMul(const matrix<int8_t>& left, const matrix<int8_t>& right, matrix<int8_t>& result) { tensorMatrixMulInternal(left, right, result); }
+	void tensorMatrixMul(const matrix<int16_t>& left, const matrix<int16_t>& right, matrix<int16_t>& result) { tensorMatrixMulInternal(left, right, result); }
+	void tensorMatrixMul(const matrix<int32_t>& left, const matrix<int32_t>& right, matrix<int32_t>& result) { tensorMatrixMulInternal(left, right, result); }
+	void tensorMatrixMul(const matrix<int64_t>& left, const matrix<int64_t>& right, matrix<int64_t>& result) { tensorMatrixMulInternal(left, right, result); }
+	void tensorMatrixMul(const matrix<float>& left, const matrix<float>& right, matrix<float>& result) { tensorMatrixMulInternal(left, right, result); }
+	void tensorMatrixMul(const matrix<double>& left, const matrix<double>& right, matrix<double>& result) { tensorMatrixMulInternal(left, right, result); }
 }
