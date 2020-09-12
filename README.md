@@ -4,7 +4,7 @@
 
 - [ ] Tensor
   - Multi dimensional matrix
-  - [ ] Math support +, -, *, /
+  - [x] Math support +, -, *, /
   - [ ] Methods
     - [ ] Transpose
     - [ ] Resize
