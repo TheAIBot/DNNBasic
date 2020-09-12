@@ -10,8 +10,8 @@ namespace dnnbasic
 		//Define some shared memory for a sub block of matrices A an B
 		extern __shared__ T sharedArray[];
 
-		matrix As(sharedArray, blockSize, blockSize);
-		matrix Bs(sharedArray + blockSize * blockSize, blockSize, blockSize);
+		matrix<T> As(sharedArray, blockSize, blockSize);
+		matrix<T> Bs(sharedArray + blockSize * blockSize, blockSize, blockSize);
 
 		// Block index
 		const uint32_t bx = blockIdx.x;

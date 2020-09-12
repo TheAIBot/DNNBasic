@@ -74,9 +74,15 @@
     <ClInclude Include="..\DNNBasic\tensor_operators.h">
       <Filter>Header Files\dnnbasic</Filter>
     </ClInclude>
+    <ClInclude Include="..\DNNBasic\matrix.h">
+      <Filter>Header Files\dnnbasic</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\DNNBasic\tensor_kernels.cuh">
+    <None Include="..\DNNBasic\tensor_matrix_kernels.cuh">
+      <Filter>Header Files\dnnbasic</Filter>
+    </None>
+    <None Include="..\DNNBasic\tensor_elementwise_kernels.cuh">
       <Filter>Header Files\dnnbasic</Filter>
     </None>
   </ItemGroup>

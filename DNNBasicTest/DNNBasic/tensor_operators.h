@@ -5,7 +5,8 @@
 #include <cstdint>
 #include "span.h"
 #include "tensor_def.h"
-#include "tensor_kernels.cuh"
+#include "tensor_elementwise_kernels.cuh"
+#include "tensor_matrix_kernels.cuh"
 
 namespace dnnbasic
 {
@@ -189,5 +190,21 @@ namespace dnnbasic
 	{
 		const T right = { 0 };
 		return right - left;
+	}
+
+	template<typename T>
+	tensor<T>* matMul(const tensor<T>& right)
+	{
+		if (!canMatrixMultiply(*this, right))
+		{
+			throw std::exception("Left hand side tensor cannot matrix multiply with right hand side tensor.");
+		}
+
+		tensor<T>* child = createTensorWithMatrixMultiplyDims(*this, right);
+
+		// make kernel call
+		tensorMatrixMultiply(*this, right, *child);
+
+		return child;
 	}
 }

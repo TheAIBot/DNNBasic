@@ -7,7 +7,7 @@
 #include <numeric>
 #include "span.h"
 #include "gpuArray.h"
-#include "tensor_matrix_kernels.cuh"
+#include "matrix.h"
 
 namespace dnnbasic
 {
@@ -143,10 +143,10 @@ namespace dnnbasic
 		{
 			return arr.copyToCPU();
 		}
-		void transpose();
-		void permute();
-		void view();
-		void resize();
+		//void transpose();
+		//void permute();
+		//void view();
+		//void resize();
 		const matrix<T> getMatrixConst() const
 		{
 			return matrix<T>(arr.getGPUArrayConst().begin(), dimension[0].dim, dimension[1].dim);
@@ -155,19 +155,8 @@ namespace dnnbasic
 		{
 			return matrix<T>(arr.getGPUArrayConst().begin(), dimension[0].dim, dimension[1].dim);
 		}
-		tensor<T>* matMul(const tensor<T>& right) const
-		{
-			if (!canMatrixMultiply(this, right))
-			{
-				throw std::exception("Left hand side tensor cannot matrix multiply with right hand side tensor.");
-			}
 
-			tensor<T>* child = createTensorWithMatrixMultiplyDims(this, right);
-
-			// make kernel call
-			tensorMatrixMultiply(this, right, *child);
-
-			return child;
-		}
+		template<typename U>
+		friend tensor<U>* matMul(const tensor<U>& right);
 	};
 }

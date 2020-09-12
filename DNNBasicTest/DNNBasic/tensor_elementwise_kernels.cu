@@ -1,6 +1,5 @@
 #include "tensor_elementwise_kernels.cuh"
 #include "cudaBasics.h"
-#include "matrix.h"
 
 namespace dnnbasic
 {

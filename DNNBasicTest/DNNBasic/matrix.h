@@ -15,7 +15,7 @@ namespace dnnbasic
 		uint32_t rows;
 
 	public:
-		__device__ __host__ span(T* arrPtr, uint32_t columns, uint32_t rows)
+		__device__ __host__ matrix(T* arrPtr, uint32_t columns, uint32_t rows)
 		{
 			assert(arrPtr != nullptr);
 			this->arr = arrPtr;
