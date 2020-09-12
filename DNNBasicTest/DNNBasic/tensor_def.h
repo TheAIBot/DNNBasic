@@ -112,11 +112,11 @@ namespace dnnbasic
 		//void resize();
 		const matrix<T> getMatrixConst() const
 		{
-			return matrix<T>(arr.getGPUArrayConst().begin(), dimension[0].dim, dimension[1].dim);
+			return matrix<T>(arr.getGPUArrayConst().begin(), dimension[1].dim, dimension[0].dim);
 		}
 		matrix<T> getMatrix() const
 		{
-			return matrix<T>(arr.getGPUArrayConst().begin(), dimension[0].dim, dimension[1].dim);
+			return matrix<T>(arr.getGPUArrayConst().begin(), dimension[1].dim, dimension[0].dim);
 		}
 
 	};
