@@ -54,9 +54,6 @@
     <ClInclude Include="tensor_def.h">
       <Filter>dnnbasic</Filter>
     </ClInclude>
-    <ClInclude Include="tensor_operators.h">
-      <Filter>dnnbasic</Filter>
-    </ClInclude>
     <ClInclude Include="matrix.h">
       <Filter>dnnbasic</Filter>
     </ClInclude>
@@ -64,6 +61,12 @@
       <Filter>dnnbasic</Filter>
     </ClInclude>
     <ClInclude Include="tensor_matrix_kernels.cuh">
+      <Filter>dnnbasic</Filter>
+    </ClInclude>
+    <ClInclude Include="tensor_elementwise_operators.h">
+      <Filter>dnnbasic</Filter>
+    </ClInclude>
+    <ClInclude Include="tensor_matrix_operators.h">
       <Filter>dnnbasic</Filter>
     </ClInclude>
   </ItemGroup>

@@ -71,10 +71,13 @@
     <ClInclude Include="..\DNNBasic\tensor_def.h">
       <Filter>Header Files\dnnbasic</Filter>
     </ClInclude>
-    <ClInclude Include="..\DNNBasic\tensor_operators.h">
+    <ClInclude Include="..\DNNBasic\matrix.h">
       <Filter>Header Files\dnnbasic</Filter>
     </ClInclude>
-    <ClInclude Include="..\DNNBasic\matrix.h">
+    <ClInclude Include="..\DNNBasic\tensor_elementwise_operators.h">
+      <Filter>Header Files\dnnbasic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DNNBasic\tensor_matrix_operators.h">
       <Filter>Header Files\dnnbasic</Filter>
     </ClInclude>
   </ItemGroup>

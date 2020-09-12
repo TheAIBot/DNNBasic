@@ -29,7 +29,8 @@
     <ClInclude Include="tensor_def.h" />
     <ClInclude Include="tensor_elementwise_kernels.cuh" />
     <ClInclude Include="tensor_matrix_kernels.cuh" />
-    <ClInclude Include="tensor_operators.h" />
+    <ClInclude Include="tensor_elementwise_operators.h" />
+    <ClInclude Include="tensor_matrix_operators.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\CudaBasicClasses\cudaBasics.cpp" />

@@ -180,7 +180,8 @@
     <ClInclude Include="..\DNNBasic\matrix.h" />
     <ClInclude Include="..\DNNBasic\Tensor.h" />
     <ClInclude Include="..\DNNBasic\tensor_def.h" />
-    <ClInclude Include="..\DNNBasic\tensor_operators.h" />
+    <ClInclude Include="..\DNNBasic\tensor_elementwise_operators.h" />
+    <ClInclude Include="..\DNNBasic\tensor_matrix_operators.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\DNNBasic\tensor_elementwise_kernels.cuh" />
