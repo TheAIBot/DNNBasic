@@ -66,6 +66,22 @@ namespace dnnbasic
 	}
 
 	template<typename T>
+	static tensor<T>* createTensorWithPermutedDims(const tensor<T>& a, std::vector<uint32_t> dims)
+	{
+		auto& aDims = a.getDimensions();
+
+		std::vector<uint32_t> new_dim;
+		std::vector<std::string> new_name;
+		for (size_t i = 0; i < aDims.size(); i++)
+		{
+			new_dim.push_back(aDims[dims[i]].dim);
+			new_name.push_back(aDims[dims[i]].name);
+		}
+
+		return new tensor<T>(new_dim, new_name);
+	}
+
+	template<typename T>
 	bool operator==(const tensor<T>& left, const tensor<T>& right)
 	{
 		if (!hasSameDimensions(left, right))
@@ -243,6 +259,30 @@ namespace dnnbasic
 
 		// make kernel call
 		tensorMatrixMul(left, right, *child);
+
+		return child;
+	}
+
+	template<typename T>
+	tensor<T>* permute(const tensor<T>& inTensor, std::vector<uint32_t> dims)
+	{
+
+		if (dims.size() != inTensor.getDimensions().size())
+		{
+			throw std::exception("cannot perform permutation due to incorrect number of permute dimensions.");
+		}
+		for (uint32_t i = 0; i < inTensor.getDimensions().size(); i++)
+		{
+			if (dims[i] >= inTensor.getDimensions().size())
+			{
+				throw std::exception("permute dimensions indicies cannot be higher than tensor dimnesion count.");
+			}
+		}
+
+		tensor<T>* child = createTensorWithPermutedDims(inTensor, dims);
+
+		// make kernel call
+		tensorPermute(inTensor, *child, dims);
 
 		return child;
 	}
