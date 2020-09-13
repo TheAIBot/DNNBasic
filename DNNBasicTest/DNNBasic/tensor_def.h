@@ -110,13 +110,17 @@ namespace dnnbasic
 		//void permute();
 		//void view();
 		//void resize();
-		const matrix<T> getMatrixConst() const
-		{
-			return matrix<T>(arr.getGPUArrayConst().begin(), dimension[1].dim, dimension[0].dim);
-		}
 		matrix<T> getMatrix() const
 		{
 			return matrix<T>(arr.getGPUArrayConst().begin(), dimension[1].dim, dimension[0].dim);
+		}
+		matrix<T> getMatrixWith1Width() const
+		{
+			return matrix<T>(arr.getGPUArrayConst().begin(), 1, dimension[0].dim);
+		}
+		matrix<T> getMatrixWith1Height() const
+		{
+			return matrix<T>(arr.getGPUArrayConst().begin(), dimension[0].dim, 1);
 		}
 
 	};
