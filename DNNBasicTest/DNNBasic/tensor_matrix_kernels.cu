@@ -53,25 +53,15 @@ namespace dnnbasic
 	template<typename T>
 	__global__ void permute(const cudabasic::span<T> inData, cudabasic::span<T> outData, tensorDims<T> inDataDimension, tensorDims<T> outDataDimension, permuteIndicies permuteIdxs)
 	{
-		int x = blockIdx.x * blockDim.x + threadIdx.x;
-		int index[10];
-		int inDims[10];
-		int outDims[10];
-		int permIdxs[10];
+		const uint32_t idx = blockIdx.x * blockDim.x + threadIdx.x;
+		uint32_t index[10];
 
-		for (int i = 0; i < 10; i++)
-		{
-			inDims[i] = inDataDimension.dims[i];
-			outDims[i] = outDataDimension.dims[i];
-			permIdxs[i] = permuteIdxs.indicies[i];
-
-		}
-		
+		uint32_t x = idx;
 		// make x, y, z, .. indecies
-		for (int32_t i = outDataDimension.dimCount - 1; i >= 0; i--)
+		for (uint32_t i = 0; i < inDataDimension.dimCount; i++)
 		{
 			uint32_t totalDim = 1;
-			for (uint32_t g = 0; g < i; g++)
+			for (uint32_t g = i + 1; g < inDataDimension.dimCount; g++)
 			{
 				totalDim *= inDataDimension.dims[g];
 			}
@@ -82,17 +72,17 @@ namespace dnnbasic
 		// make factors for indicies
 		uint32_t inIndex = 0;
 		uint32_t outIndex = 0;
-		for (int i = outDataDimension.dimCount - 1; i >= 0; i--)
+		for (uint32_t i = 0; i < inDataDimension.dimCount; i++)
 		{
 			uint32_t totalDimIn = 1;
 			uint32_t totalDimOut = 1;
-			for (int32_t g = 0; g < i; g++)
+			for (uint32_t g = i + 1; g < inDataDimension.dimCount; g++)
 			{
-				totalDimIn *= inDims[g];
-				totalDimOut *= outDims[g];
+				totalDimIn *= inDataDimension.dims[g];
+				totalDimOut *= outDataDimension.dims[g];
 			}
 			inIndex += index[i] * totalDimIn;
-			outIndex += index[permIdxs[i]] * 4;
+			outIndex += index[permuteIdxs.indicies[i]] * totalDimOut;
 
 		}
 
@@ -103,7 +93,6 @@ namespace dnnbasic
 
 		outData[outIndex] = inData[inIndex];
 	}
-
 
 	template <typename T>
 	void tensorPermuteInternal(const tensor<T>& input, const tensor<T>& output, const std::vector<uint32_t>& dims)
