@@ -5,23 +5,7 @@
 #include "Tensor.h"
 #include "test_tools.h"
 
-
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
-namespace Microsoft::VisualStudio::CppUnitTestFramework
-{
-	template<typename T>
-	static std::wstring ToString(const dnnbasic::tensor<T>& t)
-	{
-		//get type name as a string
-		std::string typeName = typeid(T).name();
-
-		//convert typeName to wstring
-		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-		std::wstring typeNameW = converter.from_bytes(typeName);
-
-		return typeNameW + L" Tensor";
-	}
-}
 
 namespace DNNBasicTest
 {
