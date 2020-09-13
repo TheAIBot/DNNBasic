@@ -88,6 +88,8 @@
     </Link>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
+      <Emulation>false</Emulation>
+      <Optimization>Od</Optimization>
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
