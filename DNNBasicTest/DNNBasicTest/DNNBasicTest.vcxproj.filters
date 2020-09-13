@@ -21,11 +21,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="TensorTests.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="..\..\..\CudaBasicClasses\cpuGpuArray.h">
       <Filter>Header Files\cudabasic</Filter>
     </ClInclude>
@@ -71,11 +66,17 @@
     <ClInclude Include="..\DNNBasic\tensor_def.h">
       <Filter>Header Files\dnnbasic</Filter>
     </ClInclude>
-    <ClInclude Include="..\DNNBasic\tensor_operators.h">
-      <Filter>Header Files\dnnbasic</Filter>
-    </ClInclude>
     <ClInclude Include="..\DNNBasic\matrix.h">
       <Filter>Header Files\dnnbasic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DNNBasic\tensor_elementwise_operators.h">
+      <Filter>Header Files\dnnbasic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DNNBasic\tensor_matrix_operators.h">
+      <Filter>Header Files\dnnbasic</Filter>
+    </ClInclude>
+    <ClInclude Include="test_tools.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -85,5 +86,13 @@
     <None Include="..\DNNBasic\tensor_elementwise_kernels.cuh">
       <Filter>Header Files\dnnbasic</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="tensor_elementwise_operator_tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tensor_matrix_operator_tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
