@@ -80,6 +80,9 @@
     <ClCompile Include="..\..\..\CudaBasicClasses\cudaTimer.cpp">
       <Filter>cudabasic</Filter>
     </ClCompile>
+    <ClCompile Include="tensor_def.cpp">
+      <Filter>dnnbasic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="tensor_elementwise_kernels.cu">
