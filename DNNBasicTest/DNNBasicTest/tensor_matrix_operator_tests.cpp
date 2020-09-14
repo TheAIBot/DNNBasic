@@ -19,7 +19,7 @@ namespace DNNBasicTest
 			dnnbasic::tensor<T> b({ 2, 2 }, { 4,1,1,2 });
 
 			dnnbasic::tensor<T> expected({ 2, 2 }, { 4,1,1,2 });
-			auto* actual = dnnbasic::matMul(a, b);
+			auto* actual = a.matMul(b);
 
 			Assert::AreEqual(expected, *actual);
 		}
@@ -46,7 +46,7 @@ namespace DNNBasicTest
 					84,92,64,
 					49,39,30
 				});
-			auto* actual = dnnbasic::matMul(a, b);
+			auto* actual = a.matMul(b);
 
 			Assert::AreEqual(expected, *actual);
 		}
@@ -73,7 +73,7 @@ namespace DNNBasicTest
 					84,
 					49
 				});
-			auto* actual = dnnbasic::matMul(a, b);
+			auto* actual = a.matMul(b);
 
 			Assert::AreEqual(expected, *actual);
 		}
@@ -96,7 +96,7 @@ namespace DNNBasicTest
 				{
 					84, 88, 62
 				});
-			auto* actual = dnnbasic::matMul(a, b);
+			auto* actual = a.matMul(b);
 
 			Assert::AreEqual(expected, *actual);
 		}

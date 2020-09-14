@@ -30,12 +30,14 @@
     <ClInclude Include="tensor_elementwise_kernels.cuh" />
     <ClInclude Include="tensor_matrix_kernels.cuh" />
     <ClInclude Include="tensor_elementwise_operators.h" />
-    <ClInclude Include="tensor_matrix_operators.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\CudaBasicClasses\cudaBasics.cpp" />
     <ClCompile Include="..\..\..\CudaBasicClasses\cudaStream.cpp" />
     <ClCompile Include="..\..\..\CudaBasicClasses\cudaTimer.cpp" />
+    <ClCompile Include="tensor_matrixMultiply.cpp" />
+    <ClCompile Include="tensor_permute.cpp" />
+    <ClCompile Include="tensor_def.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="tensor_elementwise_kernels.cu" />

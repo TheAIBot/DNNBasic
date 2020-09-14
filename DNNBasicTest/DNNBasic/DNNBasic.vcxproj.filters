@@ -7,6 +7,15 @@
     <Filter Include="dnnbasic">
       <UniqueIdentifier>{a64eaf53-7ffd-4c07-bcc0-f993aa5c557c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="dnnbasic\tensor">
+      <UniqueIdentifier>{f1cbdce8-2c56-44b2-b7e9-a8eb37962d90}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dnnbasic\tensor\kernels">
+      <UniqueIdentifier>{c88f6df9-412e-4f85-9385-061781c0c228}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dnnbasic\tensor\operators">
+      <UniqueIdentifier>{d44efa9d-3eab-405a-a134-e3e774994e84}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\CudaBasicClasses\cpuGpuArray.h">
@@ -48,26 +57,23 @@
     <ClInclude Include="Layer.h">
       <Filter>dnnbasic</Filter>
     </ClInclude>
-    <ClInclude Include="Tensor.h">
-      <Filter>dnnbasic</Filter>
-    </ClInclude>
-    <ClInclude Include="tensor_def.h">
-      <Filter>dnnbasic</Filter>
-    </ClInclude>
     <ClInclude Include="matrix.h">
       <Filter>dnnbasic</Filter>
     </ClInclude>
+    <ClInclude Include="Tensor.h">
+      <Filter>dnnbasic\tensor</Filter>
+    </ClInclude>
+    <ClInclude Include="tensor_def.h">
+      <Filter>dnnbasic\tensor</Filter>
+    </ClInclude>
     <ClInclude Include="tensor_elementwise_kernels.cuh">
-      <Filter>dnnbasic</Filter>
+      <Filter>dnnbasic\tensor\kernels</Filter>
     </ClInclude>
     <ClInclude Include="tensor_matrix_kernels.cuh">
-      <Filter>dnnbasic</Filter>
+      <Filter>dnnbasic\tensor\kernels</Filter>
     </ClInclude>
     <ClInclude Include="tensor_elementwise_operators.h">
-      <Filter>dnnbasic</Filter>
-    </ClInclude>
-    <ClInclude Include="tensor_matrix_operators.h">
-      <Filter>dnnbasic</Filter>
+      <Filter>dnnbasic\tensor\operators</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -80,13 +86,22 @@
     <ClCompile Include="..\..\..\CudaBasicClasses\cudaTimer.cpp">
       <Filter>cudabasic</Filter>
     </ClCompile>
+    <ClCompile Include="tensor_def.cpp">
+      <Filter>dnnbasic\tensor</Filter>
+    </ClCompile>
+    <ClCompile Include="tensor_permute.cpp">
+      <Filter>dnnbasic\tensor\operators</Filter>
+    </ClCompile>
+    <ClCompile Include="tensor_matrixMultiply.cpp">
+      <Filter>dnnbasic\tensor\operators</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="tensor_elementwise_kernels.cu">
-      <Filter>dnnbasic</Filter>
+      <Filter>dnnbasic\tensor\kernels</Filter>
     </CudaCompile>
     <CudaCompile Include="tensor_matrix_kernels.cu">
-      <Filter>dnnbasic</Filter>
+      <Filter>dnnbasic\tensor\kernels</Filter>
     </CudaCompile>
   </ItemGroup>
 </Project>
