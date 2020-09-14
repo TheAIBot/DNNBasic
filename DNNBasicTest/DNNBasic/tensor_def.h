@@ -49,6 +49,7 @@ namespace dnnbasic
 		matrix<T> getMatrixWith1Width() const;
 		matrix<T> getMatrixWith1Height() const;
 
+		tensor<T>* matMul(const tensor<T>& right) const;
 		tensor<T>* permute(std::vector<uint32_t> dims) const;
 
 	};

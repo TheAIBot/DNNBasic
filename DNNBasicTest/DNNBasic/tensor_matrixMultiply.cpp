@@ -1,5 +1,3 @@
-#pragma once
-
 #include <string>
 #include <vector>
 #include <cstdint>
@@ -108,13 +106,13 @@ namespace dnnbasic
 	}
 
 	template<typename T>
-	tensor<T>* matMul(const tensor<T>& left, const tensor<T>& right)
+	tensor<T>* tensor<T>::matMul(const tensor<T>& right) const
 	{
-		if (canMatrixMultiplyMatrix(left, right))
+		if (canMatrixMultiplyMatrix(*this, right))
 		{
-			tensor<T>* child = createTensorWithMatrixMultiplyMatrixDims(left, right);
+			tensor<T>* child = createTensorWithMatrixMultiplyMatrixDims(*this, right);
 
-			matrix<T> leftM = left.getMatrix();
+			matrix<T> leftM = this->getMatrix();
 			matrix<T> rightM = right.getMatrix();
 			matrix<T> childM = child->getMatrix();
 
@@ -123,11 +121,11 @@ namespace dnnbasic
 
 			return child;
 		}
-		else if (canMatrixMultiplyVector(left, right))
+		else if (canMatrixMultiplyVector(*this, right))
 		{
-			tensor<T>* child = createTensorWithMatrixMultiplyVectorDims(left, right);
+			tensor<T>* child = createTensorWithMatrixMultiplyVectorDims(*this, right);
 
-			matrix<T> leftM = left.getMatrix();
+			matrix<T> leftM = this->getMatrix();
 			matrix<T> rightM = right.getMatrixWith1Width();
 			matrix<T> childM = child->getMatrixWith1Width();
 
@@ -136,11 +134,11 @@ namespace dnnbasic
 
 			return child;
 		}
-		else if (canVectorMultiplyMatrix(left, right))
+		else if (canVectorMultiplyMatrix(*this, right))
 		{
-			tensor<T>* child = createTensorWithVectorMultiplyMatrixDims(left, right);
+			tensor<T>* child = createTensorWithVectorMultiplyMatrixDims(*this, right);
 
-			matrix<T> leftM = left.getMatrixWith1Height();
+			matrix<T> leftM = this->getMatrixWith1Height();
 			matrix<T> rightM = right.getMatrix();
 			matrix<T> childM = child->getMatrixWith1Height();
 

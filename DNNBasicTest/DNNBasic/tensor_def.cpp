@@ -9,6 +9,7 @@
 #include "tensor_def.h"
 
 #include "tensor_permute.cpp"
+#include "tensor_matrixMultiply.cpp"
 
 namespace dnnbasic
 {
