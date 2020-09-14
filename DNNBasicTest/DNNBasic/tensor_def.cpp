@@ -8,6 +8,8 @@
 #include "matrix.h"
 #include "tensor_def.h"
 
+#include "tensor_permute.cpp"
+
 namespace dnnbasic
 {
 	namedDim::namedDim(uint32_t dim, std::string name = "")

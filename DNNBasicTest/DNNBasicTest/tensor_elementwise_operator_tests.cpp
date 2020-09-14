@@ -30,7 +30,7 @@ namespace DNNBasicTest
 					4,7,1,0 
 				});
 
-			auto* actual = dnnbasic::permute(input, { 1,0 });
+			auto* actual = input.permute({1,0 });
 
 			Assert::AreEqual(expected, *actual);
 		}
@@ -55,7 +55,7 @@ namespace DNNBasicTest
 					0,0,0,1
 				});
 
-			auto* actual = dnnbasic::permute(input, { 1,0 });
+			auto* actual = input.permute({ 1,0 });
 
 			Assert::AreEqual(expected, *actual);
 		}
