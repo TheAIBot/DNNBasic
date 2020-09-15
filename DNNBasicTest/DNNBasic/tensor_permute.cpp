@@ -1,5 +1,5 @@
 #include <string>
-#include "tensor_def.h"
+#include "tensor.h"
 #include "tensor_matrix_kernels.cuh"
 
 namespace dnnbasic

@@ -179,8 +179,7 @@
     <ClInclude Include="..\DNNBasic\Functions.h" />
     <ClInclude Include="..\DNNBasic\Layer.h" />
     <ClInclude Include="..\DNNBasic\matrix.h" />
-    <ClInclude Include="..\DNNBasic\Tensor.h" />
-    <ClInclude Include="..\DNNBasic\tensor_def.h" />
+    <ClInclude Include="..\DNNBasic\tensor.h" />
     <ClInclude Include="test_tools.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

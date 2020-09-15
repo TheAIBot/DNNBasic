@@ -1,7 +1,7 @@
 #include <string>
 #include <vector>
 #include <cstdint>
-#include "tensor_def.h"
+#include "tensor.h"
 #include "tensor_matrix_kernels.cuh"
 
 namespace dnnbasic

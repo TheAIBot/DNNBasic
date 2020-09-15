@@ -60,17 +60,14 @@
     <ClInclude Include="..\DNNBasic\Layer.h">
       <Filter>Header Files\dnnbasic</Filter>
     </ClInclude>
-    <ClInclude Include="..\DNNBasic\Tensor.h">
-      <Filter>Header Files\dnnbasic</Filter>
-    </ClInclude>
-    <ClInclude Include="..\DNNBasic\tensor_def.h">
-      <Filter>Header Files\dnnbasic</Filter>
-    </ClInclude>
     <ClInclude Include="..\DNNBasic\matrix.h">
       <Filter>Header Files\dnnbasic</Filter>
     </ClInclude>
     <ClInclude Include="test_tools.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DNNBasic\tensor.h">
+      <Filter>Header Files\dnnbasic</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

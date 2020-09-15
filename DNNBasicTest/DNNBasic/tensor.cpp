@@ -6,7 +6,7 @@
 #include "span.h"
 #include "gpuArray.h"
 #include "matrix.h"
-#include "tensor_def.h"
+#include "tensor.h"
 
 #include "tensor_permute.cpp"
 #include "tensor_matrixMultiply.cpp"

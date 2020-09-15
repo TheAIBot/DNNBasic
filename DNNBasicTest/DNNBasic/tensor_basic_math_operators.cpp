@@ -2,7 +2,7 @@
 #include <vector>
 #include <cstdint>
 #include "span.h"
-#include "tensor_def.h"
+#include "tensor.h"
 #include "tensor_elementwise_kernels.cuh"
 
 namespace dnnbasic

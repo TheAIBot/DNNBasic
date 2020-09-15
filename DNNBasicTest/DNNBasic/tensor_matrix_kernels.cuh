@@ -2,7 +2,7 @@
 
 #include <cuda_runtime.h>
 #include <cstdint>
-#include "tensor_def.h"
+#include "tensor.h"
 
 namespace dnnbasic 
 {
