@@ -5,80 +5,87 @@
 
 namespace dnnbasic
 {
-	template<typename T>
-	struct tensorDims
+	template<typename T, uint32_t Max_Length>
+	struct smallGPUArray
 	{
-		uint32_t dims[10];
-		uint32_t dimCount;
+		T arr[Max_Length];
+		uint32_t length;
 
-		tensorDims(const tensor<T>& inTensor)
+		smallGPUArray(uint32_t length) 
+		{ 
+			this->length = length; 
+		}
+		smallGPUArray(size_t length)
 		{
-			auto copyDims = inTensor.getDimensions();
-			for (uint32_t i = 0; i < copyDims.size(); i++)
+			this->length = (uint32_t)length;
+		}
+		smallGPUArray(const std::vector<T>& copyFrom)
+		{
+			assert(copyFrom.size() < Max_Length);
+			for (uint32_t i = 0; i < copyFrom.size(); i++)
 			{
-				dims[i] = copyDims[i].dim;
+				arr[i] = copyFrom[i];
 			}
-			dimCount = (uint32_t)copyDims.size();
+			length = (uint32_t)copyFrom.size();
+		}
+
+		__device__ __host__ T& operator[](const uint32_t i)
+		{
+			assert(i < length);
+			return arr[i];
+		}
+
+		__device__ __host__ T operator[](const uint32_t i) const
+		{
+			assert(i < length);
+			return arr[i];
+		}
+
+		__device__ __host__ T& operator[](const std::size_t i)
+		{
+			assert(i < length);
+			return arr[i];
+		}
+
+		__device__ __host__ T operator[](const std::size_t i) const
+		{
+			assert(i < length);
+			return arr[i];
+		}
+
+		__device__ __host__ uint32_t size() const
+		{
+			return length;
 		}
 	};
 
-	struct permuteIndicies
-	{
-		uint32_t indicies[10];
-		uint32_t indexCount;
-
-		permuteIndicies(const std::vector<uint32_t>& inIndicies)
-		{
-			for (uint32_t i = 0; i < inIndicies.size(); i++)
-			{
-				indicies[i] = inIndicies[i];
-			}
-			indexCount = (uint32_t)inIndicies.size();
-		}
-	};
-
 	template<typename T>
-	__global__ void permute(const cudabasic::span<T> inData, cudabasic::span<T> outData, tensorDims<T> inDataDimension, tensorDims<T> outDataDimension, permuteIndicies permuteIdxs)
+	__global__ void permute(const cudabasic::span<T> inData, cudabasic::span<T> outData, const smallGPUArray<uint32_t, 10> inSumDims, const smallGPUArray<uint32_t, 10> outSumDims, const smallGPUArray<uint32_t, 10> permuteIdxs)
 	{
 		const uint32_t idx = blockIdx.x * blockDim.x + threadIdx.x;
-		uint32_t index[10];
 
-		uint32_t x = idx;
-		// make x, y, z, .. indecies
-		for (uint32_t i = 0; i < inDataDimension.dimCount; i++)
-		{
-			uint32_t totalDim = 1;
-			for (uint32_t g = i + 1; g < inDataDimension.dimCount; g++)
-			{
-				totalDim *= inDataDimension.dims[g];
-			}
-			index[i] = x / totalDim;
-			x = x % totalDim;
-		}
-
-		// make factors for indicies
-		uint32_t inIndex = 0;
-		uint32_t outIndex = 0;
-		for (uint32_t i = 0; i < inDataDimension.dimCount; i++)
-		{
-			uint32_t totalDimIn = 1;
-			uint32_t totalDimOut = 1;
-			for (uint32_t g = i + 1; g < inDataDimension.dimCount; g++)
-			{
-				totalDimIn *= inDataDimension.dims[g];
-				totalDimOut *= outDataDimension.dims[g];
-			}
-			inIndex += index[i] * totalDimIn;
-			outIndex += index[permuteIdxs.indicies[i]] * totalDimOut;
-
-		}
-
-		if (inIndex >= inData.size() || outIndex >= outData.size())
+		if (idx >= inData.size())
 		{
 			return;
 		}
 
-		outData[outIndex] = inData[inIndex];
+		uint32_t index[10];
+		uint32_t x = idx;
+		// make x, y, z, .. indecies
+		for (uint32_t i = 0; i < inSumDims.size(); i++)
+		{
+			index[i] = x / inSumDims[i];
+			x = x % inSumDims[i];
+		}
+
+		// make factors for indicies
+		uint32_t outIndex = 0;
+		for (uint32_t i = 0; i < inSumDims.size(); i++)
+		{
+			outIndex += index[permuteIdxs[i]] * outSumDims[i];
+		}
+
+		outData[outIndex] = inData[idx];
 	}
 
 	template <typename T>
@@ -87,7 +94,24 @@ namespace dnnbasic
 		const dim3 blockDim(256);
 		const dim3 gridDim(integerCeilDivision(input.elementCount(), blockDim.x));
 
-		cudabasic::executeKernel(permute<T>, blockDim, gridDim, input.getGPUArrayConst(), output.getGPUArray(), tensorDims<T>(input), tensorDims<T>(output), permuteIndicies(dims));
+		smallGPUArray<uint32_t, 10> permutedIdx(dims);
+		smallGPUArray<uint32_t, 10> inSumDims(dims.size());
+		smallGPUArray<uint32_t, 10> outSumDims(dims.size());
+		for (uint32_t i = 0; i < dims.size(); i++)
+		{
+			uint32_t inTotalDim = 1;
+			uint32_t outTotalDim = 1;
+			for (uint32_t g = i + 1; g < dims.size(); g++)
+			{
+				inTotalDim *= input.getDimensions()[g].dim;
+				outTotalDim *= output.getDimensions()[g].dim;
+			}
+			inSumDims[i] = inTotalDim;
+			outSumDims[i] = outTotalDim;
+		}
+
+
+		cudabasic::executeKernel(permute<T>, blockDim, gridDim, input.getGPUArrayConst(), output.getGPUArray(), inSumDims, outSumDims, permutedIdx);
 	}
 
 	template void tensorPermute(const tensor<bool>& input, const tensor<bool>& output, const std::vector<uint32_t>& dims);
