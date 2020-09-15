@@ -8,6 +8,7 @@ namespace dnnbasic
 	template<typename T, uint32_t Max_Length>
 	struct smallGPUArray
 	{
+		static constexpr uint32_t MAX_LENGTH = Max_Length;
 		T arr[Max_Length];
 		uint32_t length;
 
@@ -59,8 +60,10 @@ namespace dnnbasic
 		}
 	};
 
+	using dimsArray = smallGPUArray<uint32_t, tensor<uint32_t>::MAX_DIMENSION_COUNT>;
+
 	template<typename T>
-	__global__ void permute(const cudabasic::span<T> inData, cudabasic::span<T> outData, const smallGPUArray<uint32_t, 10> inSumDims, const smallGPUArray<uint32_t, 10> outSumDims, const smallGPUArray<uint32_t, 10> permuteIdxs)
+	__global__ void permute(const cudabasic::span<T> inData, cudabasic::span<T> outData, const dimsArray inSumDims, const dimsArray outSumDims, const dimsArray permuteIdxs)
 	{
 		const uint32_t idx = blockIdx.x * blockDim.x + threadIdx.x;
 
@@ -69,7 +72,7 @@ namespace dnnbasic
 			return;
 		}
 
-		uint32_t index[10];
+		uint32_t index[dimsArray::MAX_LENGTH];
 		uint32_t x = idx;
 		// make x, y, z, .. indecies
 		for (uint32_t i = 0; i < inSumDims.size(); i++)
@@ -94,9 +97,9 @@ namespace dnnbasic
 		const dim3 blockDim(256);
 		const dim3 gridDim(integerCeilDivision(input.elementCount(), blockDim.x));
 
-		smallGPUArray<uint32_t, 10> permutedIdx(dims);
-		smallGPUArray<uint32_t, 10> inSumDims(dims.size());
-		smallGPUArray<uint32_t, 10> outSumDims(dims.size());
+		dimsArray permutedIdx(dims);
+		dimsArray inSumDims(dims.size());
+		dimsArray outSumDims(dims.size());
 		for (uint32_t i = 0; i < dims.size(); i++)
 		{
 			uint32_t inTotalDim = 1;

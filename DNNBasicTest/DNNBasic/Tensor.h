@@ -30,6 +30,8 @@ namespace dnnbasic
 		void addConnection(const tensor<T>* newConnection);
 
 	public:
+		static constexpr uint32_t MAX_DIMENSION_COUNT = 10;
+
 		tensor(std::vector<uint32_t> dims);
 		tensor(std::vector<uint32_t> dims, std::vector<T> values);
 		tensor(std::vector<uint32_t> dimensions, std::vector<std::string> names);

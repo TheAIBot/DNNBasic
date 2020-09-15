@@ -43,6 +43,11 @@ namespace dnnbasic
 			throw std::exception("Cannot make tensor with 0 dimensions.");
 		}
 
+		if (dimensions.size() > tensor<T>::MAX_DIMENSION_COUNT)
+		{
+			throw std::exception("A tensor can not have more than 10 dimensions.");
+		}
+
 		if (dimensions.size() != names.size())
 		{
 			throw std::exception("Number of dimensions and dimension names do not match.");
