@@ -1,3 +1,4 @@
+#include <cuda_runtime.h>
 #include "tensor_elementwise_kernels.cuh"
 #include "cudaBasics.h"
 

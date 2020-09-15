@@ -1,6 +1,6 @@
 #include <string>
+#include "tensor_permute_kernel.cuh"
 #include "tensor.h"
-#include "tensor_matrix_kernels.cuh"
 
 namespace dnnbasic
 {
