@@ -10,6 +10,7 @@
 
 #include "tensor_permute.cpp"
 #include "tensor_matrixMultiply.cpp"
+#include "tensor_basic_math_operators.cpp"
 
 namespace dnnbasic
 {

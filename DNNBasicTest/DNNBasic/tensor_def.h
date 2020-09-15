@@ -55,4 +55,17 @@ namespace dnnbasic
 		tensor<T>* permute(std::initializer_list<std::string> dims) const;
 		tensor<T>* permute(std::vector<std::string> dims) const;
 	};
+
+	template<typename T> bool operator==(const tensor<T>& left, const tensor<T>& right);
+	template<typename T> bool operator!=(const tensor<T>& left, const tensor<T>& right);
+	template<typename T> tensor<T>* operator*(const tensor<T>& left, const tensor<T>& right);
+	template<typename T> tensor<T>* operator*(const tensor<T>& left, const T& right);
+	template<typename T> tensor<T>* operator*(const T& left, const tensor<T>& right);
+	template<typename T> tensor<T>* operator+(const tensor<T>& left, const tensor<T>& right);
+	template<typename T> tensor<T>* operator+(const tensor<T>& left, const T& right);
+	template<typename T> tensor<T>* operator+(const T& left, const tensor<T>& right);
+	template<typename T> tensor<T>* operator-(const tensor<T>& left, const tensor<T>& right);
+	template<typename T> tensor<T>* operator-(const tensor<T>& left, const T& right);
+	template<typename T> tensor<T>* operator-(const T& left, const tensor<T>& right);
+	template<typename T> tensor<T>* operator-(const tensor<T>& left);
 }

@@ -72,9 +72,6 @@
     <ClInclude Include="tensor_matrix_kernels.cuh">
       <Filter>dnnbasic\tensor\kernels</Filter>
     </ClInclude>
-    <ClInclude Include="tensor_elementwise_operators.h">
-      <Filter>dnnbasic\tensor\operators</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\CudaBasicClasses\cudaBasics.cpp">
@@ -93,6 +90,9 @@
       <Filter>dnnbasic\tensor\operators</Filter>
     </ClCompile>
     <ClCompile Include="tensor_matrixMultiply.cpp">
+      <Filter>dnnbasic\tensor\operators</Filter>
+    </ClCompile>
+    <ClCompile Include="tensor_basic_math_operators.cpp">
       <Filter>dnnbasic\tensor\operators</Filter>
     </ClCompile>
   </ItemGroup>

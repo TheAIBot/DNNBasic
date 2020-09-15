@@ -69,23 +69,9 @@
     <ClInclude Include="..\DNNBasic\matrix.h">
       <Filter>Header Files\dnnbasic</Filter>
     </ClInclude>
-    <ClInclude Include="..\DNNBasic\tensor_elementwise_operators.h">
-      <Filter>Header Files\dnnbasic</Filter>
-    </ClInclude>
-    <ClInclude Include="..\DNNBasic\tensor_matrix_operators.h">
-      <Filter>Header Files\dnnbasic</Filter>
-    </ClInclude>
     <ClInclude Include="test_tools.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\DNNBasic\tensor_matrix_kernels.cuh">
-      <Filter>Header Files\dnnbasic</Filter>
-    </None>
-    <None Include="..\DNNBasic\tensor_elementwise_kernels.cuh">
-      <Filter>Header Files\dnnbasic</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="tensor_elementwise_operator_tests.cpp">
