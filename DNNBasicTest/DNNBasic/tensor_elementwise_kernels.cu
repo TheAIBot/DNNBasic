@@ -1,5 +1,6 @@
 #include <cuda_runtime.h>
 #include "tensor_elementwise_kernels.cuh"
+#include "kernel_tools.h"
 #include "cudaBasics.h"
 
 namespace dnnbasic
@@ -31,13 +32,13 @@ namespace dnnbasic
 		static void execute(const tensor<T>& left, const tensor<T>& right, const tensor<T>& result)
 		{
 			const dim3 blockDim(256);
-			const dim3 gridDim((result.elementCount() + (blockDim.x - 1)) / blockDim.x);
+			const dim3 gridDim(integerCeilDivision(result.elementCount(), blockDim.x));
 			cudabasic::executeKernel(biArgElementWiseKernelSpanSpan<OP, T>, blockDim, gridDim, left.getGPUArray(), right.getGPUArray(), result.getGPUArray());
 		}
 		static void execute(const T left, const tensor<T>& right, const tensor<T>& result)
 		{
 			const dim3 blockDim(256);
-			const dim3 gridDim((result.elementCount() + (blockDim.x - 1)) / blockDim.x);
+			const dim3 gridDim(integerCeilDivision(result.elementCount(), blockDim.x));
 			cudabasic::executeKernel(biArgElementWiseKernelScalarSpan<OP, T>, blockDim, gridDim, left, right.getGPUArray(), result.getGPUArray());
 		}
 	};
