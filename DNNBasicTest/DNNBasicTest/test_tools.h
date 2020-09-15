@@ -1,5 +1,8 @@
 #pragma once
 
+#include <typeinfo>
+#include <codecvt>
+
 #define TEST_ALL_OP_TYPES(methodName) \
 	TEST_METHOD(uint8_t ## methodName) { methodName<uint8_t>(); } \
 	TEST_METHOD(uint16_t ## methodName) { methodName<uint16_t>(); } \
@@ -19,6 +22,8 @@
 	TEST_METHOD(int64_t ## methodName) { methodName<int64_t>(); } \
 	TEST_METHOD(float ## methodName) { methodName<float>(); } \
 	TEST_METHOD(double ## methodName) { methodName<double>(); }
+
+using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace Microsoft::VisualStudio::CppUnitTestFramework
 {

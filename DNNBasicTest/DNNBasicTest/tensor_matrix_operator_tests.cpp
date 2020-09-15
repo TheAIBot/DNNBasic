@@ -1,11 +1,7 @@
 #include <CppUnitTest.h>
 #include <string>
-#include <typeinfo>
-#include <codecvt>
 #include "tensor.h"
 #include "test_tools.h"
-
-using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace DNNBasicTest
 {

@@ -77,5 +77,8 @@
     <ClCompile Include="tensor_matrix_operator_tests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="tensor_permute_tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

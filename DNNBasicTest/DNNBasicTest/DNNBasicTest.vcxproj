@@ -163,6 +163,7 @@
   <ItemGroup>
     <ClCompile Include="tensor_elementwise_operator_tests.cpp" />
     <ClCompile Include="tensor_matrix_operator_tests.cpp" />
+    <ClCompile Include="tensor_permute_tests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\CudaBasicClasses\cpuGpuArray.h" />
