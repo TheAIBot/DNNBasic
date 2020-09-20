@@ -75,6 +75,9 @@
     <ClInclude Include="kernel_tools.h">
       <Filter>dnnbasic\tensor\kernels</Filter>
     </ClInclude>
+    <ClInclude Include="tensor_multi_dim_matrix_mul.cuh">
+      <Filter>dnnbasic\tensor\kernels</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\CudaBasicClasses\cudaBasics.cpp">
@@ -110,6 +113,9 @@
       <Filter>dnnbasic\tensor\kernels</Filter>
     </CudaCompile>
     <CudaCompile Include="tensor_permute_kernel.cu">
+      <Filter>dnnbasic\tensor\kernels</Filter>
+    </CudaCompile>
+    <CudaCompile Include="tensor_multi_dim_matrix_mul.cu">
       <Filter>dnnbasic\tensor\kernels</Filter>
     </CudaCompile>
   </ItemGroup>
