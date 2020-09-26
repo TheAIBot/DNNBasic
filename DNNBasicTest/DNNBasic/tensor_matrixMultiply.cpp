@@ -69,8 +69,8 @@ namespace dnnbasic
 		new_dim.push_back(aDims[0].dim);
 		new_dim.push_back(bDims[1].dim);
 
-		new_name.push_back(aDims.front().name != "" ? aDims[0].name : bDims[0].name);
-		new_name.push_back(aDims.front().name != "" ? aDims[1].name : bDims[1].name);
+		new_name.push_back(aDims[aDims.size() - 2].name != "" ? aDims[0].name : bDims[0].name);
+		new_name.push_back(aDims[aDims.size() - 1].name != "" ? aDims[1].name : bDims[1].name);
 
 		return new tensor<T>(new_dim, new_name);
 	}
