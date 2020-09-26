@@ -59,9 +59,9 @@ namespace dnnbasic
 			cMatrixIndex += index[i] * cDimStrides[i];
 		}
 
-		const matrix<T> aMatrix(&a[aMatrixIndex], aWidth, aHeight, aStride);
-		const matrix<T> bMatrix(&b[bMatrixIndex], bWidth, bHeight, aStride);
-		matrix<T> cMatrix(&c[cMatrixIndex], aHeight, bWidth, cStride);
+		const matrix<T> aMatrix(&a[aMatrixIndex], aWidth, aHeight);
+		const matrix<T> bMatrix(&b[bMatrixIndex], bWidth, bHeight);
+		matrix<T> cMatrix(&c[cMatrixIndex], aHeight, bWidth);
 
 		dim3 blockOffset;
 		dim3 threadOffset;
