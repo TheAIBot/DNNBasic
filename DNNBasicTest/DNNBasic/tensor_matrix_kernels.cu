@@ -7,7 +7,7 @@
 namespace dnnbasic
 {
 	template <typename T>
-	__device__ void matMul(const matrix<T> a, const matrix<T> b, matrix<T> c, const uint32_t num_sub_blocks, const uint32_t blockSize, dim3 blockOffset, dim3 threadOffset)
+	__device__ void matMulInternal(const matrix<T> a, const matrix<T> b, matrix<T> c, const uint32_t num_sub_blocks, const uint32_t blockSizeX, const uint32_t blockSizeY, const dim3 blockOffset, const dim3 threadOffset, const uint32_t sharedOffset)
 	{
 		// Block index
 		const uint32_t bx = blockOffset.x;
@@ -23,15 +23,15 @@ namespace dnnbasic
 		extern __shared__ __align__(sizeof(T)) int8_t sharedArray[];
 		T* sharedMemT = reinterpret_cast<T*>(sharedArray);
 
-		matrix<T> As(sharedMemT, blockSize, blockSize);
-		matrix<T> Bs(sharedMemT + blockSize * blockSize, blockSize, blockSize);
+		matrix<T> As(sharedMemT + sharedOffset, blockSizeX, blockSizeY);
+		matrix<T> Bs(sharedMemT + sharedOffset + blockSizeX * blockSizeY, blockSizeX, blockSizeY);
 
 		//iterate through the number of sub matrices of A and B
 		for (uint32_t i = 0; i < num_sub_blocks; i++) {
-			const uint32_t a_x = tx + i * blockSize;
-			const uint32_t a_y = ty + by * blockSize;
-			const uint32_t b_x = tx + bx * blockSize;
-			const uint32_t b_y = ty + i * blockSize;
+			const uint32_t a_x = tx + i * blockSizeX;
+			const uint32_t a_y = ty + by * blockSizeY;
+			const uint32_t b_x = tx + bx * blockSizeX;
+			const uint32_t b_y = ty + i * blockSizeY;
 
 			//a submatrix can lie both inside and outside the bounds of the matrix.
 			//We can't load any part that lies outside the bounds so instead 0 is
@@ -43,7 +43,7 @@ namespace dnnbasic
 			// change this so that we have min(a height, blocksize) <- is this valid?
 			// Wait untill all threads have loaded their values into shared memory.
 			__syncthreads();
-			for (uint32_t k = 0; k < blockSize; ++k)
+			for (uint32_t k = 0; k < blockSizeX; ++k)
 			{
 				Csub += As[ty][k] * Bs[k][tx];
 			}
@@ -51,8 +51,8 @@ namespace dnnbasic
 
 		}
 
-		const uint32_t c_x = tx + bx * blockSize;
-		const uint32_t c_y = ty + by * blockSize;
+		const uint32_t c_x = tx + bx * blockSizeX;
+		const uint32_t c_y = ty + by * blockSizeY;
 
 		// Write the resulting matrix multiplication into the result matrix if 
 		// within bounds.
@@ -67,7 +67,7 @@ namespace dnnbasic
 	template <typename T>
 	__global__ void matrixMultiplication(const matrix<T> a, const matrix<T> b, matrix<T> c, const uint32_t num_sub_blocks, const uint32_t blockSize)
 	{
-		matMul(a, b, c, num_sub_blocks, blockSize, blockIdx, threadIdx);
+		matMulInternal(a, b, c, num_sub_blocks, blockSize, blockSize, blockIdx, threadIdx, 0);
 	}
 
 

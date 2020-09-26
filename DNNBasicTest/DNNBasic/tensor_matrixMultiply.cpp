@@ -3,6 +3,7 @@
 #include <cstdint>
 #include "tensor.h"
 #include "tensor_matrix_kernels.cuh"
+#include "tensor_multi_dim_matrix_mul.cuh"
 
 namespace dnnbasic
 {
@@ -58,6 +59,51 @@ namespace dnnbasic
 	}
 
 	template<typename T>
+	bool canBroadcastMatrixMultiplyBroadcastMatrix(const tensor<T>& a, const tensor<T>& b)
+	{
+		auto& aDims = a.getDimensions();
+		auto& bDims = b.getDimensions();
+
+		if (!(aDims.size() > 1 && bDims.size() > 1))
+		{
+			return false;
+		}
+
+		if (aDims[aDims.size() - 1].dim != bDims[bDims.size() - 2].dim)
+		{
+			return false;
+		}
+
+		const uint32_t matrixDimsCount = 2;
+
+		int32_t aDimsIdx = a.getDimensions().size() - 1 - matrixDimsCount;
+		int32_t bDimsIdx = b.getDimensions().size() - 1 - matrixDimsCount;
+
+		while (true)
+		{
+			if (aDimsIdx < 0 || bDimsIdx < 0)
+			{
+				return true;
+			}
+			else if (aDims[aDimsIdx].dim == bDims[bDimsIdx].dim)
+			{
+				continue;
+			}
+			else if (aDims[aDimsIdx].dim == 1 || bDims[bDimsIdx].dim == 1)
+			{
+				continue;
+			}
+			else
+			{
+				return false;
+			}
+
+			aDimsIdx--;
+			bDimsIdx--;
+		}
+	}
+
+	template<typename T>
 	tensor<T>* createTensorWithMatrixMultiplyMatrixDims(const tensor<T>& a, const tensor<T>& b)
 	{
 		auto& aDims = a.getDimensions();
@@ -106,6 +152,49 @@ namespace dnnbasic
 	}
 
 	template<typename T>
+	tensor<T>* createTensorWithBroadcastMatrixMultiplyBroadcastMatrixDims(const tensor<T>& a, const tensor<T>& b)
+	{
+		auto& aDims = a.getDimensions();
+		auto& bDims = b.getDimensions();
+
+		std::vector<uint32_t> new_dim(std::max(aDims.size(), bDims.size()));
+		std::vector<std::string> new_name(new_dim.size());
+
+		const uint32_t matrixDimsCount = 2;
+		int32_t aDimsIdx = a.getDimensions().size() - 1 - matrixDimsCount;
+		int32_t bDimsIdx = b.getDimensions().size() - 1 - matrixDimsCount;
+
+		for (int i = new_dim.size() - 1 - matrixDimsCount; i >= 0; i--)
+		{
+			if (bDimsIdx < 0)
+			{
+				new_dim[i] = aDims[aDimsIdx].dim;
+				new_name[i] = aDims[aDimsIdx].name;
+			}
+			else if (aDimsIdx < 0)
+			{
+				new_dim[i] = bDims[bDimsIdx].dim;
+				new_name[i] = bDims[bDimsIdx].name;
+			}
+			else
+			{
+				new_dim[i] = std::max(aDims[aDimsIdx].dim, bDims[bDimsIdx].dim);
+				new_name[i] = aDims[aDimsIdx].name != "" ? aDims[aDimsIdx].name : bDims[bDimsIdx].name;
+			}
+			aDimsIdx--;
+			bDimsIdx--;
+		}
+
+		new_dim[new_dim.size() - 2] = aDims[aDims.size() - 2].dim;
+		new_dim[new_dim.size() - 1] = bDims[bDims.size() - 1].dim;
+
+		new_name[new_dim.size() - 2] = aDims[aDims.size() - 2].name != "" ? aDims[aDims.size() - 2].name : bDims[bDims.size() - 2].name;
+		new_name[new_dim.size() - 1] = aDims[aDims.size() - 1].name != "" ? aDims[aDims.size() - 1].name : bDims[bDims.size() - 1].name;
+
+		return new tensor<T>(new_dim, new_name);
+	}
+
+	template<typename T>
 	tensor<T>* tensor<T>::matMul(const tensor<T>& right) const
 	{
 		if (canMatrixMultiplyMatrix(*this, right))
@@ -144,6 +233,15 @@ namespace dnnbasic
 
 			// make kernel call
 			tensorMatrixMul(leftM, rightM, childM);
+
+			return child;
+		}
+		else if (canBroadcastMatrixMultiplyBroadcastMatrix(*this, right))
+		{
+			tensor<T>* child = createTensorWithBroadcastMatrixMultiplyBroadcastMatrixDims(*this, right);
+
+			// make kernel call
+			tensorMultiDimMatrixMul(*this, right, *child);
 
 			return child;
 		}

@@ -2,8 +2,9 @@
 
 #include <cstdint>
 #include "matrix.h"
+#include <cuda_runtime.h>
 
-namespace dnnbasic 
+namespace dnnbasic
 {
 	void tensorMatrixMul(const matrix<bool>& left, const matrix<bool>& right, matrix<bool>& result);
 	void tensorMatrixMul(const matrix<uint8_t>& left, const matrix<uint8_t>& right, matrix<uint8_t>& result);
