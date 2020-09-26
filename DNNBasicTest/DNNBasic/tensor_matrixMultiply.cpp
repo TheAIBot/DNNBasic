@@ -87,11 +87,11 @@ namespace dnnbasic
 			}
 			else if (aDims[aDimsIdx].dim == bDims[bDimsIdx].dim)
 			{
-				continue;
+				
 			}
 			else if (aDims[aDimsIdx].dim == 1 || bDims[bDimsIdx].dim == 1)
 			{
-				continue;
+				
 			}
 			else
 			{

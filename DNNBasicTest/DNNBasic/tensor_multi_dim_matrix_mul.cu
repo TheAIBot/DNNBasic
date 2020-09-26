@@ -90,17 +90,13 @@ namespace dnnbasic
 		const uint32_t num_sub_blocks, 
 		const uint32_t blockSizeX,
 		const uint32_t blockSizeY,
-		const gpuArray cSumDims,
 		const gpuArray aDimStrides,
 		const gpuArray bDimStrides,
 		const gpuArray cDimStrides,
 		const uint32_t aWidth,
 		const uint32_t aHeight,
 		const uint32_t bWidth,
-		const uint32_t bHeight,
-		const uint32_t aStride,
-		const uint32_t bStride,
-		const uint32_t cStride)
+		const uint32_t bHeight)
 	{
 		//fix this as we also have blockidx y
 		const uint32_t idx = blockIdx.x * blockDim.x + threadIdx.x;
@@ -113,17 +109,17 @@ namespace dnnbasic
 		uint32_t index[gpuArray::MAX_LENGTH];
 		uint32_t x = idx;
 		// make x, y, z, .. indecies
-		for (uint32_t i = 0; i < cSumDims.size(); i++)
+		for (uint32_t i = 0; i < cDimStrides.size(); i++)
 		{
-			index[i] = x / cSumDims[i];
-			x = x % cSumDims[i];
+			index[i] = x / cDimStrides[i];
+			x = x % cDimStrides[i];
 		}
 
 		// Convert to matricies
 		uint32_t aMatrixIndex = 0;
 		uint32_t bMatrixIndex = 0;
 		uint32_t cMatrixIndex = 0;
-		for (size_t i = 0; i < cSumDims.size(); i++)
+		for (size_t i = 0; i < cDimStrides.size(); i++)
 		{
 			aMatrixIndex += index[i] * aDimStrides[i];
 			bMatrixIndex += index[i] * bDimStrides[i];
@@ -134,8 +130,8 @@ namespace dnnbasic
 		const matrix<T> bMatrix(&b[bMatrixIndex], bWidth, bHeight);
 		matrix<T> cMatrix(&c[cMatrixIndex], aHeight, bWidth);
 
-		const uint32_t widthIdx = cSumDims.size() - 1;
-		const uint32_t heightIdx = cSumDims.size() - 2;
+		const uint32_t widthIdx = cDimStrides.size() - 1;
+		const uint32_t heightIdx = cDimStrides.size() - 2;
 
 		dim3 topLeftC;
 		dim3 bottomRightC;
@@ -241,7 +237,7 @@ namespace dnnbasic
 			}
 		}
 
-		const uint32_t blockSize = 32;
+		const uint32_t blockSize = 24;
 		const dim3 blockDim(blockSize, blockSize);
 		const uint32_t sharedMemory = sizeof(T) * blockSize * blockSize * 2;
 		const dim3 gridDim(integerCeilDivision(tensorWidth, blockDim.x), integerCeilDivision(tensorHeight, blockDim.y));
@@ -257,8 +253,8 @@ namespace dnnbasic
 		const uint32_t bStride = bWidth;
 		const uint32_t cStride = cDims[cDims.size() - 1];
 
-		cudabasic::executeKernel(multiDimMatrixMultiplication<T>, blockDim, gridDim, sharedMemory, a.getGPUArrayConst(), b.getGPUArrayConst(), c.getGPUArray(), num_sub_blocks, blockSize, blockSize, cStrides,
-			aStrides, bStrides, cStrides, aWidth, aHeight, bWidth, bHeight, aStride, bStride, cStride);
+		cudabasic::executeKernel(multiDimMatrixMultiplication<T>, blockDim, gridDim, sharedMemory, a.getGPUArrayConst(), b.getGPUArrayConst(), c.getGPUArray(), num_sub_blocks, blockSize, blockSize,
+			aStrides, bStrides, cStrides, aWidth, aHeight, bWidth, bHeight);
 	}
 	void tensorMultiDimMatrixMul(const tensor<bool>& a, const tensor<bool>& b, const tensor<bool>& c) { tensorMultiDimMatMul(a, b, c); }
 	void tensorMultiDimMatrixMul(const tensor<uint8_t>& a, const tensor<uint8_t>& b, tensor<uint8_t>& c) { tensorMultiDimMatMul(a, b, c); }

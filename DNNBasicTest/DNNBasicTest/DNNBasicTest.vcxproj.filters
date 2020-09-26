@@ -80,5 +80,8 @@
     <ClCompile Include="tensor_permute_tests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="tensor_multi_dim_mat_mul_tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
