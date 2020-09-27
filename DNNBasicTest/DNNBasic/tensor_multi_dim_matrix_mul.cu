@@ -99,7 +99,10 @@ namespace dnnbasic
 		const uint32_t bHeight)
 	{
 		//fix this as we also have blockidx y
-		const uint32_t idx = blockIdx.x * blockDim.x + threadIdx.x;
+		const uint32_t idx = blockIdx.x * blockDim.x * blockDim.y +
+			blockIdx.y * gridDim.x * blockDim.x * blockDim.y + 
+			threadIdx.x + 
+			threadIdx.y * blockDim.x;
 
 		if (idx >= c.size())
 		{
