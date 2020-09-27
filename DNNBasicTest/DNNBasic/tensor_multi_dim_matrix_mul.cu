@@ -130,29 +130,32 @@ namespace dnnbasic
 			cMatrixIndex += index[i] * cDimStrides[i];
 		}
 
+		const uint32_t cMatrixWidth = aHeight;
+		const uint32_t cMatrixHeight = bWidth;
+
 		const matrix<T> aMatrix(&a[aMatrixIndex], aWidth, aHeight);
 		const matrix<T> bMatrix(&b[bMatrixIndex], bWidth, bHeight);
-		matrix<T> cMatrix(&c[cMatrixIndex], aHeight, bWidth);
+		matrix<T> cMatrix(&c[cMatrixIndex], cMatrixWidth, cMatrixHeight);
 
 		const uint32_t widthIdx = cDimStrides.size() - 1;
 		const uint32_t heightIdx = cDimStrides.size() - 2;
 
-		dim3 topLeftC;
-		dim3 bottomRightC;
+		const uint32_t threadsPerBlock = blockDim.x * blockDim.y;
+		const uint32_t currentThreadIdx = threadIdx.x + threadIdx.y * blockDim.y;
+		const uint32_t firstThreadInMatrix = currentThreadIdx - (index[widthIdx] + index[heightIdx] * cMatrixWidth);
+		const uint32_t remainingThreads = threadsPerBlock - firstThreadInMatrix;
 
-		topLeftC.x = max(threadIdx.x - index[widthIdx], index[widthIdx] - threadIdx.x);
-		topLeftC.y = max(threadIdx.y - index[heightIdx], index[heightIdx] - threadIdx.y);
-
-		bottomRightC.x = min(threadIdx.x - index[widthIdx] + bWidth, blockSizeX);
-		bottomRightC.y = min(threadIdx.y - index[heightIdx] + aHeight, blockSizeY);
-
-		const uint32_t partialBlockSizeX = bottomRightC.x - topLeftC.x;
-		const uint32_t partialBlockSizeY = bottomRightC.y - topLeftC.y;
+		//this code assumes that remainingThreads / cMatrixWidth is always
+		//a whole number, otherwise the matMul probably won't work.
+		//blockSizeX and blockSizeX needs to be modified on the host
+		//to make sure this case doesn't happen.
+		const uint32_t partialBlockSizeX = min(cMatrixWidth, remainingThreads);
+		const uint32_t partialBlockSizeY = max(1u, min(cMatrixHeight, remainingThreads / cMatrixWidth));
 
 		dim3 blockOffset;
 		dim3 threadOffset;
 
-		const uint32_t sharedMemOffset = topLeftC.y * blockSizeX + topLeftC.x * partialBlockSizeY;
+		const uint32_t sharedMemOffset = firstThreadInMatrix * 2;
 
 		blockOffset.x = index[widthIdx] / partialBlockSizeX;
 		blockOffset.y = index[heightIdx] / partialBlockSizeY;

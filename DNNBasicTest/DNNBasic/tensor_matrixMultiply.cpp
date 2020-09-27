@@ -75,7 +75,6 @@ namespace dnnbasic
 		}
 
 		const uint32_t matrixDimsCount = 2;
-
 		int32_t aDimsIdx = a.getDimensions().size() - 1 - matrixDimsCount;
 		int32_t bDimsIdx = b.getDimensions().size() - 1 - matrixDimsCount;
 
