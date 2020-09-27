@@ -99,7 +99,10 @@ namespace dnnbasic
 		const uint32_t bHeight)
 	{
 		//fix this as we also have blockidx y
-		const uint32_t idx = blockIdx.x * blockDim.x + threadIdx.x;
+		const uint32_t idx = blockIdx.x * blockDim.x * blockDim.y +
+			blockIdx.y * gridDim.x * blockDim.x * blockDim.y + 
+			threadIdx.x + 
+			threadIdx.y * blockDim.x;
 
 		if (idx >= c.size())
 		{
@@ -248,10 +251,6 @@ namespace dnnbasic
 		const uint32_t bWidth = bDims[bDims.size() - 1];
 		const uint32_t aHeight = aDims[aDims.size() - 2];
 		const uint32_t bHeight = bDims[bDims.size() - 2];
-		// stride to access next row in matrix
-		const uint32_t aStride = aWidth;
-		const uint32_t bStride = bWidth;
-		const uint32_t cStride = cDims[cDims.size() - 1];
 
 		cudabasic::executeKernel(multiDimMatrixMultiplication<T>, blockDim, gridDim, sharedMemory, a.getGPUArrayConst(), b.getGPUArrayConst(), c.getGPUArray(), num_sub_blocks, blockSize, blockSize,
 			aStrides, bStrides, cStrides, aWidth, aHeight, bWidth, bHeight);
