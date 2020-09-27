@@ -173,14 +173,14 @@ namespace dnnbasic
 		std::vector<uint32_t> bDims(c.getDimensions().size());
 		std::vector<uint32_t> cDims(c.getDimensions().size());
 
-		int32_t aDimsIdx = a.getDimensions().size() - 1;
-		int32_t bDimsIdx = b.getDimensions().size() - 1;
-		int32_t cDimsIdx = c.getDimensions().size() - 1;
+		int32_t aDimsIdx = (int32_t)a.getDimensions().size() - 1;
+		int32_t bDimsIdx = (int32_t)b.getDimensions().size() - 1;
+		int32_t cDimsIdx = (int32_t)c.getDimensions().size() - 1;
 
 		// Convert aDims and bDims into a shape tensor in which length of the tensor is
 		// the same size as the output c. The ideas is to perform an internal broadcasting of a and b
 		// such that these can be multiplied.
-		for (int i = c.getDimensions().size() - 1; i >= 0; i--)
+		for (int32_t i = (int32_t)c.getDimensions().size() - 1; i >= 0; i--)
 		{
 			if (aDimsIdx < 0)
 			{
