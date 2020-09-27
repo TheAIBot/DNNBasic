@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\cudaBasic">
+      <UniqueIdentifier>{e2f31bb5-7b43-4751-9a82-2ac0e70fc8b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\dnnBasic">
+      <UniqueIdentifier>{a5966229-42f7-4923-9c55-098b4a504166}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\dnnBasic\NewFilter1">
+      <UniqueIdentifier>{512f3914-b6ea-4d4c-90e7-3d7482e7a563}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="DNNBasicRun.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\CudaBasicClasses\cpuGpuArray.h">
+      <Filter>Header Files\cudaBasic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\CudaBasicClasses\cpuGpuObject.h">
+      <Filter>Header Files\cudaBasic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\CudaBasicClasses\cpuGpuTransporter.h">
+      <Filter>Header Files\cudaBasic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\CudaBasicClasses\cudaBasics.h">
+      <Filter>Header Files\cudaBasic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\CudaBasicClasses\cudaBench.h">
+      <Filter>Header Files\cudaBasic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\CudaBasicClasses\cudaStream.h">
+      <Filter>Header Files\cudaBasic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\CudaBasicClasses\cudaTimer.h">
+      <Filter>Header Files\cudaBasic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\CudaBasicClasses\gpuArray.h">
+      <Filter>Header Files\cudaBasic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\CudaBasicClasses\matrix.h">
+      <Filter>Header Files\cudaBasic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\CudaBasicClasses\span.h">
+      <Filter>Header Files\cudaBasic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DNNBasic\FBPropagation.h">
+      <Filter>Header Files\dnnBasic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DNNBasic\Functions.h">
+      <Filter>Header Files\dnnBasic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DNNBasic\Layer.h">
+      <Filter>Header Files\dnnBasic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DNNBasic\matrix.h">
+      <Filter>Header Files\dnnBasic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DNNBasic\Tensor.h">
+      <Filter>Header Files\dnnBasic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DNNBasic\tensor_def.h">
+      <Filter>Header Files\dnnBasic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DNNBasic\tensor_operators.h">
+      <Filter>Header Files\dnnBasic</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\DNNBasic\tensor_elementwise_kernels.cuh">
+      <Filter>Header Files\dnnBasic</Filter>
+    </None>
+    <None Include="..\DNNBasic\tensor_matrix_kernels.cuh">
+      <Filter>Header Files\dnnBasic</Filter>
+    </None>
+  </ItemGroup>
+</Project>
