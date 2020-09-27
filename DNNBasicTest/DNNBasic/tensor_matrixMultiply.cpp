@@ -75,8 +75,8 @@ namespace dnnbasic
 		}
 
 		const uint32_t matrixDimsCount = 2;
-		int32_t aDimsIdx = a.getDimensions().size() - 1 - matrixDimsCount;
-		int32_t bDimsIdx = b.getDimensions().size() - 1 - matrixDimsCount;
+		int32_t aDimsIdx = (int32_t)a.getDimensions().size() - 1 - matrixDimsCount;
+		int32_t bDimsIdx = (int32_t)b.getDimensions().size() - 1 - matrixDimsCount;
 
 		while (true)
 		{
@@ -160,10 +160,10 @@ namespace dnnbasic
 		std::vector<std::string> new_name(new_dim.size());
 
 		const uint32_t matrixDimsCount = 2;
-		int32_t aDimsIdx = a.getDimensions().size() - 1 - matrixDimsCount;
-		int32_t bDimsIdx = b.getDimensions().size() - 1 - matrixDimsCount;
+		int32_t aDimsIdx = (int32_t)a.getDimensions().size() - 1 - matrixDimsCount;
+		int32_t bDimsIdx = (int32_t)b.getDimensions().size() - 1 - matrixDimsCount;
 
-		for (int i = new_dim.size() - 1 - matrixDimsCount; i >= 0; i--)
+		for (int32_t i = (int32_t)new_dim.size() - 1 - matrixDimsCount; i >= 0; i--)
 		{
 			if (bDimsIdx < 0)
 			{
