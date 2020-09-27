@@ -109,6 +109,7 @@ namespace dnnbasic
 			return;
 		}
 
+		const uint32_t matrixDimsCount = 2;
 		uint32_t index[gpuArray::MAX_LENGTH];
 		uint32_t x = idx;
 		// make x, y, z, .. indecies
@@ -122,7 +123,7 @@ namespace dnnbasic
 		uint32_t aMatrixIndex = 0;
 		uint32_t bMatrixIndex = 0;
 		uint32_t cMatrixIndex = 0;
-		for (size_t i = 0; i < cDimStrides.size(); i++)
+		for (size_t i = 0; i < cDimStrides.size() - matrixDimsCount; i++)
 		{
 			aMatrixIndex += index[i] * aDimStrides[i];
 			bMatrixIndex += index[i] * bDimStrides[i];
