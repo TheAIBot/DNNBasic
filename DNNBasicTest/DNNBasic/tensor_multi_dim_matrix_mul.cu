@@ -219,8 +219,8 @@ namespace dnnbasic
 				cStride *= cDims[g];
 			}
 			// if dimension is broadcasted then the stride should be 0 to reuse the same matrix again
-			aStrides[i] = aStride * (aDims[i] == 1 && bDims[i] != 1) ? 0 : 1;
-			bStrides[i] = bStride * (bDims[i] == 1 && aDims[i] != 1) ? 0 : 1;
+			aStrides[i] = aStride * ((aDims[i] == 1 && bDims[i] != 1) ? 0 : 1);
+			bStrides[i] = bStride * ((bDims[i] == 1 && aDims[i] != 1) ? 0 : 1);
 			cStrides[i] = cStride;
 		}
 		uint32_t tensorWidth = 1;
