@@ -9,20 +9,32 @@ namespace DNNBasicTest
 	{
 	public:
 		template<typename T>
-		void matrixMatrix2x2MulMatrix2x2()
+		void matrix2x2MulMatrix2x2()
 		{
-			dnnbasic::tensor<T> a({ 2, 2 }, { 1,0,0,1 });
-			dnnbasic::tensor<T> b({ 2, 2 }, { 4,1,1,2 });
+			dnnbasic::tensor<T> a({ 2, 2 }, 
+				{ 
+					1,0,
+					0,1 
+				});
+			dnnbasic::tensor<T> b({ 2, 2 }, 
+				{ 
+					4,1,
+					1,2 
+				});
 
-			dnnbasic::tensor<T> expected({ 2, 2 }, { 4,1,1,2 });
+			dnnbasic::tensor<T> expected({ 2, 2 }, 
+				{ 
+					4,1,
+					1,2 
+				});
 			auto* actual = a.matMul(b);
 
 			Assert::AreEqual(expected, *actual);
 		}
-		TEST_ALL_OP_TYPES(matrixMatrix2x2MulMatrix2x2)
+		TEST_ALL_OP_TYPES(matrix2x2MulMatrix2x2)
 
-			template<typename T>
-		void matrixMatrix3x2MulMatrix2x3()
+		template<typename T>
+		void matrix3x2MulMatrix2x3()
 		{
 			dnnbasic::tensor<T> a({ 3, 2 },
 				{
@@ -46,10 +58,10 @@ namespace DNNBasicTest
 
 			Assert::AreEqual(expected, *actual);
 		}
-		TEST_ALL_OP_TYPES(matrixMatrix3x2MulMatrix2x3)
+		TEST_ALL_OP_TYPES(matrix3x2MulMatrix2x3)
 
-			template<typename T>
-		void matrixMatrixMulVector()
+		template<typename T>
+		void matrixMulVector()
 		{
 			dnnbasic::tensor<T> a({ 3, 2 },
 				{
@@ -73,10 +85,10 @@ namespace DNNBasicTest
 
 			Assert::AreEqual(expected, *actual);
 		}
-		TEST_ALL_OP_TYPES(matrixMatrixMulVector)
+		TEST_ALL_OP_TYPES(matrixMulVector)
 
-			template<typename T>
-		void matrixVectorMulMatrix()
+		template<typename T>
+		void vectorMulMatrix()
 		{
 			dnnbasic::tensor<T> a({ 2 },
 				{
@@ -96,6 +108,6 @@ namespace DNNBasicTest
 
 			Assert::AreEqual(expected, *actual);
 		}
-		TEST_ALL_OP_TYPES(matrixVectorMulMatrix)
+		TEST_ALL_OP_TYPES(vectorMulMatrix)
 	};
 }
