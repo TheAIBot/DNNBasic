@@ -2,6 +2,8 @@
 
 #include <typeinfo>
 #include <codecvt>
+#include <vector>
+#include <random>
 
 #define TEST_ALL_OP_TYPES(methodName) \
 	TEST_METHOD(uint8_t ## methodName) { methodName<uint8_t>(); } \
@@ -48,5 +50,46 @@ namespace Microsoft::VisualStudio::CppUnitTestFramework
 		std::wstring typeNameW = converter.from_bytes(typeName);
 
 		return typeNameW + L" Tensor";
+	}
+}
+
+namespace DNNBasicTest
+{
+	template<typename T>
+	std::vector<T> GetVectorWithRandomNumbers(const uint32_t size)
+	{
+		std::vector<T> numbers;
+
+		std::default_random_engine rngGen(7);
+		if constexpr (std::is_floating_point<T>::value)
+		{
+			std::uniform_real_distribution<T> dist(-1322, 64323);
+			for (size_t i = 0; i < size; i++)
+			{
+				numbers.push_back(dist(rngGen));
+			}
+		}
+		else if constexpr (std::is_signed<T>::value)
+		{
+			std::uniform_int_distribution<int32_t> dist(-1322, 64323);
+			for (size_t i = 0; i < size; i++)
+			{
+				numbers.push_back((T)dist(rngGen));
+			}
+		}
+		else if constexpr (std::is_unsigned<T>::value)
+		{
+			std::uniform_int_distribution<uint32_t> dist(0, 64323);
+			for (size_t i = 0; i < size; i++)
+			{
+				numbers.push_back((T)dist(rngGen));
+			}
+		}
+		else
+		{
+			static_assert("Failed to make a random generator for the specified type.");
+		}
+
+		return numbers;
 	}
 }
