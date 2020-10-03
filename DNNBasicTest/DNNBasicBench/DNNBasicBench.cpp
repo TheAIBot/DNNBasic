@@ -74,7 +74,7 @@ void benchMarkMatrixMultColumnsVsRows(std::string folder, std::string filename, 
     std::string filepath = folder + "/" + filename + ".txt";
 
     std::vector<matrixSize> matSizes;
-    for (size_t i = 1; i <= elementCount; i++)
+    for (uint32_t i = 1; i <= elementCount; i++)
     {
         const uint32_t columns = i;
         const uint32_t rows = elementCount / columns;
@@ -136,7 +136,7 @@ void benchMarkMatrixMultColumnsVsRows(std::string folder, std::string filename, 
 
 int main()
 {
-    for (size_t i = 256; i <= 2048; i += 256)
+    for (uint32_t i = 256; i <= 2048; i += 256)
     {
         benchMarkMatrixMultColumnsVsRows("matmul/static_block_size", "matrix_size-" + std::to_string(i), i);
     }

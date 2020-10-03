@@ -121,9 +121,9 @@ namespace DNNBasicTest
 		static dnnbasic::matrix<T> transpose(dnnbasic::matrix<T> a, std::vector<T>& tData)
 		{
 			dnnbasic::matrix<T> t(&tData[0], a.getRows(), a.getColumns());
-			for (size_t y = 0; y < a.getRows(); y++)
+			for (uint32_t y = 0; y < a.getRows(); y++)
 			{
-				for (size_t x = 0; x < a.getColumns(); x++)
+				for (uint32_t x = 0; x < a.getColumns(); x++)
 				{
 					t[x][y] = a[y][x];
 				}
@@ -137,12 +137,12 @@ namespace DNNBasicTest
 		{
 			std::vector<T> tData(b.getColumns() * b.getRows());
 			b = transpose(b, tData);
-			for (size_t y = 0; y < c.getRows(); y++)
+			for (uint32_t y = 0; y < c.getRows(); y++)
 			{
-				for (size_t x = 0; x < c.getColumns(); x++)
+				for (uint32_t x = 0; x < c.getColumns(); x++)
 				{
 					T sum = 0;
-					for (size_t z = 0; z < a.getColumns(); z++)
+					for (uint32_t z = 0; z < a.getColumns(); z++)
 					{
 						sum += a[y][z] * b[x][z];
 					}
