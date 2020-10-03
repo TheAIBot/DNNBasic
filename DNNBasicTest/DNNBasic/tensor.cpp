@@ -20,11 +20,6 @@ namespace dnnbasic
 		this->dim = dim;
 	}
 
-	template<typename T>
-	void tensor<T>::addConnection(const tensor<T>* newConnection)
-	{
-		connections.push_back(newConnection);
-	}
 
 	template<typename T>
 	tensor<T>::tensor(std::vector<uint32_t> dims) : tensor(dims, std::vector<std::string>(dims.size()))
@@ -36,8 +31,9 @@ namespace dnnbasic
 	tensor<T>::tensor(std::vector<uint32_t> dimensions, std::vector<std::string> names) : tensor(dimensions, names, std::vector<T>())
 	{ }
 	template<typename T>
-	tensor<T>::tensor(std::vector<uint32_t> dimensions, std::vector<std::string> names, std::vector<T> values) : arr(std::accumulate(dimensions.begin(), dimensions.end(), 1, std::multiplies<uint32_t>()))
+	tensor<T>::tensor(std::vector<uint32_t> dimensions, std::vector<std::string> names, std::vector<T> values)
 	{
+		this->data = std::make_shared<tensorData <T>>(dimensions);
 		if (dimensions.size() == 0)
 		{
 			throw std::exception("Cannot make tensor with 0 dimensions.");
@@ -58,19 +54,19 @@ namespace dnnbasic
 			throw std::exception("Dimensions with size 0 are not allowed in a tensor.");
 		}
 
-		if (values.size() > arr.size())
+		if (values.size() > this->data->arr.size())
 		{
 			throw std::exception("Initializtion vector contain too many values.");
 		}
 
 		for (size_t i = 0; i < dimensions.size(); i++)
 		{
-			dimension.push_back(namedDim(dimensions[i], names[i]));
+			this->data->dimension.push_back(namedDim(dimensions[i], names[i]));
 		}
 
 		if (values.size() > 0)
 		{
-			arr.copyToGPU(values);
+			this->data->arr.copyToGPU(values);
 		}
 	}
 
@@ -88,27 +84,27 @@ namespace dnnbasic
 	template<typename T>
 	uint32_t tensor<T>::elementCount() const
 	{
-		return arr.size();
+		return this->data->arr.size();
 	}
 	template<typename T>
 	const std::vector<namedDim>& tensor<T>::getDimensions() const
 	{
-		return dimension;
+		return this->data->dimension;
 	}
 	template<typename T>
 	cudabasic::span<T> tensor<T>::getGPUArray() const
 	{
-		return arr.getGPUArray();
+		return this->data->arr.getGPUArray();
 	}
 	template<typename T>
 	const cudabasic::span<T> tensor<T>::getGPUArrayConst() const
 	{
-		return arr.getGPUArrayConst();
+		return this->data->arr.getGPUArrayConst();
 	}
 	template<typename T>
 	std::vector<T> tensor<T>::getValuesOnCPU() const
 	{
-		return arr.copyToCPU();
+		return this->data->arr.copyToCPU();
 	}
 	//void transpose();
 	//void permute();
@@ -117,17 +113,17 @@ namespace dnnbasic
 	template<typename T>
 	matrix<T> tensor<T>::getMatrix() const
 	{
-		return matrix<T>(arr.getGPUArrayConst().begin(), dimension[1].dim, dimension[0].dim);
+		return matrix<T>(this->data->arr.getGPUArrayConst().begin(), this->data->dimension[1].dim, this->data->dimension[0].dim);
 	}
 	template<typename T>
 	matrix<T> tensor<T>::getMatrixWith1Width() const
 	{
-		return matrix<T>(arr.getGPUArrayConst().begin(), 1, dimension[0].dim);
+		return matrix<T>(this->data->arr.getGPUArrayConst().begin(), 1, this->data->dimension[0].dim);
 	}
 	template<typename T>
 	matrix<T> tensor<T>::getMatrixWith1Height() const
 	{
-		return matrix<T>(arr.getGPUArrayConst().begin(), dimension[0].dim, 1);
+		return matrix<T>(this->data->arr.getGPUArrayConst().begin(), this->data->dimension[0].dim, 1);
 	}
 
 

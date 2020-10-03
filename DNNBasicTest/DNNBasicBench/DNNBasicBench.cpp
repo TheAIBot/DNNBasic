@@ -103,16 +103,12 @@ void benchMarkMatrixMultColumnsVsRows(std::string folder, std::string filename, 
         dnnbasic::tensor<float> a({ matSize.rows, matSize.columns }, aData);
         dnnbasic::tensor<float> b({ matSize.columns, matSize.rows }, bData);
 
-        std::vector<dnnbasic::tensor<float>*> resultTensors;
+        std::vector<dnnbasic::tensor<float>> resultTensors;
         float time = benchMarkFunc([&]()
             {
                 resultTensors.push_back(a.matMul(b));
             });
 
-        for (size_t z = 0; z < resultTensors.size(); z++)
-        {
-            delete resultTensors[z];
-        }
     }
 
     for (size_t i = 0; i < matSizes.size(); i++)
@@ -125,16 +121,11 @@ void benchMarkMatrixMultColumnsVsRows(std::string folder, std::string filename, 
         dnnbasic::tensor<float> a({ matSize.rows, matSize.columns }, aData);
         dnnbasic::tensor<float> b({ matSize.columns, matSize.rows }, bData);
 
-        std::vector<dnnbasic::tensor<float>*> resultTensors;
+        std::vector<dnnbasic::tensor<float>> resultTensors;
         float time = benchMarkFunc([&]()
             {
                 resultTensors.push_back(a.matMul(b));
             });
-
-        for (size_t z = 0; z < resultTensors.size(); z++)
-        {
-            delete resultTensors[z];
-        }
 
         const float colRowRatio = (float)matSize.columns / elementCount;
         file << std::to_string(colRowRatio) << "; " << std::to_string(time) << std::endl;

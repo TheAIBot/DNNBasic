@@ -45,7 +45,7 @@ namespace DNNBasicTest
 				dnnbasic::tensor<T> aMatrix({ aHeight, aWidth }, aMatrixValues);
 				dnnbasic::tensor<T> bMatrix({ bHeight, bWidth }, bMatrixValues);
 
-				std::vector<T> cMatrixValues = aMatrix.matMul(bMatrix)->getValuesOnCPU();
+				std::vector<T> cMatrixValues = aMatrix.matMul(bMatrix).getValuesOnCPU();
 
 				aTensorValues.insert(aTensorValues.begin(), aMatrixValues.begin(), aMatrixValues.end());
 				bTensorValues.insert(bTensorValues.begin(), bMatrixValues.begin(), bMatrixValues.end());
@@ -56,9 +56,9 @@ namespace DNNBasicTest
 			dnnbasic::tensor<T> b(bDims, bTensorValues);
 
 			dnnbasic::tensor<T> expected(cDims, cTensorValues);
-			auto* actual = a.matMul(b);
+			auto actual = a.matMul(b);
 
-			Assert::AreEqual(expected, *actual);
+			Assert::AreEqual(expected, actual);
 		}
 
 #define GEN_MULTI_TEST_SPECIFY_MAT_DIMS_AND_TYPE(aH, aW, bH, bW, T) \
@@ -127,9 +127,9 @@ namespace DNNBasicTest
 					84,92,64,
 					49,39,30,
 				});
-			auto* actual = a.matMul(b);
+			auto actual = a.matMul(b);
 
-			Assert::AreEqual(expected, *actual);
+			Assert::AreEqual(expected, actual);
 		}
 		TEST_ALL_OP_TYPES(matrixMutiDimMatrix1x3x2MulMatrix1x2x3)
 
@@ -161,9 +161,9 @@ namespace DNNBasicTest
 					84,88,
 					84,92
 				});
-			auto* actual = a.matMul(b);
+			auto actual = a.matMul(b);
 
-			Assert::AreEqual(expected, *actual);
+			Assert::AreEqual(expected, actual);
 		}
 		TEST_ALL_OP_TYPES(matrixMutiDimMatrix2x2x2MulMatrix2x2x2)
 
@@ -199,9 +199,9 @@ namespace DNNBasicTest
 					84,92,64,
 					49,39,30
 				});
-			auto* actual = a.matMul(b);
+			auto actual = a.matMul(b);
 
-			Assert::AreEqual(expected, *actual);
+			Assert::AreEqual(expected, actual);
 		}
 		TEST_ALL_OP_TYPES(matrixMutiDimMatrix3x2MulMatrix2x3)
 
@@ -262,9 +262,9 @@ namespace DNNBasicTest
 					879,924,969
 
 				});
-			auto* actual = a.matMul(b);
+			auto actual = a.matMul(b);
 
-			Assert::AreEqual(expected, *actual);
+			Assert::AreEqual(expected, actual);
 		}
 		TEST_ALL_OP_TYPES_LEAST_8_BITS(matrixMultiDimMatrixMul4Dim)
 
@@ -295,9 +295,9 @@ namespace DNNBasicTest
 
 					1200, 3509, 2654
 				});
-			auto* actual = a.matMul(b);
+			auto actual = a.matMul(b);
 
-			Assert::AreEqual(expected, *actual);
+			Assert::AreEqual(expected, actual);
 		}
 		TEST_ALL_OP_TYPES_LEAST_8_BITS(matrixMutiDimVectorMulMatrix)
 	};

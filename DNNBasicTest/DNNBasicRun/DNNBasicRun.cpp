@@ -35,9 +35,9 @@ int main()
 					84,92,64,
 					49,39,30
 				});
-	auto* actual = a.matMul(b);
+	auto actual = a.matMul(b);
 
-	std::cout << (*actual==expected) << std::endl;
+	std::cout << (actual==expected) << std::endl;
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

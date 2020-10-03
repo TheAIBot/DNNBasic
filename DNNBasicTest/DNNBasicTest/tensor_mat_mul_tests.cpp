@@ -29,9 +29,9 @@ namespace DNNBasicTest
 					4,1,
 					1,2 
 				});
-			auto* actual = a.matMul(b);
+			auto actual = a.matMul(b);
 
-			Assert::AreEqual(expected, *actual);
+			Assert::AreEqual(expected, actual);
 		}
 		TEST_ALL_OP_TYPES(matrix2x2MulMatrix2x2)
 
@@ -56,9 +56,9 @@ namespace DNNBasicTest
 					84,92,64,
 					49,39,30
 				});
-			auto* actual = a.matMul(b);
+			auto actual = a.matMul(b);
 
-			Assert::AreEqual(expected, *actual);
+			Assert::AreEqual(expected, actual);
 		}
 		TEST_ALL_OP_TYPES(matrix3x2MulMatrix2x3)
 
@@ -83,9 +83,9 @@ namespace DNNBasicTest
 					84,
 					49
 				});
-			auto* actual = a.matMul(b);
+			auto actual = a.matMul(b);
 
-			Assert::AreEqual(expected, *actual);
+			Assert::AreEqual(expected, actual);
 		}
 		TEST_ALL_OP_TYPES(matrixMulVector)
 
@@ -106,9 +106,9 @@ namespace DNNBasicTest
 				{
 					84, 88, 62
 				});
-			auto* actual = a.matMul(b);
+			auto actual = a.matMul(b);
 
-			Assert::AreEqual(expected, *actual);
+			Assert::AreEqual(expected, actual);
 		}
 		TEST_ALL_OP_TYPES(vectorMulMatrix)
 	};
@@ -170,7 +170,7 @@ namespace DNNBasicTest
 
 			auto actual = a.matMul(b);
 
-			Assert::AreEqual(expected, *actual);
+			Assert::AreEqual(expected, actual);
 		}
 	public:
 

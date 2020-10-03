@@ -5,7 +5,7 @@
 namespace dnnbasic
 {
 	template<typename T>
-	static tensor<T>* createTensorWithPermutedDims(const tensor<T>& a, std::vector<uint32_t> dims)
+	static tensor<T> createTensorWithPermutedDims(const tensor<T>& a, std::vector<uint32_t> dims)
 	{
 		auto& aDims = a.getDimensions();
 
@@ -17,46 +17,46 @@ namespace dnnbasic
 			new_name.push_back(aDims[dims[i]].name);
 		}
 
-		return new tensor<T>(new_dim, new_name);
+		return tensor<T>(new_dim, new_name);
 	}
 
 	template<typename T>
-	tensor<T>* tensor<T>::permute(std::initializer_list<uint32_t> dims) const
+	tensor<T> tensor<T>::permute(std::initializer_list<uint32_t> dims) const
 	{
 		return permute(std::vector<uint32_t>(dims));
 	}
 
 	template<typename T>
-	tensor<T>* tensor<T>::permute(std::vector<uint32_t> dims) const
+	tensor<T> tensor<T>::permute(std::vector<uint32_t> dims) const
 	{
-		if (dims.size() != dimension.size())
+		if (dims.size() != this->data->dimension.size())
 		{
 			throw std::exception("cannot perform permutation due to incorrect number of permute dimensions.");
 		}
-		for (uint32_t i = 0; i < dimension.size(); i++)
+		for (uint32_t i = 0; i < this->data->dimension.size(); i++)
 		{
-			if (dims[i] >= dimension.size())
+			if (dims[i] >= this->data->dimension.size())
 			{
 				throw std::exception("permute dimensions indicies cannot be higher than tensor dimnesion count.");
 			}
 		}
 
-		tensor<T>* child = createTensorWithPermutedDims(*this, dims);
+		tensor<T> child = createTensorWithPermutedDims(*this, dims);
 
 		// make kernel call
-		tensorPermute(*this, *child, dims);
+		tensorPermute(*this, child, dims);
 
 		return child;
 	}
 
 	template<typename T>
-	tensor<T>* tensor<T>::permute(std::initializer_list<std::string> dimNames) const
+	tensor<T> tensor<T>::permute(std::initializer_list<std::string> dimNames) const
 	{
 		return permute(std::vector<std::string>(dimNames));
 	}
 
 	template<typename T>
-	tensor<T>* tensor<T>::permute(std::vector<std::string> dimNames) const
+	tensor<T> tensor<T>::permute(std::vector<std::string> dimNames) const
 	{
 		if (dimNames.size() != this->getDimensions().size())
 		{

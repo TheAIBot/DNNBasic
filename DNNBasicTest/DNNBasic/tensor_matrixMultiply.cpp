@@ -103,7 +103,7 @@ namespace dnnbasic
 	}
 
 	template<typename T>
-	tensor<T>* createTensorWithMatrixMultiplyMatrixDims(const tensor<T>& a, const tensor<T>& b)
+	tensor<T> createTensorWithMatrixMultiplyMatrixDims(const tensor<T>& a, const tensor<T>& b)
 	{
 		auto& aDims = a.getDimensions();
 		auto& bDims = b.getDimensions();
@@ -117,11 +117,11 @@ namespace dnnbasic
 		new_name.push_back(aDims[aDims.size() - 2].name != "" ? aDims[0].name : bDims[0].name);
 		new_name.push_back(aDims[aDims.size() - 1].name != "" ? aDims[1].name : bDims[1].name);
 
-		return new tensor<T>(new_dim, new_name);
+		return tensor<T>(new_dim, new_name);
 	}
 
 	template<typename T>
-	tensor<T>* createTensorWithMatrixMultiplyVectorDims(const tensor<T>& a, const tensor<T>& b)
+	tensor<T> createTensorWithMatrixMultiplyVectorDims(const tensor<T>& a, const tensor<T>& b)
 	{
 		auto& aDims = a.getDimensions();
 		auto& bDims = b.getDimensions();
@@ -132,11 +132,11 @@ namespace dnnbasic
 		new_dim.push_back(aDims[0].dim);
 		new_name.push_back(bDims[0].name);
 
-		return new tensor<T>(new_dim, new_name);
+		return tensor<T>(new_dim, new_name);
 	}
 
 	template<typename T>
-	tensor<T>* createTensorWithVectorMultiplyMatrixDims(const tensor<T>& a, const tensor<T>& b)
+	tensor<T> createTensorWithVectorMultiplyMatrixDims(const tensor<T>& a, const tensor<T>& b)
 	{
 		auto& aDims = a.getDimensions();
 		auto& bDims = b.getDimensions();
@@ -147,11 +147,11 @@ namespace dnnbasic
 		new_dim.push_back(bDims[1].dim);
 		new_name.push_back(aDims[0].name);
 
-		return new tensor<T>(new_dim, new_name);
+		return tensor<T>(new_dim, new_name);
 	}
 
 	template<typename T>
-	tensor<T>* createTensorWithBroadcastMatrixMultiplyBroadcastMatrixDims(const tensor<T>& a, const tensor<T>& b)
+	tensor<T> createTensorWithBroadcastMatrixMultiplyBroadcastMatrixDims(const tensor<T>& a, const tensor<T>& b)
 	{
 		auto& aDims = a.getDimensions();
 		auto& bDims = b.getDimensions();
@@ -190,19 +190,19 @@ namespace dnnbasic
 		new_name[new_dim.size() - 2] = aDims[aDims.size() - 2].name != "" ? aDims[aDims.size() - 2].name : bDims[bDims.size() - 2].name;
 		new_name[new_dim.size() - 1] = aDims[aDims.size() - 1].name != "" ? aDims[aDims.size() - 1].name : bDims[bDims.size() - 1].name;
 
-		return new tensor<T>(new_dim, new_name);
+		return tensor<T>(new_dim, new_name);
 	}
 
 	template<typename T>
-	tensor<T>* tensor<T>::matMul(const tensor<T>& right) const
+	tensor<T> tensor<T>::matMul(const tensor<T>& right) const
 	{
 		if (canMatrixMultiplyMatrix(*this, right))
 		{
-			tensor<T>* child = createTensorWithMatrixMultiplyMatrixDims(*this, right);
+			tensor<T> child = createTensorWithMatrixMultiplyMatrixDims(*this, right);
 
 			matrix<T> leftM = this->getMatrix();
 			matrix<T> rightM = right.getMatrix();
-			matrix<T> childM = child->getMatrix();
+			matrix<T> childM = child.getMatrix();
 
 			// make kernel call
 			tensorMatrixMul(leftM, rightM, childM);
@@ -211,11 +211,11 @@ namespace dnnbasic
 		}
 		else if (canMatrixMultiplyVector(*this, right))
 		{
-			tensor<T>* child = createTensorWithMatrixMultiplyVectorDims(*this, right);
+			tensor<T> child = createTensorWithMatrixMultiplyVectorDims(*this, right);
 
 			matrix<T> leftM = this->getMatrix();
 			matrix<T> rightM = right.getMatrixWith1Width();
-			matrix<T> childM = child->getMatrixWith1Width();
+			matrix<T> childM = child.getMatrixWith1Width();
 
 			// make kernel call
 			tensorMatrixMul(leftM, rightM, childM);
@@ -224,11 +224,11 @@ namespace dnnbasic
 		}
 		else if (canVectorMultiplyMatrix(*this, right))
 		{
-			tensor<T>* child = createTensorWithVectorMultiplyMatrixDims(*this, right);
+			tensor<T> child = createTensorWithVectorMultiplyMatrixDims(*this, right);
 
 			matrix<T> leftM = this->getMatrixWith1Height();
 			matrix<T> rightM = right.getMatrix();
-			matrix<T> childM = child->getMatrixWith1Height();
+			matrix<T> childM = child.getMatrixWith1Height();
 
 			// make kernel call
 			tensorMatrixMul(leftM, rightM, childM);
@@ -237,10 +237,10 @@ namespace dnnbasic
 		}
 		else if (canBroadcastMatrixMultiplyBroadcastMatrix(*this, right))
 		{
-			tensor<T>* child = createTensorWithBroadcastMatrixMultiplyBroadcastMatrixDims(*this, right);
+			tensor<T> child = createTensorWithBroadcastMatrixMultiplyBroadcastMatrixDims(*this, right);
 
 			// make kernel call
-			tensorMultiDimMatrixMul(*this, right, *child);
+			tensorMultiDimMatrixMul(*this, right, child);
 
 			return child;
 		}
