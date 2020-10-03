@@ -24,7 +24,7 @@ namespace dnnbasic
 	}
 
 	template <typename T>
-	__device__ void matMul(const matrix<T> a, const matrix<T> b, matrix<T> c, const uint32_t num_sub_blocks, const uint32_t blockSizeX, const uint32_t blockSizeY, const dim3 blockOffset, const dim3 threadOffset, const uint32_t sharedOffset)
+	__device__ void matMulInternal(const matrix<T> a, const matrix<T> b, matrix<T> c, const uint32_t num_sub_blocks, const uint32_t blockSizeX, const uint32_t blockSizeY, const dim3 blockOffset, const dim3 threadOffset, const uint32_t sharedOffset)
 	{
 		// Block index
 		const uint32_t bx = blockOffset.x;
@@ -81,88 +81,82 @@ namespace dnnbasic
 		c[c_y][c_x] = Csub;
 	}
 
+	template <typename T>
+	__global__ void matrixMultiplication(const matrix<T> a, const matrix<T> b, matrix<T> c, const uint32_t num_sub_blocks, const uint32_t blockSize)
+	{
+		matMulInternal(a, b, c, num_sub_blocks, blockSize, blockSize, blockIdx, threadIdx, 0);
+	}
+
+	__device__ int icd(int a, int b)
+	{
+		//return (int) math.ceil((float)a / b);
+		return (a + (b - 1)) / b;
+	}
 
 	template <typename T>
 	__global__ void multiDimMatrixMultiplication(
 		const cudabasic::span<T> a, 
 		const cudabasic::span<T> b, 
-		cudabasic::span<T> c, 
-		const uint32_t num_sub_blocks, 
-		const uint32_t blockSizeX,
-		const uint32_t blockSizeY,
+		cudabasic::span<T> c,
 		const gpuArray aDimStrides,
 		const gpuArray bDimStrides,
 		const gpuArray cDimStrides,
 		const uint32_t aWidth,
 		const uint32_t aHeight,
 		const uint32_t bWidth,
-		const uint32_t bHeight)
+		const uint32_t bHeight,
+		const uint32_t num_sub_blocks)
 	{
-		//fix this as we also have blockidx y
-		const uint32_t idx = blockIdx.x * blockDim.x * blockDim.y +
-			blockIdx.y * gridDim.x * blockDim.x * blockDim.y + 
-			threadIdx.x + 
-			threadIdx.y * blockDim.x;
+		const uint32_t cMatrixWidth = bWidth;
+		const uint32_t cMatrixHeight = aHeight;
 
-		if (idx >= c.size())
+		cudaStream_t stream;
+		cudaStreamCreateWithFlags(&stream, cudaStreamNonBlocking);
+
+		const uint32_t blockSize = min(32u, max(cMatrixWidth, cMatrixHeight));
+		const dim3 blockDimq(blockSize, blockSize);
+		const dim3 gridDimq(icd(cMatrixWidth, blockDimq.x), icd(cMatrixHeight, blockDimq.y));
+		const uint32_t sharedMemory = sizeof(T) * blockDimq.x * blockDimq.y * 2;
+
+		for (size_t qweqwe = 0; ; qweqwe++)
 		{
-			return;
+			const uint32_t idx = (threadIdx.x + qweqwe * blockDim.x) * (cMatrixWidth * cMatrixHeight);
+
+			if (idx >= c.size())
+			{
+				return;
+			}
+
+
+			const uint32_t matrixDimsCount = 2;
+			uint32_t index[gpuArray::MAX_LENGTH];
+			uint32_t x = idx;
+			// make x, y, z, .. indecies
+			for (uint32_t i = 0; i < cDimStrides.size(); i++)
+			{
+				index[i] = x / cDimStrides[i];
+				x = x % cDimStrides[i];
+			}
+
+			// Convert to matricies
+			uint32_t aMatrixIndex = 0;
+			uint32_t bMatrixIndex = 0;
+			uint32_t cMatrixIndex = 0;
+			for (size_t i = 0; i < cDimStrides.size() - matrixDimsCount; i++)
+			{
+				aMatrixIndex += index[i] * aDimStrides[i];// / (aWidth * aHeight);
+				bMatrixIndex += index[i] * bDimStrides[i];// / (bWidth * bHeight);
+				cMatrixIndex += index[i] * cDimStrides[i];// / (cMatrixWidth * cMatrixHeight);
+			}
+
+			const matrix<T> aMatrix(&a[aMatrixIndex], aWidth, aHeight);
+			const matrix<T> bMatrix(&b[bMatrixIndex], bWidth, bHeight);
+			matrix<T> cMatrix(&c[cMatrixIndex], cMatrixWidth, cMatrixHeight);
+
+			matrixMultiplication << <gridDimq, blockDimq, sharedMemory, stream >> > (aMatrix, bMatrix, cMatrix, num_sub_blocks, blockDimq.x);
 		}
 
-		const uint32_t matrixDimsCount = 2;
-		uint32_t index[gpuArray::MAX_LENGTH];
-		uint32_t x = idx;
-		// make x, y, z, .. indecies
-		for (uint32_t i = 0; i < cDimStrides.size(); i++)
-		{
-			index[i] = x / cDimStrides[i];
-			x = x % cDimStrides[i];
-		}
-
-		// Convert to matricies
-		uint32_t aMatrixIndex = 0;
-		uint32_t bMatrixIndex = 0;
-		uint32_t cMatrixIndex = 0;
-		for (size_t i = 0; i < cDimStrides.size() - matrixDimsCount; i++)
-		{
-			aMatrixIndex += index[i] * aDimStrides[i];
-			bMatrixIndex += index[i] * bDimStrides[i];
-			cMatrixIndex += index[i] * cDimStrides[i];
-		}
-
-		const uint32_t cMatrixWidth = aHeight;
-		const uint32_t cMatrixHeight = bWidth;
-
-		const matrix<T> aMatrix(&a[aMatrixIndex], aWidth, aHeight);
-		const matrix<T> bMatrix(&b[bMatrixIndex], bWidth, bHeight);
-		matrix<T> cMatrix(&c[cMatrixIndex], cMatrixWidth, cMatrixHeight);
-
-		const uint32_t widthIdx = cDimStrides.size() - 1;
-		const uint32_t heightIdx = cDimStrides.size() - 2;
-
-		const uint32_t threadsPerBlock = blockDim.x * blockDim.y;
-		const uint32_t currentThreadIdx = threadIdx.x + threadIdx.y * blockDim.y;
-		const uint32_t firstThreadInMatrix = currentThreadIdx - (index[widthIdx] + index[heightIdx] * cMatrixWidth);
-		const uint32_t remainingThreads = threadsPerBlock - firstThreadInMatrix;
-
-		//this code assumes that remainingThreads / cMatrixWidth is always
-		//a whole number, otherwise the matMul probably won't work.
-		//blockSizeX and blockSizeX needs to be modified on the host
-		//to make sure this case doesn't happen.
-		const uint32_t partialBlockSizeX = min(cMatrixWidth, remainingThreads);
-		const uint32_t partialBlockSizeY = max(1u, min(cMatrixHeight, remainingThreads / cMatrixWidth));
-
-		dim3 blockOffset;
-		dim3 threadOffset;
-
-		const uint32_t sharedMemOffset = firstThreadInMatrix * 2;
-
-		blockOffset.x = index[widthIdx] / partialBlockSizeX;
-		blockOffset.y = index[heightIdx] / partialBlockSizeY;
-		threadOffset.x = index[widthIdx] % partialBlockSizeX;
-		threadOffset.y = index[heightIdx] % partialBlockSizeY;
-
-		matMul(aMatrix, bMatrix, cMatrix, num_sub_blocks, partialBlockSizeX, partialBlockSizeY, blockOffset, threadOffset, sharedMemOffset);
+		cudaStreamDestroy(stream);
 	}
 
 	template <typename T>
@@ -227,28 +221,6 @@ namespace dnnbasic
 			bStrides[i] = bStride * ((bDims[i] == 1 && aDims[i] != 1) ? 0 : 1);
 			cStrides[i] = cStride;
 		}
-		uint32_t tensorWidth = 1;
-		uint32_t tensorHeight = 1;
-
-		// As the dimensions of a multidim tensor is an aleternating series of heigh and witdth
-		// we multiply every odd dimension to get the total width and even to get the total height.
-		for (size_t i = 0; i < cDims.size() - 2; i++)
-		{
-			if (i%2 == 0)
-			{
-				tensorHeight *= cDims[i];
-			}
-			else
-			{
-				tensorWidth *= cDims[i];
-			}
-		}
-
-		const uint32_t blockSize = 24;
-		const dim3 blockDim(blockSize, blockSize);
-		const uint32_t sharedMemory = sizeof(T) * blockSize * blockSize * 2;
-		const dim3 gridDim(integerCeilDivision(tensorWidth, blockDim.x), integerCeilDivision(tensorHeight, blockDim.y));
-		const uint32_t num_sub_blocks = integerCeilDivision(aDims[aDims.size() - 1], blockSize);
 
 		// height and width of the matrix
 		const uint32_t aWidth = aDims[aDims.size() - 1];
@@ -256,8 +228,13 @@ namespace dnnbasic
 		const uint32_t aHeight = aDims[aDims.size() - 2];
 		const uint32_t bHeight = bDims[bDims.size() - 2];
 
-		cudabasic::executeKernel(multiDimMatrixMultiplication<T>, blockDim, gridDim, sharedMemory, a.getGPUArrayConst(), b.getGPUArrayConst(), c.getGPUArray(), num_sub_blocks, blockSize, blockSize,
-			aStrides, bStrides, cStrides, aWidth, aHeight, bWidth, bHeight);
+		const uint32_t blockSize = 512;
+		const dim3 blockDim(blockSize);
+		const dim3 gridDim(1);
+		const uint32_t num_sub_blocks = integerCeilDivision(aWidth, blockSize);
+
+		cudabasic::executeKernel(multiDimMatrixMultiplication<T>, blockDim, gridDim, a.getGPUArrayConst(), b.getGPUArrayConst(), c.getGPUArray(),
+			aStrides, bStrides, cStrides, aWidth, aHeight, bWidth, bHeight, num_sub_blocks);
 	}
 	void tensorMultiDimMatrixMul(const tensor<bool>& a, const tensor<bool>& b, const tensor<bool>& c) { tensorMultiDimMatMul(a, b, c); }
 	void tensorMultiDimMatrixMul(const tensor<uint8_t>& a, const tensor<uint8_t>& b, tensor<uint8_t>& c) { tensorMultiDimMatMul(a, b, c); }

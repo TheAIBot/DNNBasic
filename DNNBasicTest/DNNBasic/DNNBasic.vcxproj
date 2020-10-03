@@ -97,7 +97,11 @@
       <TargetMachinePlatform>64</TargetMachinePlatform>
       <Emulation>false</Emulation>
       <Optimization>Od</Optimization>
+      <GenerateRelocatableDeviceCode>true</GenerateRelocatableDeviceCode>
     </CudaCompile>
+    <CudaLink>
+      <AdditionalDependencies>cudadevrt.lib</AdditionalDependencies>
+    </CudaLink>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -117,7 +121,14 @@
     </Link>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
+      <Optimization>Od</Optimization>
+      <GPUDebugInfo>true</GPUDebugInfo>
+      <HostDebugInfo>true</HostDebugInfo>
+      <GenerateRelocatableDeviceCode>true</GenerateRelocatableDeviceCode>
     </CudaCompile>
+    <CudaLink>
+      <AdditionalDependencies>cudadevrt.lib</AdditionalDependencies>
+    </CudaLink>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
