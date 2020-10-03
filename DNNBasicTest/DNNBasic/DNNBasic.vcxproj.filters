@@ -16,6 +16,9 @@
     <Filter Include="dnnbasic\tensor\operators">
       <UniqueIdentifier>{d44efa9d-3eab-405a-a134-e3e774994e84}</UniqueIdentifier>
     </Filter>
+    <Filter Include="dnnbasic\tensor\tensorNodes">
+      <UniqueIdentifier>{b29b8069-e047-4adc-9bfd-733957048a60}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\CudaBasicClasses\cpuGpuArray.h">
@@ -80,6 +83,15 @@
     </ClInclude>
     <ClInclude Include="auto_graph.h">
       <Filter>dnnbasic</Filter>
+    </ClInclude>
+    <ClInclude Include="optional.h">
+      <Filter>dnnbasic</Filter>
+    </ClInclude>
+    <ClInclude Include="tensor_node_linear.h">
+      <Filter>dnnbasic\tensor\tensorNodes</Filter>
+    </ClInclude>
+    <ClInclude Include="tensor_node_no_grad.h">
+      <Filter>dnnbasic\tensor\tensorNodes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
