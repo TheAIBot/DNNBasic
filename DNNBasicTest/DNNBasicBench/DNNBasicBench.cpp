@@ -11,6 +11,7 @@
 #include <random>
 #include <filesystem>
 #include "cudaTimer.h"
+#include "cudaBasics.h"
 #include "tensor.h"
 
 std::vector<float> getVectorWithRandomNumbers(const uint32_t size)
@@ -32,7 +33,7 @@ float benchMarkFunc(std::function<void(void)> func)
     std::vector<float> benchTimes;
     cudabasic::cudaTimer timer;
 
-    const int32_t benchCount = 1000;
+    const int32_t benchCount = 100;
     for (size_t i = 0; i < benchCount; i++)
     {
         timer.startTimer();
@@ -66,13 +67,11 @@ struct matrixSize
     }
 };
 
-void benchMarkMatrixMultColumnsVsRows(std::string folder, std::string filename)
+void benchMarkMatrixMultColumnsVsRows(std::string folder, std::string filename, const uint32_t elementCount)
 {
     std::filesystem::create_directory(folder);
 
-    std::string filepath = folder + "/" + filename;
-
-    const uint32_t elementCount = 1024;
+    std::string filepath = folder + "/" + filename + ".txt";
 
     std::vector<matrixSize> matSizes;
     for (size_t i = 1; i <= elementCount; i++)
@@ -94,6 +93,27 @@ void benchMarkMatrixMultColumnsVsRows(std::string folder, std::string filename)
 
     std::ofstream file(filepath);
     file << "cols/rows; time in ms" << std::endl;
+
+    {
+        const matrixSize matSize = matSizes[0];
+
+        auto aData = getVectorWithRandomNumbers(matSize.columns * matSize.rows);
+        auto bData = getVectorWithRandomNumbers(matSize.columns * matSize.rows);
+
+        dnnbasic::tensor<float> a({ matSize.rows, matSize.columns }, aData);
+        dnnbasic::tensor<float> b({ matSize.columns, matSize.rows }, bData);
+
+        std::vector<dnnbasic::tensor<float>*> resultTensors;
+        float time = benchMarkFunc([&]()
+            {
+                resultTensors.push_back(a.matMul(b));
+            });
+
+        for (size_t z = 0; z < resultTensors.size(); z++)
+        {
+            delete resultTensors[z];
+        }
+    }
 
     for (size_t i = 0; i < matSizes.size(); i++)
     {
@@ -125,5 +145,9 @@ void benchMarkMatrixMultColumnsVsRows(std::string folder, std::string filename)
 
 int main()
 {
-    benchMarkMatrixMultColumnsVsRows("matmul", "static_block_size.txt");
+    for (size_t i = 256; i <= 2048; i += 256)
+    {
+        benchMarkMatrixMultColumnsVsRows("matmul/static_block_size", "matrix_size-" + std::to_string(i), i);
+    }
+
 }
