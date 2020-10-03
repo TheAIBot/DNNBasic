@@ -2,6 +2,7 @@
 #include <vector>
 #include <cstdint>
 #include "tensor.h"
+#include "tensor_node_no_grad.h"
 #include "tensor_matrix_kernels.cuh"
 #include "tensor_multi_dim_matrix_mul.cuh"
 

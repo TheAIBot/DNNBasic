@@ -1,7 +1,8 @@
 #pragma once
 #include "Tensor.h"
 #include "Layer.h"
-#include ""
+
+
 namespace dnnbasic 
 {
 	template<typename T>

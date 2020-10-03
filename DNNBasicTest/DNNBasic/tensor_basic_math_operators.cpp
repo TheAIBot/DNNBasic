@@ -5,6 +5,7 @@
 #include "tensor.h"
 #include "tensor_elementwise_kernels.cuh"
 #include "auto_graph.h"
+#include "tensor_node_no_grad.h"
 
 namespace dnnbasic
 {

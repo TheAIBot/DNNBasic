@@ -1,6 +1,7 @@
 #include <string>
 #include "tensor_permute_kernel.cuh"
 #include "tensor.h"
+#include "tensor_node_no_grad.h"
 
 namespace dnnbasic
 {
