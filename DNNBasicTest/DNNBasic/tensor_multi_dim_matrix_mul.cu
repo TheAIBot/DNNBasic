@@ -232,7 +232,7 @@ namespace dnnbasic
 
 		// As the dimensions of a multidim tensor is an aleternating series of heigh and witdth
 		// we multiply every odd dimension to get the total width and even to get the total height.
-		for (size_t i = 0; i < cDims.size(); i++)
+		for (size_t i = 0; i < cDims.size() - 2; i++)
 		{
 			if (i%2 == 0)
 			{
