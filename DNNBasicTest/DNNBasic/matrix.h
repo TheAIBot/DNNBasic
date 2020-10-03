@@ -29,14 +29,12 @@ namespace dnnbasic
 		__device__ __host__ cudabasic::span<T> operator[](const uint32_t rowIndex)
 		{
 			assert(rowIndex < rows);
-			return &arr[rowIndex * columns];
 			return cudabasic::span<T>(arr + rowIndex * columns, columns);
 		}
 
 		__device__ __host__ const cudabasic::span<T> operator[](const uint32_t rowIndex) const
 		{
 			assert(rowIndex < rows);
-			return &arr[rowIndex * columns];
 			return cudabasic::span<T>(arr + rowIndex * columns, columns);
 		}
 
