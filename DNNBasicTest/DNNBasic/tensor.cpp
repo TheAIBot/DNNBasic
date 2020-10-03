@@ -71,6 +71,18 @@ namespace dnnbasic
 	}
 
 	template<typename T>
+	void tensor<T>::setNode(tensorNode<T>* inNode)
+	{
+		this->data->tensorOp = std::shared_ptr<tensorNode<T>>(inNode);
+	}
+
+	template<typename T>
+	optional<std::shared_ptr<tensorNode<T>>> tensor<T>::getNode()
+	{
+		return this->data->tensorOp;
+	}
+
+	template<typename T>
 	void tensor<T>::makeRandom(T min, T max)
 	{
 		//std::default_random_engine rngGen;

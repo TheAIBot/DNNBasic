@@ -6,10 +6,13 @@
 #include <random>
 #include <numeric>
 #include <memory>
+#include <stdexcept>
+#include <assert.h>
+#include "optional.h"
 #include "span.h"
 #include "gpuArray.h"
 #include "matrix.h"
-//#include "FBPropagation.h"
+#include "FBPropagation.h"
 
 namespace dnnbasic
 {
@@ -21,23 +24,17 @@ namespace dnnbasic
 		namedDim(uint32_t dim, std::string name);
 	};
 
-	//template<typename T>
-	//class tensorOpNode : fbpropagation<T>
-	//{
+	template<typename T>
+	class tensorNode : public fbpropagation<T>
+	{
+	private:
+		tensor<T> forward(const tensor<T>& x) const override
+		{
+			throw new std::runtime_error("Wait how you do that?");
+		}
 
-	//};
+	};
 
-	//template<typename T>
-	//class tensorOpAdd : tensorOpNode<T>
-	//{
-	//	tensor<T> left;
-	//	tensor<T> right;
-
-	//	tensor<T>& backward(const tensor<T>& estimatedLoss, const tensor<T>& functionOut) const override
-	//	{
-
-	//	}
-	//};
 
 	template<typename T>
 	class tensorData
@@ -45,7 +42,7 @@ namespace dnnbasic
 	public:
 		std::vector<namedDim> dimension;
 		cudabasic::gpuArray<T> arr;
-		//tensorOpNode<T> tensorOp;
+		optional<std::shared_ptr<tensorNode<T>>> tensorOp;
 
 		tensorData(std::vector<uint32_t> dimensions) : arr(std::accumulate(dimensions.begin(), dimensions.end(), 1, std::multiplies<uint32_t>()))
 		{
@@ -67,7 +64,8 @@ namespace dnnbasic
 		tensor(std::vector<uint32_t> dimensions, std::vector<std::string> names);
 		tensor(std::vector<uint32_t> dimensions, std::vector<std::string> names, std::vector<T> values);
 
-
+		void setNode(tensorNode<T>* inNode);
+		optional<std::shared_ptr<tensorNode<T>>> getNode();
 
 		void makeRandom(T min, T max);
 		uint32_t elementCount() const;
@@ -102,4 +100,5 @@ namespace dnnbasic
 	template<typename T> tensor<T> operator-(const tensor<T>& left, const T& right);
 	template<typename T> tensor<T> operator-(const T& left, const tensor<T>& right);
 	template<typename T> tensor<T> operator-(const tensor<T>& left);
+
 }

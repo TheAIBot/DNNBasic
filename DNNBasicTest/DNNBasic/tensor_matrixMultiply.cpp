@@ -200,6 +200,11 @@ namespace dnnbasic
 		{
 			tensor<T> child = createTensorWithMatrixMultiplyMatrixDims(*this, right);
 
+			if (autoGraph::makeGraph)
+			{
+				child.setNode(new tensorNodeNoGrad<T>({ *this, right }));
+			}
+
 			matrix<T> leftM = this->getMatrix();
 			matrix<T> rightM = right.getMatrix();
 			matrix<T> childM = child.getMatrix();
@@ -212,6 +217,10 @@ namespace dnnbasic
 		else if (canMatrixMultiplyVector(*this, right))
 		{
 			tensor<T> child = createTensorWithMatrixMultiplyVectorDims(*this, right);
+			if (autoGraph::makeGraph)
+			{
+				child.setNode(new tensorNodeNoGrad<T>({ *this, right }));
+			}
 
 			matrix<T> leftM = this->getMatrix();
 			matrix<T> rightM = right.getMatrixWith1Width();
@@ -225,6 +234,10 @@ namespace dnnbasic
 		else if (canVectorMultiplyMatrix(*this, right))
 		{
 			tensor<T> child = createTensorWithVectorMultiplyMatrixDims(*this, right);
+			if (autoGraph::makeGraph)
+			{
+				child.setNode(new tensorNodeNoGrad<T>({ *this, right }));
+			}
 
 			matrix<T> leftM = this->getMatrixWith1Height();
 			matrix<T> rightM = right.getMatrix();
@@ -238,6 +251,10 @@ namespace dnnbasic
 		else if (canBroadcastMatrixMultiplyBroadcastMatrix(*this, right))
 		{
 			tensor<T> child = createTensorWithBroadcastMatrixMultiplyBroadcastMatrixDims(*this, right);
+			if (autoGraph::makeGraph)
+			{
+				child.setNode(new tensorNodeNoGrad<T>({ *this, right }));
+			}
 
 			// make kernel call
 			tensorMultiDimMatrixMul(*this, right, child);

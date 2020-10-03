@@ -1,6 +1,7 @@
 #pragma once
 #include "FBPropagation.h"
 #include "Tensor.h"
+#include "auto_graph.h"
 namespace dnnbasic::layer
 {
 	template<typename T>
@@ -24,10 +25,18 @@ namespace dnnbasic::layer
 		}
 
 
-		tensor<T>& forward(const tensor<T>& x) const override
+		tensor<T> forward(const tensor<T>& x) const override
 		{
+			const bool oldMakeGraph = autoGraph::makeGraph;
+			autoGraph::makeGraph = false;
+
+			auto output = this->weights.matMul(x) + this->biases;
+
+			autoGraph::makeGraph = oldMakeGraph;
+
+			return output;
 		}
-		tensor<T>& backward(const tensor<T>& estimatedLoss, const tensor<T>& functionOut) const override
+		void backward(const tensor<T>& estimatedLoss, const tensor<T>& functionOut) const override
 		{
 
 		}

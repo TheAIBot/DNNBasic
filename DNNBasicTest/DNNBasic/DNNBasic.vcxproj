@@ -21,6 +21,7 @@
     <ClInclude Include="..\..\..\CudaBasicClasses\gpuArray.h" />
     <ClInclude Include="..\..\..\CudaBasicClasses\matrix.h" />
     <ClInclude Include="..\..\..\CudaBasicClasses\span.h" />
+    <ClInclude Include="auto_graph.h" />
     <ClInclude Include="FBPropagation.h" />
     <ClInclude Include="Functions.h" />
     <ClInclude Include="kernel_tools.h" />
@@ -66,6 +67,8 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v142</PlatformToolset>
+    <VCToolsVersion>
+    </VCToolsVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -87,6 +90,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;WIN64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\..\CudaBasicClasses;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

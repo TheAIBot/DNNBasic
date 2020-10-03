@@ -4,6 +4,7 @@
 #include "span.h"
 #include "tensor.h"
 #include "tensor_elementwise_kernels.cuh"
+#include "auto_graph.h"
 
 namespace dnnbasic
 {
@@ -91,6 +92,10 @@ namespace dnnbasic
 		}
 
 		tensor<T> child = createTensorWithSameDims(left, right);
+		if (autoGraph::makeGraph)
+		{
+			child.setNode(new tensorNodeNoGrad<T>({ left, right }));
+		}
 
 		// make kernel call
 		tensorMultiply(left, right, child);
@@ -108,6 +113,10 @@ namespace dnnbasic
 	tensor<T> operator*(const T& left, const tensor<T>& right)
 	{
 		tensor<T> child = createTensorWithSameDims(right);
+		if (autoGraph::makeGraph)
+		{
+			child.setNode(new tensorNodeNoGrad<T>({ right }));
+		}
 
 		// make kernel call
 		tensorMultiply(left, right, child);
@@ -124,6 +133,10 @@ namespace dnnbasic
 		}
 
 		tensor<T> child = createTensorWithSameDims(left, right);
+		if (autoGraph::makeGraph)
+		{
+			child.setNode(new tensorNodeNoGrad<T>({ left, right }));
+		}
 
 		// make kernel call
 		tensorAdd(left, right, child);
@@ -141,6 +154,10 @@ namespace dnnbasic
 	tensor<T> operator+(const T& left, const tensor<T>& right)
 	{
 		tensor<T> child = createTensorWithSameDims(right);
+		if (autoGraph::makeGraph)
+		{
+			child.setNode(new tensorNodeNoGrad<T>({right}));
+		}
 
 		// make kernel call
 		tensorAdd(left, right, child);
@@ -157,7 +174,10 @@ namespace dnnbasic
 		}
 
 		tensor<T> child = createTensorWithSameDims(left, right);
-
+		if (autoGraph::makeGraph)
+		{
+			child.setNode(new tensorNodeNoGrad<T>({ left, right }));
+		}
 		// make kernel call
 		tensorSubtract(left, right, child);
 
@@ -175,6 +195,10 @@ namespace dnnbasic
 	tensor<T> operator-(const T& left, const tensor<T>& right)
 	{
 		tensor<T> child = createTensorWithSameDims(right);
+		if (autoGraph::makeGraph)
+		{
+			child.setNode(new tensorNodeNoGrad<T>({ right }));
+		}
 
 		// make kernel call
 		tensorSubtract(left, right, child);

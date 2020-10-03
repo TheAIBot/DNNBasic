@@ -78,6 +78,9 @@
     <ClInclude Include="tensor_multi_dim_matrix_mul.cuh">
       <Filter>dnnbasic\tensor\kernels</Filter>
     </ClInclude>
+    <ClInclude Include="auto_graph.h">
+      <Filter>dnnbasic</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\CudaBasicClasses\cudaBasics.cpp">

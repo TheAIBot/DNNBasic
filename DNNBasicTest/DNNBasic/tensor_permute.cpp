@@ -42,7 +42,10 @@ namespace dnnbasic
 		}
 
 		tensor<T> child = createTensorWithPermutedDims(*this, dims);
-
+		if (autoGraph::makeGraph)
+		{
+			child.setNode(new tensorNodeNoGrad<T>({ *this }));
+		}
 		// make kernel call
 		tensorPermute(*this, child, dims);
 
