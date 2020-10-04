@@ -42,6 +42,7 @@
     <ClCompile Include="..\..\..\CudaBasicClasses\cudaBasics.cpp" />
     <ClCompile Include="..\..\..\CudaBasicClasses\cudaStream.cpp" />
     <ClCompile Include="..\..\..\CudaBasicClasses\cudaTimer.cpp" />
+    <ClCompile Include="auto_graph.cpp" />
     <ClCompile Include="kernel_tools.cpp" />
     <ClCompile Include="tensor_basic_math_operators.cpp" />
     <ClCompile Include="tensor_data.cpp" />

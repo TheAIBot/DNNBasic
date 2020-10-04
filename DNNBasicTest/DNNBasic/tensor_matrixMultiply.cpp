@@ -200,8 +200,7 @@ namespace dnnbasic
 		if (canMatrixMultiplyMatrix(*this, right))
 		{
 			tensor<T> child = createTensorWithMatrixMultiplyMatrixDims(*this, right);
-
-			if (autoGraph::makeGraph)
+			if (autoGraph::getMakeGraph())
 			{
 				child.setNode(new tensorNodeNoGrad<T>({ *this, right }));
 			}
@@ -218,7 +217,7 @@ namespace dnnbasic
 		else if (canMatrixMultiplyVector(*this, right))
 		{
 			tensor<T> child = createTensorWithMatrixMultiplyVectorDims(*this, right);
-			if (autoGraph::makeGraph)
+			if (autoGraph::getMakeGraph())
 			{
 				child.setNode(new tensorNodeNoGrad<T>({ *this, right }));
 			}
@@ -235,7 +234,7 @@ namespace dnnbasic
 		else if (canVectorMultiplyMatrix(*this, right))
 		{
 			tensor<T> child = createTensorWithVectorMultiplyMatrixDims(*this, right);
-			if (autoGraph::makeGraph)
+			if (autoGraph::getMakeGraph())
 			{
 				child.setNode(new tensorNodeNoGrad<T>({ *this, right }));
 			}
@@ -252,7 +251,7 @@ namespace dnnbasic
 		else if (canBroadcastMatrixMultiplyBroadcastMatrix(*this, right))
 		{
 			tensor<T> child = createTensorWithBroadcastMatrixMultiplyBroadcastMatrixDims(*this, right);
-			if (autoGraph::makeGraph)
+			if (autoGraph::getMakeGraph())
 			{
 				child.setNode(new tensorNodeNoGrad<T>({ *this, right }));
 			}

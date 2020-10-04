@@ -93,7 +93,7 @@ namespace dnnbasic
 		}
 
 		tensor<T> child = createTensorWithSameDims(left, right);
-		if (autoGraph::makeGraph)
+		if (autoGraph::getMakeGraph())
 		{
 			child.setNode(new tensorNodeNoGrad<T>({ left, right }));
 		}
@@ -114,7 +114,7 @@ namespace dnnbasic
 	tensor<T> operator*(const T& left, const tensor<T>& right)
 	{
 		tensor<T> child = createTensorWithSameDims(right);
-		if (autoGraph::makeGraph)
+		if (autoGraph::getMakeGraph())
 		{
 			child.setNode(new tensorNodeNoGrad<T>({ right }));
 		}
@@ -134,7 +134,7 @@ namespace dnnbasic
 		}
 
 		tensor<T> child = createTensorWithSameDims(left, right);
-		if (autoGraph::makeGraph)
+		if (autoGraph::getMakeGraph())
 		{
 			child.setNode(new tensorNodeNoGrad<T>({ left, right }));
 		}
@@ -155,7 +155,7 @@ namespace dnnbasic
 	tensor<T> operator+(const T& left, const tensor<T>& right)
 	{
 		tensor<T> child = createTensorWithSameDims(right);
-		if (autoGraph::makeGraph)
+		if (autoGraph::getMakeGraph())
 		{
 			child.setNode(new tensorNodeNoGrad<T>({right}));
 		}
@@ -175,7 +175,7 @@ namespace dnnbasic
 		}
 
 		tensor<T> child = createTensorWithSameDims(left, right);
-		if (autoGraph::makeGraph)
+		if (autoGraph::getMakeGraph())
 		{
 			child.setNode(new tensorNodeNoGrad<T>({ left, right }));
 		}
@@ -196,7 +196,7 @@ namespace dnnbasic
 	tensor<T> operator-(const T& left, const tensor<T>& right)
 	{
 		tensor<T> child = createTensorWithSameDims(right);
-		if (autoGraph::makeGraph)
+		if (autoGraph::getMakeGraph())
 		{
 			child.setNode(new tensorNodeNoGrad<T>({ right }));
 		}

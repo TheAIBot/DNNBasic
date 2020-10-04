@@ -128,6 +128,9 @@
     <ClCompile Include="tensor_data.cpp">
       <Filter>dnnbasic\tensor</Filter>
     </ClCompile>
+    <ClCompile Include="auto_graph.cpp">
+      <Filter>dnnbasic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="tensor_elementwise_kernels.cu">

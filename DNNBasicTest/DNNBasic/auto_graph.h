@@ -1,7 +1,18 @@
 #pragma once
-#include <thread>
+
 
 namespace dnnbasic::autoGraph
 {
-	thread_local bool makeGraph = true;
+	void setMakeGraph(bool value);
+	bool getMakeGraph();
+
+	class scopeLevelDisableAutoGrad
+	{
+	private:
+		bool oldValue;
+
+	public:
+		scopeLevelDisableAutoGrad();
+		~scopeLevelDisableAutoGrad();
+	};
 }
