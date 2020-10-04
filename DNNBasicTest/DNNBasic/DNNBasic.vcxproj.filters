@@ -93,6 +93,12 @@
     <ClInclude Include="tensor_node_no_grad.h">
       <Filter>dnnbasic\tensor\tensorNodes</Filter>
     </ClInclude>
+    <ClInclude Include="tensor_node.h">
+      <Filter>dnnbasic\tensor\tensorNodes</Filter>
+    </ClInclude>
+    <ClInclude Include="tensor_data.h">
+      <Filter>dnnbasic\tensor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\CudaBasicClasses\cudaBasics.cpp">
@@ -118,6 +124,9 @@
     </ClCompile>
     <ClCompile Include="kernel_tools.cpp">
       <Filter>dnnbasic\tensor\kernels</Filter>
+    </ClCompile>
+    <ClCompile Include="tensor_data.cpp">
+      <Filter>dnnbasic\tensor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

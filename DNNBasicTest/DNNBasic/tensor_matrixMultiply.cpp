@@ -206,9 +206,9 @@ namespace dnnbasic
 				child.setNode(new tensorNodeNoGrad<T>({ *this, right }));
 			}
 
-			matrix<T> leftM = this->getMatrix();
-			matrix<T> rightM = right.getMatrix();
-			matrix<T> childM = child.getMatrix();
+			matrix<T> leftM = this->data->getMatrix();
+			matrix<T> rightM = right.data->getMatrix();
+			matrix<T> childM = child.data->getMatrix();
 
 			// make kernel call
 			tensorMatrixMul(leftM, rightM, childM);
@@ -223,9 +223,9 @@ namespace dnnbasic
 				child.setNode(new tensorNodeNoGrad<T>({ *this, right }));
 			}
 
-			matrix<T> leftM = this->getMatrix();
-			matrix<T> rightM = right.getMatrixWith1Width();
-			matrix<T> childM = child.getMatrixWith1Width();
+			matrix<T> leftM = this->data->getMatrix();
+			matrix<T> rightM = right.data->getMatrixWith1Width();
+			matrix<T> childM = child.data->getMatrixWith1Width();
 
 			// make kernel call
 			tensorMatrixMul(leftM, rightM, childM);
@@ -240,9 +240,9 @@ namespace dnnbasic
 				child.setNode(new tensorNodeNoGrad<T>({ *this, right }));
 			}
 
-			matrix<T> leftM = this->getMatrixWith1Height();
-			matrix<T> rightM = right.getMatrix();
-			matrix<T> childM = child.getMatrixWith1Height();
+			matrix<T> leftM = this->data->getMatrixWith1Height();
+			matrix<T> rightM = right.data->getMatrix();
+			matrix<T> childM = child.data->getMatrixWith1Height();
 
 			// make kernel call
 			tensorMatrixMul(leftM, rightM, childM);

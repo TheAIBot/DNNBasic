@@ -3,53 +3,15 @@
 #include <string>
 #include <vector>
 #include <cstdint>
-#include <random>
-#include <numeric>
 #include <memory>
 #include <stdexcept>
-#include <assert.h>
 #include "optional.h"
 #include "span.h"
-#include "gpuArray.h"
 #include "matrix.h"
-#include "FBPropagation.h"
+#include "tensor_data.h"
 
 namespace dnnbasic
 {
-	struct namedDim
-	{
-		std::string name;
-		uint32_t dim;
-
-		namedDim(uint32_t dim, std::string name);
-	};
-
-	template<typename T>
-	class tensorNode : public fbpropagation<T>
-	{
-	private:
-		tensor<T> forward(const tensor<T>& x) const override
-		{
-			throw new std::runtime_error("Wait how you do that?");
-		}
-
-	};
-
-
-	template<typename T>
-	class tensorData
-	{
-	public:
-		std::vector<namedDim> dimension;
-		cudabasic::gpuArray<T> arr;
-		optional<std::shared_ptr<tensorNode<T>>> tensorOp;
-
-		tensorData(std::vector<uint32_t> dimensions) : arr(std::accumulate(dimensions.begin(), dimensions.end(), 1, std::multiplies<uint32_t>()))
-		{
-
-		}
-	};
-
 	template<typename T>
 	class tensor
 	{
@@ -77,9 +39,6 @@ namespace dnnbasic
 		//void permute();
 		//void view();
 		//void resize();
-		matrix<T> getMatrix() const;
-		matrix<T> getMatrixWith1Width() const;
-		matrix<T> getMatrixWith1Height() const;
 
 		tensor<T> matMul(const tensor<T>& right) const;
 		tensor<T> permute(std::initializer_list<uint32_t> dims) const;
@@ -100,5 +59,4 @@ namespace dnnbasic
 	template<typename T> tensor<T> operator-(const tensor<T>& left, const T& right);
 	template<typename T> tensor<T> operator-(const T& left, const tensor<T>& right);
 	template<typename T> tensor<T> operator-(const tensor<T>& left);
-
 }

@@ -1,7 +1,6 @@
 #pragma once
-#include "Tensor.h"
+#include "tensor.h"
 #include "Layer.h"
-
 
 namespace dnnbasic 
 {

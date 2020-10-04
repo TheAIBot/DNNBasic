@@ -1,7 +1,9 @@
 #pragma once
 #include "FBPropagation.h"
-#include "Tensor.h"
+#include "tensor.h"
+#include "tensor_node_linear.h"
 #include "auto_graph.h"
+
 namespace dnnbasic::layer
 {
 	template<typename T>

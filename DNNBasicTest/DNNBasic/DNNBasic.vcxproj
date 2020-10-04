@@ -29,9 +29,11 @@
     <ClInclude Include="matrix.h" />
     <ClInclude Include="optional.h" />
     <ClInclude Include="tensor.h" />
+    <ClInclude Include="tensor_data.h" />
     <ClInclude Include="tensor_elementwise_kernels.cuh" />
     <ClInclude Include="tensor_matrix_kernels.cuh" />
     <ClInclude Include="tensor_multi_dim_matrix_mul.cuh" />
+    <ClInclude Include="tensor_node.h" />
     <ClInclude Include="tensor_node_no_grad.h" />
     <ClInclude Include="tensor_node_linear.h" />
     <ClInclude Include="tensor_permute_kernel.cuh" />
@@ -42,6 +44,7 @@
     <ClCompile Include="..\..\..\CudaBasicClasses\cudaTimer.cpp" />
     <ClCompile Include="kernel_tools.cpp" />
     <ClCompile Include="tensor_basic_math_operators.cpp" />
+    <ClCompile Include="tensor_data.cpp" />
     <ClCompile Include="tensor_matrixMultiply.cpp" />
     <ClCompile Include="tensor_permute.cpp" />
     <ClCompile Include="tensor.cpp" />

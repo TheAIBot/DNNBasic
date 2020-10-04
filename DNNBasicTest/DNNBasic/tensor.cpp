@@ -2,7 +2,6 @@
 #include <vector>
 #include <cstdint>
 #include <random>
-#include <numeric>
 #include "span.h"
 #include "gpuArray.h"
 #include "matrix.h"
@@ -14,13 +13,6 @@
 
 namespace dnnbasic
 {
-	namedDim::namedDim(uint32_t dim, std::string name = "")
-	{
-		this->name = name;
-		this->dim = dim;
-	}
-
-
 	template<typename T>
 	tensor<T>::tensor(std::vector<uint32_t> dims) : tensor(dims, std::vector<std::string>(dims.size()))
 	{ }
@@ -122,21 +114,6 @@ namespace dnnbasic
 	//void permute();
 	//void view();
 	//void resize();
-	template<typename T>
-	matrix<T> tensor<T>::getMatrix() const
-	{
-		return matrix<T>(this->data->arr.getGPUArrayConst().begin(), this->data->dimension[1].dim, this->data->dimension[0].dim);
-	}
-	template<typename T>
-	matrix<T> tensor<T>::getMatrixWith1Width() const
-	{
-		return matrix<T>(this->data->arr.getGPUArrayConst().begin(), 1, this->data->dimension[0].dim);
-	}
-	template<typename T>
-	matrix<T> tensor<T>::getMatrixWith1Height() const
-	{
-		return matrix<T>(this->data->arr.getGPUArrayConst().begin(), this->data->dimension[0].dim, 1);
-	}
 
 
 	template class tensor<bool>;
