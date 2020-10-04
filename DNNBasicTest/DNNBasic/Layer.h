@@ -12,10 +12,12 @@ namespace dnnbasic::layer
 	private:
 		tensor<T> weights;
 		tensor<T> biases;
+		bool useBias;
 
 	public:
 		linear(int inputDim, int outputDim, bool useBias)
 		{
+			this->useBias = useBias;
 			this->weights = tensor<T>({ inputDim,outputDim });
 			this->weights.makeRandom();
 
@@ -29,12 +31,18 @@ namespace dnnbasic::layer
 
 		tensor<T> forward(const tensor<T>& x) const override
 		{
-			const bool oldMakeGraph = autoGraph::makeGraph;
-			autoGraph::makeGraph = false;
+			autoGraph::scopeLevelDisableAutoGrad t;
 
-			auto output = this->weights.matMul(x) + this->biases;
-
-			autoGraph::makeGraph = oldMakeGraph;
+			tensor<T> output;
+			if (useBias)
+			{
+				output = this->weights.matMul(x) + this->biases;
+			}
+			else
+			{
+				output = this->weights.matMul(x);
+			}
+			output.setNode(tensorNodeLinearLayer<T>(x, output, this));
 
 			return output;
 		}
