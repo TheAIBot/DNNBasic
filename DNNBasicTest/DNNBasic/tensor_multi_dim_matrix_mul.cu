@@ -142,12 +142,11 @@ namespace dnnbasic
 			// Convert to matricies
 			uint32_t aMatrixIndex = 0;
 			uint32_t bMatrixIndex = 0;
-			uint32_t cMatrixIndex = 0;
+			const uint32_t cMatrixIndex = idx;
 			for (size_t i = 0; i < cDimStrides.size() - matrixDimsCount; i++)
 			{
-				aMatrixIndex += index[i] * aDimStrides[i];// / (aWidth * aHeight);
-				bMatrixIndex += index[i] * bDimStrides[i];// / (bWidth * bHeight);
-				cMatrixIndex += index[i] * cDimStrides[i];// / (cMatrixWidth * cMatrixHeight);
+				aMatrixIndex += index[i] * aDimStrides[i];
+				bMatrixIndex += index[i] * bDimStrides[i];
 			}
 
 			const matrix<T> aMatrix(&a[aMatrixIndex], aWidth, aHeight);
@@ -229,7 +228,7 @@ namespace dnnbasic
 		const uint32_t aHeight = aDims[aDims.size() - 2];
 		const uint32_t bHeight = bDims[bDims.size() - 2];
 
-		const uint32_t blockSize = 512;
+		const uint32_t blockSize = 784;
 		const dim3 blockDim(blockSize);
 		const dim3 gridDim(1);
 		const uint32_t num_sub_blocks = integerCeilDivision(aWidth, blockSize);
