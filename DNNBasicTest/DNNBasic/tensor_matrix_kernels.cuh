@@ -6,6 +6,9 @@
 
 namespace dnnbasic
 {
+	template <typename T>
+	__global__ void matrixMultiplication(const matrix<T> a, const matrix<T> b, matrix<T> c, const uint32_t num_sub_blocks, const uint32_t blockSize);
+
 	void tensorMatrixMul(const matrix<bool>& left, const matrix<bool>& right, matrix<bool>& result);
 	void tensorMatrixMul(const matrix<uint8_t>& left, const matrix<uint8_t>& right, matrix<uint8_t>& result);
 	void tensorMatrixMul(const matrix<uint16_t>& left, const matrix<uint16_t>& right, matrix<uint16_t>& result);
