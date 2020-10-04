@@ -42,7 +42,7 @@ namespace dnnbasic::layer
 			{
 				output = this->weights.matMul(x);
 			}
-			output.setNode(tensorNodeLinearLayer<T>(x, output, this));
+			output.setNode(new tensorNodeLinearLayer<T>(x, output, this));
 
 			return output;
 		}
