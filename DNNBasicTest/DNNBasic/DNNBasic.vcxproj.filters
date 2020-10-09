@@ -69,9 +69,6 @@
     <ClInclude Include="tensor_matrix_kernels.cuh">
       <Filter>dnnbasic\tensor\kernels</Filter>
     </ClInclude>
-    <ClInclude Include="tensor.h">
-      <Filter>dnnbasic\tensor</Filter>
-    </ClInclude>
     <ClInclude Include="tensor_permute_kernel.cuh">
       <Filter>dnnbasic\tensor\kernels</Filter>
     </ClInclude>
@@ -101,6 +98,9 @@
     </ClInclude>
     <ClInclude Include="tensor_cast_kernel.cuh">
       <Filter>dnnbasic\tensor\kernels</Filter>
+    </ClInclude>
+    <ClInclude Include="tensor.h">
+      <Filter>dnnbasic\tensor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

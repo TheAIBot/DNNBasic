@@ -162,13 +162,7 @@
     <ClInclude Include="..\DNNBasic\Functions.h" />
     <ClInclude Include="..\DNNBasic\Layer.h" />
     <ClInclude Include="..\DNNBasic\matrix.h" />
-    <ClInclude Include="..\DNNBasic\Tensor.h" />
-    <ClInclude Include="..\DNNBasic\tensor_def.h" />
-    <ClInclude Include="..\DNNBasic\tensor_operators.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\DNNBasic\tensor_elementwise_kernels.cuh" />
-    <None Include="..\DNNBasic\tensor_matrix_kernels.cuh" />
+    <ClInclude Include="..\DNNBasic\tensor.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

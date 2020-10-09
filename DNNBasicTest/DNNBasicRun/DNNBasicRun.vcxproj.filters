@@ -19,9 +19,6 @@
     <Filter Include="Header Files\dnnBasic">
       <UniqueIdentifier>{a5966229-42f7-4923-9c55-098b4a504166}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\dnnBasic\NewFilter1">
-      <UniqueIdentifier>{512f3914-b6ea-4d4c-90e7-3d7482e7a563}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DNNBasicRun.cpp">
@@ -62,31 +59,18 @@
     <ClInclude Include="..\DNNBasic\FBPropagation.h">
       <Filter>Header Files\dnnBasic</Filter>
     </ClInclude>
-    <ClInclude Include="..\DNNBasic\Functions.h">
-      <Filter>Header Files\dnnBasic</Filter>
-    </ClInclude>
     <ClInclude Include="..\DNNBasic\Layer.h">
       <Filter>Header Files\dnnBasic</Filter>
     </ClInclude>
     <ClInclude Include="..\DNNBasic\matrix.h">
       <Filter>Header Files\dnnBasic</Filter>
     </ClInclude>
-    <ClInclude Include="..\DNNBasic\Tensor.h">
       <Filter>Header Files\dnnBasic</Filter>
     </ClInclude>
-    <ClInclude Include="..\DNNBasic\tensor_def.h">
       <Filter>Header Files\dnnBasic</Filter>
     </ClInclude>
-    <ClInclude Include="..\DNNBasic\tensor_operators.h">
+    <ClInclude Include="..\DNNBasic\tensor.h">
       <Filter>Header Files\dnnBasic</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\DNNBasic\tensor_elementwise_kernels.cuh">
-      <Filter>Header Files\dnnBasic</Filter>
-    </None>
-    <None Include="..\DNNBasic\tensor_matrix_kernels.cuh">
-      <Filter>Header Files\dnnBasic</Filter>
-    </None>
   </ItemGroup>
 </Project>

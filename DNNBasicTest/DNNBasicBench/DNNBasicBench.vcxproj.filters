@@ -38,9 +38,6 @@
     <ClInclude Include="..\DNNBasic\matrix.h">
       <Filter>Header Files\dnnbasic</Filter>
     </ClInclude>
-    <ClInclude Include="..\DNNBasic\tensor.h">
-      <Filter>Header Files\dnnbasic</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\CudaBasicClasses\cpuGpuArray.h">
       <Filter>Header Files\cudabasic</Filter>
     </ClInclude>
@@ -70,6 +67,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\CudaBasicClasses\span.h">
       <Filter>Header Files\cudabasic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DNNBasic\tensor.h">
+      <Filter>Header Files\dnnbasic</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
