@@ -14,7 +14,7 @@ namespace dnnbasic::optimizer
 		template<typename T>
 		void update(tensor<T>& weights, tensor<T>& gradients)
 		{
-			auto lrGrad = (gradients.cast<float>() * larningRate).cast<T>();
+			auto lrGrad = (gradients.cast<float>() * this->learningRate).cast<T>();
 			tensorSubtract(weights, lrGrad, weights);
 		}
 

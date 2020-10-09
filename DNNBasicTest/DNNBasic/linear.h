@@ -15,7 +15,7 @@ namespace dnnbasic
 			bool useBias;
 
 		public:
-			linear(int inputDim, int outputDim, bool useBias);
+			linear(const uint32_t inputDim, const uint32_t outputDim, const bool useBias);
 
 			tensor<T> forward(const tensor<T>& x) const override;
 			void backward(const tensor<T>& estimatedLoss, optimizer::optimizer* opti) const override;

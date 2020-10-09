@@ -8,16 +8,14 @@ namespace dnnbasic
 	{
 
 		template<typename T>
-		linear<T>::linear(int inputDim, int outputDim, bool useBias)
+		linear<T>::linear(const uint32_t inputDim, const uint32_t outputDim, const bool useBias) : weights({ inputDim,outputDim }), biases({ useBias ? outputDim : 0 })
 		{
 			this->useBias = useBias;
-			this->weights = tensor<T>({ inputDim,outputDim });
-			this->weights.makeRandom();
+			//this->weights.makeRandom();
 
 			if (useBias)
 			{
-				this->biases = tensor<T>({ outputDim });
-				this->biases.makeRandom();
+				//this->biases.makeRandom();
 			}
 		}
 
@@ -26,15 +24,9 @@ namespace dnnbasic
 		{
 			autoGraph::scopeLevelDisableAutoGrad t;
 
-			tensor<T> output;
-			if (useBias)
-			{
-				output = this->weights.matMul(x) + this->biases;
-			}
-			else
-			{
-				output = this->weights.matMul(x);
-			}
+			tensor<T> output = this->useBias ? 
+				this->weights.matMul(x) + this->biases :
+				this->weights.matMul(x);
 			output.setNode(new tensorNodeLinearLayer<T>(x, output, this));
 
 			return output;
@@ -44,5 +36,17 @@ namespace dnnbasic
 		{
 			autoGraph::scopeLevelDisableAutoGrad t;
 		}
+
+		template class linear<bool>;
+		template class linear<uint8_t>;
+		template class linear<uint16_t>;
+		template class linear<uint32_t>;
+		template class linear<uint64_t>;
+		template class linear<int8_t>;
+		template class linear<int16_t>;
+		template class linear<int32_t>;
+		template class linear<int64_t>;
+		template class linear<float>;
+		template class linear<double>;
 	}
 }
