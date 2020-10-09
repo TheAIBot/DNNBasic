@@ -7,6 +7,7 @@
 #include "matrix.h"
 #include "tensor.h"
 
+#include "tensor_cast.cpp"
 #include "tensor_permute.cpp"
 #include "tensor_matrixMultiply.cpp"
 #include "tensor_basic_math_operators.cpp"

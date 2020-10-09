@@ -45,6 +45,9 @@ namespace dnnbasic
 		tensor<T> permute(std::vector<uint32_t> dims) const;
 		tensor<T> permute(std::initializer_list<std::string> dims) const;
 		tensor<T> permute(std::vector<std::string> dims) const;
+
+		template<typename U>
+		tensor<U> cast() const;
 	};
 
 	template<typename T> bool operator==(const tensor<T>& left, const tensor<T>& right);

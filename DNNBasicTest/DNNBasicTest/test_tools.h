@@ -60,10 +60,10 @@ namespace DNNBasicTest
 	{
 		std::vector<T> numbers;
 
-		std::default_random_engine rngGen(7);
+		std::default_random_engine rngGen(size);
 		if constexpr (std::is_floating_point<T>::value)
 		{
-			std::uniform_real_distribution<T> dist(-1322, 64323);
+			std::uniform_real_distribution<T> dist(-13722, 64323);
 			for (size_t i = 0; i < size; i++)
 			{
 				numbers.push_back(dist(rngGen));
@@ -71,7 +71,7 @@ namespace DNNBasicTest
 		}
 		else if constexpr (std::is_signed<T>::value)
 		{
-			std::uniform_int_distribution<int32_t> dist(-1322, 64323);
+			std::uniform_int_distribution<int32_t> dist(-13722, 64323);
 			for (size_t i = 0; i < size; i++)
 			{
 				numbers.push_back((T)dist(rngGen));

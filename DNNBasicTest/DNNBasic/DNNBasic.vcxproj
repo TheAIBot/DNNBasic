@@ -29,6 +29,7 @@
     <ClInclude Include="matrix.h" />
     <ClInclude Include="optional.h" />
     <ClInclude Include="tensor.h" />
+    <ClInclude Include="tensor_cast_kernel.cuh" />
     <ClInclude Include="tensor_data.h" />
     <ClInclude Include="tensor_elementwise_kernels.cuh" />
     <ClInclude Include="tensor_matrix_kernels.cuh" />
@@ -45,12 +46,14 @@
     <ClCompile Include="auto_graph.cpp" />
     <ClCompile Include="kernel_tools.cpp" />
     <ClCompile Include="tensor_basic_math_operators.cpp" />
+    <ClCompile Include="tensor_cast.cpp" />
     <ClCompile Include="tensor_data.cpp" />
     <ClCompile Include="tensor_matrixMultiply.cpp" />
     <ClCompile Include="tensor_permute.cpp" />
     <ClCompile Include="tensor.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <CudaCompile Include="tensor_cast_kernel.cu" />
     <CudaCompile Include="tensor_elementwise_kernels.cu" />
     <CudaCompile Include="tensor_matrix_kernels.cu" />
     <CudaCompile Include="tensor_multi_dim_matrix_mul.cu" />
