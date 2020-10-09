@@ -1,7 +1,8 @@
 #pragma once
 #include "tensor.h"
-#include "Layer.h"
 #include "optional.h"
+#include "FBPropagation.h"
+#include "linear.h"
 
 namespace dnnbasic 
 {
@@ -10,18 +11,18 @@ namespace dnnbasic
 	{
 		optional<std::shared_ptr<tensorNode<T>>> inputNode;
 		tensor<T> outputTensor;
-		layer::linear<T>* layer;
+		layer::linear<T>* linear;
 
-		tensorNodeLinearLayer(tensor<T> input, tensor<T> output, layer::linear* layer)
+		tensorNodeLinearLayer(tensor<T> input, tensor<T> output, layer::linear<T>* linear)
 		{
 			this->inputNode = input.getNode();
 			this->outputTensor = output;
-			this->layer = layer;
+			this->linear = linear;
 		}
 
-		void backward(const tensor<T>& estimatedLoss, const tensor<T>& functionOut) const override
+		void backward(const tensor<T>& estimatedLoss, optimizer::optimizer* opti) const override
 		{
-			layer->backward(estimatedLoss, functionOut);
+			linear->backward(estimatedLoss, opti);
 		}
 	};
 }

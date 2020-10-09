@@ -22,11 +22,11 @@ namespace dnnbasic
 			}
 		}
 
-		void backward(const tensor<T>& estimatedLoss, const tensor<T>& functionOut) const override
+		void backward(const tensor<T>& estimatedLoss, optimizer::optimizer* opti) const override
 		{
 			for (size_t i = 0; i < nodes.size(); i++)
 			{
-				nodes[i]->backward(estimatedLoss, functionOut);
+				nodes[i]->backward(estimatedLoss, opti);
 			}
 		}
 	};

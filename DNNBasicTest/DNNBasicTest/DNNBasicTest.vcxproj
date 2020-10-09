@@ -162,6 +162,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="simple_nn_tests.cpp" />
     <ClCompile Include="tensor_cast_tests.cpp" />
     <ClCompile Include="tensor_elementwise_operator_tests.cpp" />
     <ClCompile Include="tensor_mat_mul_tests.cpp" />
@@ -181,7 +182,6 @@
     <ClInclude Include="..\..\..\CudaBasicClasses\span.h" />
     <ClInclude Include="..\DNNBasic\FBPropagation.h" />
     <ClInclude Include="..\DNNBasic\Functions.h" />
-    <ClInclude Include="..\DNNBasic\Layer.h" />
     <ClInclude Include="..\DNNBasic\matrix.h" />
     <ClInclude Include="..\DNNBasic\tensor.h" />
     <ClInclude Include="test_tools.h" />

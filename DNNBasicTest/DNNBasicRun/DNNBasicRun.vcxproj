@@ -160,7 +160,7 @@
     <ClInclude Include="..\..\..\CudaBasicClasses\span.h" />
     <ClInclude Include="..\DNNBasic\FBPropagation.h" />
     <ClInclude Include="..\DNNBasic\Functions.h" />
-    <ClInclude Include="..\DNNBasic\Layer.h" />
+    <ClInclude Include="..\DNNBasic\linear.h" />
     <ClInclude Include="..\DNNBasic\matrix.h" />
     <ClInclude Include="..\DNNBasic\tensor.h" />
   </ItemGroup>

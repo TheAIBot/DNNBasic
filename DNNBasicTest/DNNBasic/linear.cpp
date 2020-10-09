@@ -1,21 +1,14 @@
-#pragma once
-#include "FBPropagation.h"
-#include "tensor.h"
+#include "linear.h"
 #include "tensor_node_linear.h"
 #include "auto_graph.h"
 
-namespace dnnbasic::layer
+namespace dnnbasic
 {
-	template<typename T>
-	class linear : fbpropagation<T>
+	namespace layer
 	{
-	private:
-		tensor<T> weights;
-		tensor<T> biases;
-		bool useBias;
 
-	public:
-		linear(int inputDim, int outputDim, bool useBias)
+		template<typename T>
+		linear<T>::linear(int inputDim, int outputDim, bool useBias)
 		{
 			this->useBias = useBias;
 			this->weights = tensor<T>({ inputDim,outputDim });
@@ -28,8 +21,8 @@ namespace dnnbasic::layer
 			}
 		}
 
-
-		tensor<T> forward(const tensor<T>& x) const override
+		template<typename T>
+		tensor<T> linear<T>::forward(const tensor<T>& x) const
 		{
 			autoGraph::scopeLevelDisableAutoGrad t;
 
@@ -46,12 +39,10 @@ namespace dnnbasic::layer
 
 			return output;
 		}
-		void backward(const tensor<T>& estimatedLoss, const tensor<T>& functionOut) const override
+		template<typename T>
+		void linear<T>::backward(const tensor<T>& estimatedLoss, optimizer::optimizer* opti) const
 		{
-
+			autoGraph::scopeLevelDisableAutoGrad t;
 		}
-
-	private:
-
-	};
+	}
 }

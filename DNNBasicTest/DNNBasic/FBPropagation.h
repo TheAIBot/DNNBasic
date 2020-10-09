@@ -1,5 +1,7 @@
 #pragma once
 
+#include "optimizer.h"
+
 namespace dnnbasic
 {
 	template<typename T>
@@ -10,7 +12,7 @@ namespace dnnbasic
 	{
 	public:
 		virtual tensor<T> forward(const tensor<T>& x) const = 0;
-		virtual void backward(const tensor<T>& estimatedLoss, const tensor<T>& functionOut) const = 0;
+		virtual void backward(const tensor<T>& estimatedLoss, optimizer::optimizer* opti) const = 0;
 		virtual void updateWeight(const tensor<T>& gradient) 
 		{
 

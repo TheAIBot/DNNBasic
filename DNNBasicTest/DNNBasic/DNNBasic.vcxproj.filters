@@ -19,6 +19,12 @@
     <Filter Include="dnnbasic\tensor\tensorNodes">
       <UniqueIdentifier>{b29b8069-e047-4adc-9bfd-733957048a60}</UniqueIdentifier>
     </Filter>
+    <Filter Include="dnnbasic\optimizers">
+      <UniqueIdentifier>{6f7ce999-c486-45a0-b57e-1b223bf3ae63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dnnbasic\layers">
+      <UniqueIdentifier>{e638bdfb-9f53-4568-8e16-7411bfa20b0a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\CudaBasicClasses\cpuGpuArray.h">
@@ -57,9 +63,6 @@
     <ClInclude Include="Functions.h">
       <Filter>dnnbasic</Filter>
     </ClInclude>
-    <ClInclude Include="Layer.h">
-      <Filter>dnnbasic</Filter>
-    </ClInclude>
     <ClInclude Include="matrix.h">
       <Filter>dnnbasic</Filter>
     </ClInclude>
@@ -96,8 +99,17 @@
     <ClInclude Include="tensor_data.h">
       <Filter>dnnbasic\tensor</Filter>
     </ClInclude>
+    <ClInclude Include="sgd.h">
+      <Filter>dnnbasic\optimizers</Filter>
+    </ClInclude>
+    <ClInclude Include="optimizer.h">
+      <Filter>dnnbasic\optimizers</Filter>
+    </ClInclude>
     <ClInclude Include="tensor_cast_kernel.cuh">
       <Filter>dnnbasic\tensor\kernels</Filter>
+    </ClInclude>
+    <ClInclude Include="linear.h">
+      <Filter>dnnbasic\layers</Filter>
     </ClInclude>
     <ClInclude Include="tensor.h">
       <Filter>dnnbasic\tensor</Filter>
@@ -136,6 +148,9 @@
     </ClCompile>
     <ClCompile Include="tensor_cast.cpp">
       <Filter>dnnbasic\tensor\operators</Filter>
+    </ClCompile>
+    <ClCompile Include="linear.cpp">
+      <Filter>dnnbasic\layers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

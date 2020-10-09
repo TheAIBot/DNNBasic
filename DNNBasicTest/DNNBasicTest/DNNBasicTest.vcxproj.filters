@@ -57,9 +57,6 @@
     <ClInclude Include="..\DNNBasic\Functions.h">
       <Filter>Header Files\dnnbasic</Filter>
     </ClInclude>
-    <ClInclude Include="..\DNNBasic\Layer.h">
-      <Filter>Header Files\dnnbasic</Filter>
-    </ClInclude>
     <ClInclude Include="..\DNNBasic\matrix.h">
       <Filter>Header Files\dnnbasic</Filter>
     </ClInclude>
@@ -81,6 +78,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="tensor_mat_mul_tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="simple_nn_tests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="tensor_cast_tests.cpp">

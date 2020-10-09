@@ -59,14 +59,13 @@
     <ClInclude Include="..\DNNBasic\FBPropagation.h">
       <Filter>Header Files\dnnBasic</Filter>
     </ClInclude>
-    <ClInclude Include="..\DNNBasic\Layer.h">
-      <Filter>Header Files\dnnBasic</Filter>
-    </ClInclude>
     <ClInclude Include="..\DNNBasic\matrix.h">
       <Filter>Header Files\dnnBasic</Filter>
     </ClInclude>
+    <ClInclude Include="..\DNNBasic\Functions.h">
       <Filter>Header Files\dnnBasic</Filter>
     </ClInclude>
+    <ClInclude Include="..\DNNBasic\linear.h">
       <Filter>Header Files\dnnBasic</Filter>
     </ClInclude>
     <ClInclude Include="..\DNNBasic\tensor.h">
