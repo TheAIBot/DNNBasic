@@ -6,13 +6,13 @@ namespace dnnbasic::autoGraph
 	void setMakeGraph(bool value);
 	bool getMakeGraph();
 
-	class scopeLevelDisableAutoGrad
+	class scopeLevelDisableAutoGraph
 	{
 	private:
 		bool oldValue;
 
 	public:
-		scopeLevelDisableAutoGrad();
-		~scopeLevelDisableAutoGrad();
+		scopeLevelDisableAutoGraph();
+		~scopeLevelDisableAutoGraph();
 	};
 }

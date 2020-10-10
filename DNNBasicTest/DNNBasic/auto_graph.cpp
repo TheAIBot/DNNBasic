@@ -15,13 +15,13 @@ namespace dnnbasic::autoGraph
 		return makeGraph;
 	}
 
-	scopeLevelDisableAutoGrad::scopeLevelDisableAutoGrad()
+	scopeLevelDisableAutoGraph::scopeLevelDisableAutoGraph()
 	{
 		this->oldValue = makeGraph;
 		makeGraph = false;
 	}
 
-	scopeLevelDisableAutoGrad::~scopeLevelDisableAutoGrad()
+	scopeLevelDisableAutoGraph::~scopeLevelDisableAutoGraph()
 	{
 		makeGraph = this->oldValue;
 	}

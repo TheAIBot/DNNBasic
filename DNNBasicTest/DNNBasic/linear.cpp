@@ -20,9 +20,9 @@ namespace dnnbasic
 		}
 
 		template<typename T>
-		tensor<T> linear<T>::forward(const tensor<T>& x) const
+		tensor<T> linear<T>::forward(const tensor<T>& x)
 		{
-			autoGraph::scopeLevelDisableAutoGrad t;
+			autoGraph::scopeLevelDisableAutoGraph t;
 
 			tensor<T> output = this->useBias ? 
 				this->weights.matMul(x) + this->biases :
@@ -32,9 +32,23 @@ namespace dnnbasic
 			return output;
 		}
 		template<typename T>
-		void linear<T>::backward(const tensor<T>& estimatedLoss, optimizer::optimizer* opti) const
+		tensor<T> linear<T>::backward(const tensor<T>& estimatedLoss, optimizer::optimizer* opti, const tensor<T>& input)
 		{
-			autoGraph::scopeLevelDisableAutoGrad t;
+			autoGraph::scopeLevelDisableAutoGraph t;
+
+			// Partial derivative cost for weight
+			opti->updateWeights(this->weights, estimatedLoss * input);
+
+			// Partial derivative cost for bias
+			if (this->useBias)
+			{
+				opti->updateWeights(this->biases, estimatedLoss);
+			}
+
+			// error for layer L
+			const tensor<T> newLoss = this->weights.permute({ 1, 0 }).matMul(estimatedLoss);
+
+			return newLoss;
 		}
 
 		template class linear<bool>;

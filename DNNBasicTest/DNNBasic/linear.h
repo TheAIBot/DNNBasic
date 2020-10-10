@@ -7,7 +7,7 @@ namespace dnnbasic
 	namespace layer
 	{
 		template<typename T>
-		class linear : fbpropagation<T>
+		class linear
 		{
 		private:
 			tensor<T> weights;
@@ -17,8 +17,8 @@ namespace dnnbasic
 		public:
 			linear(const uint32_t inputDim, const uint32_t outputDim, const bool useBias);
 
-			tensor<T> forward(const tensor<T>& x) const override;
-			void backward(const tensor<T>& estimatedLoss, optimizer::optimizer* opti) const override;
+			tensor<T> forward(const tensor<T>& x);
+			tensor<T> backward(const tensor<T>& estimatedLoss, optimizer::optimizer* opti, const tensor<T>& input);
 		};
 	}
 }

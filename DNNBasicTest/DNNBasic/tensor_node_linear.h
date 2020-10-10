@@ -11,16 +11,21 @@ namespace dnnbasic
 	{
 	private:
 		optional<std::shared_ptr<tensorNode<T>>> inputNode;
+		tensor<T> inputTensor;
 		tensor<T> outputTensor;
-		const layer::linear<T>* linear;
+		layer::linear<T>* linear;
 
 	public:
-		tensorNodeLinearLayer(tensor<T> input, tensor<T> output, const layer::linear<T>* linear) : inputNode(input.getNode()), outputTensor(output), linear(linear)
+		tensorNodeLinearLayer(tensor<T> input, tensor<T> output, layer::linear<T>* linear) : inputNode(input.getNode()), inputTensor(input), outputTensor(output), linear(linear)
 		{ }
 
 		void backward(const tensor<T>& estimatedLoss, optimizer::optimizer* opti) const override
 		{
-			linear->backward(estimatedLoss, opti);
+			auto newLoss = linear->backward(estimatedLoss, opti, this->inputTensor);
+			if (inputNode.has_value())
+			{
+				inputNode.value()->backward(newLoss, opti);
+			}
 		}
 	};
 }
