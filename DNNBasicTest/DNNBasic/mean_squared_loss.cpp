@@ -6,7 +6,7 @@
 namespace dnnbasic::loss
 {
 	template<typename T>
-	lossData<T>::lossData(tensor<T> gradient, tensor<T> error, std::shared_ptr<tensorNode<T>> leafNode) :
+	lossData<T>::lossData(tensor<T> gradient, T error, std::shared_ptr<tensorNode<T>> leafNode) :
 		gradient(gradient),
 		error(error),
 		leafNode(leafNode) { }
@@ -32,7 +32,12 @@ namespace dnnbasic::loss
 		tensor<T> gradient = actual - expected;
 		tensor<T> error = 0.5f * (gradient * gradient);
 
-		return lossData(gradient, error, actual.getNode().value());
+		std::vector<T> errorValues = error.getValuesOnCPU();
+		T errorSum = std::accumulate(errorValues.begin(), errorValues.end(), 0, std::plus<T>());
+		T meanError = errorSum / errorValues.size();
+
+
+		return lossData(gradient, meanError, actual.getNode().value());
 	}
 
 	//template lossData<bool> meanSquaredLoss(tensor<bool> expected, tensor<bool> actual);

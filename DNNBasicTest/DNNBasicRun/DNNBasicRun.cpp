@@ -72,7 +72,7 @@ int main()
 			auto actual = l1.forward(dataset.data[i].input);
 
 			auto fisk = dnnbasic::loss::meanSquaredLoss(expected, actual);
-			//std::cout << std::abs(actual.getValuesOnCPU()[0] - expected.getValuesOnCPU()[0]) << std::endl;
+			std::cout << fisk.error << std::endl;
 			fisk.backward(opti);
 		}
 	}

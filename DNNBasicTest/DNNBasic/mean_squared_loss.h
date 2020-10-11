@@ -13,9 +13,9 @@ namespace dnnbasic::loss
 		std::shared_ptr<tensorNode<T>> leafNode;
 
 	public:
-		tensor<T> error; 
+		T error; 
 	
-		lossData(tensor<T> gradient, tensor<T> error, std::shared_ptr<tensorNode<T>> leafNode);
+		lossData(tensor<T> gradient, T error, std::shared_ptr<tensorNode<T>> leafNode);
 
 		void backward(optimizer::optimizer* opti);
 
