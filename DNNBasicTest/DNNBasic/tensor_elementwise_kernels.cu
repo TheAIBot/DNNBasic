@@ -63,6 +63,16 @@ namespace dnnbasic
 		}
 		output[index] = OP::operation(left, right[index]);
 	}
+	template<typename OP, typename T>
+	__global__ void biArgElementWiseKernelScalarSpan(const cudabasic::span<T> left, const T right, cudabasic::span<T> output)
+	{
+		const uint32_t index = blockIdx.x * blockDim.x + threadIdx.x;
+		if (index >= output.size())
+		{
+			return;
+		}
+		output[index] = OP::operation(left[index], right);
+	}
 
 	template<typename OP, typename T>
 	struct biArgElementWiseKernel
@@ -147,6 +157,12 @@ namespace dnnbasic
 			const dim3 gridDim(integerCeilDivision(result.elementCount(), blockDim.x));
 			cudabasic::executeKernel(biArgElementWiseKernelScalarSpan<OP, T>, blockDim, gridDim, left, right.getGPUArray(), result.getGPUArray());
 		}
+		static void execute(const tensor<T>& left, const T right, const tensor<T>& result, const bool isBroadcasted)
+		{
+			const dim3 blockDim(256);
+			const dim3 gridDim(integerCeilDivision(result.elementCount(), blockDim.x));
+			cudabasic::executeKernel(biArgElementWiseKernelScalarSpan<OP, T>, blockDim, gridDim, left.getGPUArray(), right, result.getGPUArray());
+		}
 	};
 
 	template<typename T>
@@ -155,6 +171,14 @@ namespace dnnbasic
 		static __device__ T operation(const T left, const T right)
 		{
 			return left * right;
+		}
+	};
+	template<typename T>
+	struct divideOp
+	{
+		static __device__ T operation(const T left, const T right)
+		{
+			return left / right;
 		}
 	};
 	template<typename T>
@@ -197,6 +221,18 @@ namespace dnnbasic
 	void tensorMultiply(const int64_t left, const tensor<int64_t>& right, const tensor<int64_t>& result, const bool isBroadcasted) { biArgElementWiseKernel<multiplyOp<int64_t>, int64_t>::execute(left, right, result, isBroadcasted); }
 	void tensorMultiply(const float left, const tensor<float>& right, const tensor<float>& result, const bool isBroadcasted) { biArgElementWiseKernel<multiplyOp<float>, float>::execute(left, right, result, isBroadcasted); }
 	void tensorMultiply(const double left, const tensor<double>& right, const tensor<double>& result, const bool isBroadcasted) { biArgElementWiseKernel<multiplyOp<double>, double>::execute(left, right, result, isBroadcasted); }
+
+	void tensorDiv(const tensor<bool>& left, const bool right, const tensor<bool>& result, const bool isBroadcasted) { biArgElementWiseKernel<divideOp<bool>, bool>::execute(left, right, result, isBroadcasted); }
+	void tensorDiv(const tensor<uint8_t>& left, const uint8_t right, const tensor<uint8_t>& result, const bool isBroadcasted) { biArgElementWiseKernel<divideOp<uint8_t>, uint8_t>::execute(left, right, result, isBroadcasted); }
+	void tensorDiv(const tensor<uint16_t>& left, const uint16_t right, const tensor<uint16_t>& result, const bool isBroadcasted) { biArgElementWiseKernel<divideOp<uint16_t>, uint16_t>::execute(left, right, result, isBroadcasted); }
+	void tensorDiv(const tensor<uint32_t>& left, const uint32_t right, const tensor<uint32_t>& result, const bool isBroadcasted) { biArgElementWiseKernel<divideOp<uint32_t>, uint32_t>::execute(left, right, result, isBroadcasted); }
+	void tensorDiv(const tensor<uint64_t>& left, const uint64_t right, const tensor<uint64_t>& result, const bool isBroadcasted) { biArgElementWiseKernel<divideOp<uint64_t>, uint64_t>::execute(left, right, result, isBroadcasted); }
+	void tensorDiv(const tensor<int8_t>& left, const int8_t right, const tensor<int8_t>& result, const bool isBroadcasted) { biArgElementWiseKernel<divideOp<int8_t>, int8_t>::execute(left, right, result, isBroadcasted); }
+	void tensorDiv(const tensor<int16_t>& left, const int16_t right, const tensor<int16_t>& result, const bool isBroadcasted) { biArgElementWiseKernel<divideOp<int16_t>, int16_t>::execute(left, right, result, isBroadcasted); }
+	void tensorDiv(const tensor<int32_t>& left, const int32_t right, const tensor<int32_t>& result, const bool isBroadcasted) { biArgElementWiseKernel<divideOp<int32_t>, int32_t>::execute(left, right, result, isBroadcasted); }
+	void tensorDiv(const tensor<int64_t>& left, const int64_t right, const tensor<int64_t>& result, const bool isBroadcasted) { biArgElementWiseKernel<divideOp<int64_t>, int64_t>::execute(left, right, result, isBroadcasted); }
+	void tensorDiv(const tensor<float>& left, const float right, const tensor<float>& result, const bool isBroadcasted) { biArgElementWiseKernel<divideOp<float>, float>::execute(left, right, result, isBroadcasted); }
+	void tensorDiv(const tensor<double>& left, const double right, const tensor<double>& result, const bool isBroadcasted) { biArgElementWiseKernel<divideOp<double>, double>::execute(left, right, result, isBroadcasted); }
 
 	void tensorAdd(const tensor<bool>& left, const tensor<bool>& right, const tensor<bool>& result, const bool isBroadcasted) { biArgElementWiseKernel<addOp<bool>, bool>::execute(left, right, result, isBroadcasted); }
 	void tensorAdd(const tensor<uint8_t>& left, const tensor<uint8_t>& right, const tensor<uint8_t>& result, const bool isBroadcasted) { biArgElementWiseKernel<addOp<uint8_t>, uint8_t>::execute(left, right, result, isBroadcasted); }

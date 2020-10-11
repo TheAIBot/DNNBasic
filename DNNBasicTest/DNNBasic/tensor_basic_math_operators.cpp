@@ -212,6 +212,28 @@ namespace dnnbasic
 		return right - left;
 	}
 
+	template<typename T>
+	tensor<T> operator/(const tensor<T>& left, const T& right)
+	{
+		if constexpr (std::is_floating_point<T>::value)
+		{
+			return left * ((T)1.0 / right);
+		}
+		else
+		{
+			tensor<T> child = createTensorWithSameDims(left);
+			if (autoGraph::getMakeGraph())
+			{
+				child.setNode(new tensorNodeNoGrad<T>({ left }));
+			}
+
+			// make kernel call
+			tensorDiv(left, right, child, false);
+
+			return child;
+		}
+	}
+
 
 	template bool operator==(const tensor<bool>& left, const tensor<bool>& right);
 	template bool operator==(const tensor<uint8_t>& left, const tensor<uint8_t>& right);
@@ -272,6 +294,19 @@ namespace dnnbasic
 	template tensor<int64_t> operator*(const int64_t& left, const tensor<int64_t>& right);
 	template tensor<float> operator*(const float& left, const tensor<float>& right);
 	template tensor<double> operator*(const double& left, const tensor<double>& right);
+
+
+	//template tensor<bool> operator/(const tensor<bool>& left, const bool& right);
+	template tensor<uint8_t> operator/(const tensor<uint8_t>& left, const uint8_t& right);
+	template tensor<uint16_t> operator/(const tensor<uint16_t>& left, const uint16_t& right);
+	template tensor<uint32_t> operator/(const tensor<uint32_t>& left, const uint32_t& right);
+	template tensor<uint64_t> operator/(const tensor<uint64_t>& left, const uint64_t& right);
+	template tensor<int8_t> operator/(const tensor<int8_t>& left, const int8_t& right);
+	template tensor<int16_t> operator/(const tensor<int16_t>& left, const int16_t& right);
+	template tensor<int32_t> operator/(const tensor<int32_t>& left, const int32_t& right);
+	template tensor<int64_t> operator/(const tensor<int64_t>& left, const int64_t& right);
+	template tensor<float> operator/(const tensor<float>& left, const float& right);
+	template tensor<double> operator/(const tensor<double>& left, const double& right);
 
 
 	//template tensor<bool> operator+(const tensor<bool>& left, const tensor<bool>& right);
