@@ -30,6 +30,7 @@
     <ClInclude Include="mean_squared_loss.h" />
     <ClInclude Include="optimizer.h" />
     <ClInclude Include="optional.h" />
+    <ClInclude Include="random.h" />
     <ClInclude Include="sgd.h" />
     <ClInclude Include="tensor.h" />
     <ClInclude Include="tensor_cast_kernel.cuh" />
@@ -50,6 +51,7 @@
     <ClCompile Include="kernel_tools.cpp" />
     <ClCompile Include="linear.cpp" />
     <ClCompile Include="mean_squared_loss.cpp" />
+    <ClCompile Include="random.cpp" />
     <ClCompile Include="tensor_basic_math_operators.cpp" />
     <ClCompile Include="tensor_cast.cpp" />
     <ClCompile Include="tensor_data.cpp" />

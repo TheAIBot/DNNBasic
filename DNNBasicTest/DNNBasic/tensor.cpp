@@ -1,11 +1,11 @@
 #include <string>
 #include <vector>
 #include <cstdint>
-#include <random>
 #include "span.h"
 #include "gpuArray.h"
 #include "matrix.h"
 #include "tensor.h"
+#include "random.h"
 
 #include "tensor_cast.cpp"
 #include "tensor_permute.cpp"
@@ -14,6 +14,26 @@
 
 namespace dnnbasic
 {
+	template<typename T>
+	tensor<T> tensor<T>::random(std::initializer_list<uint32_t> dims)
+	{
+		std::vector<uint32_t> vDims = dims;
+		return random(vDims);
+	}
+	template<typename T>
+	tensor<T> tensor<T>::random(std::vector<uint32_t> dims)
+	{
+		const uint32_t sum = std::accumulate(dims.begin(), dims.end(), 1, std::multiplies<uint32_t>());
+		if constexpr (std::is_unsigned<T>::value)
+		{
+			return tensor<T>(dims, random::getRandomNumbers<T>(sum, 0, 2));
+		}
+		else
+		{
+			return tensor<T>(dims, random::getRandomNumbers<T>(sum, -1, 1));
+		}
+	}
+
 	template<typename T>
 	tensor<T>::tensor(std::vector<uint32_t> dims) : tensor(dims, std::vector<std::string>(dims.size()))
 	{ }

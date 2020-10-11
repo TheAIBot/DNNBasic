@@ -120,6 +120,9 @@
     <ClInclude Include="mean_squared_loss.h">
       <Filter>dnnbasic\losses</Filter>
     </ClInclude>
+    <ClInclude Include="random.h">
+      <Filter>dnnbasic</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\CudaBasicClasses\cudaBasics.cpp">
@@ -161,6 +164,7 @@
     <ClCompile Include="mean_squared_loss.cpp">
       <Filter>dnnbasic\losses</Filter>
     </ClCompile>
+    <ClCompile Include="random.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="tensor_elementwise_kernels.cu">

@@ -2,24 +2,17 @@
 #include "tensor_node_linear.h"
 #include "auto_graph.h"
 
-#include <iostream>
-
 namespace dnnbasic
 {
 	namespace layer
 	{
 
 		template<typename T>
-		linear<T>::linear(const uint32_t inputDim, const uint32_t outputDim, const bool useBias) : weights({ outputDim, inputDim }), biases({ useBias ? outputDim : 1 })
-		{
-			this->useBias = useBias;
-			//this->weights.makeRandom();
-
-			if (useBias)
-			{
-				//this->biases.makeRandom();
-			}
-		}
+		linear<T>::linear(const uint32_t inputDim, const uint32_t outputDim, const bool useBias) : 
+			weights(tensor<T>::random({ outputDim, inputDim })), 
+			biases(tensor<T>::random({ useBias ? outputDim : 1 })),
+			useBias(useBias)
+		{ }
 
 		template<typename T>
 		tensor<T> linear<T>::forward(const tensor<T>& x)
@@ -33,6 +26,7 @@ namespace dnnbasic
 
 			return output;
 		}
+
 		template<typename T>
 		tensor<T> linear<T>::backward(const tensor<T>& estimatedLoss, optimizer::optimizer* opti, const tensor<T>& input)
 		{
