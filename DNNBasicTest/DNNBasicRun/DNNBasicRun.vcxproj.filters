@@ -16,8 +16,8 @@
     <Filter Include="Header Files\cudaBasic">
       <UniqueIdentifier>{e2f31bb5-7b43-4751-9a82-2ac0e70fc8b2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\dnnBasic">
-      <UniqueIdentifier>{a5966229-42f7-4923-9c55-098b4a504166}</UniqueIdentifier>
+    <Filter Include="Header Files\dnnbasic">
+      <UniqueIdentifier>{7e04931e-360f-4c72-917b-bb4f0d081da1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -57,19 +57,22 @@
       <Filter>Header Files\cudaBasic</Filter>
     </ClInclude>
     <ClInclude Include="..\DNNBasic\FBPropagation.h">
-      <Filter>Header Files\dnnBasic</Filter>
-    </ClInclude>
-    <ClInclude Include="..\DNNBasic\matrix.h">
-      <Filter>Header Files\dnnBasic</Filter>
+      <Filter>Header Files\dnnbasic</Filter>
     </ClInclude>
     <ClInclude Include="..\DNNBasic\Functions.h">
-      <Filter>Header Files\dnnBasic</Filter>
+      <Filter>Header Files\dnnbasic</Filter>
     </ClInclude>
-    <ClInclude Include="..\DNNBasic\linear.h">
-      <Filter>Header Files\dnnBasic</Filter>
+    <ClInclude Include="..\DNNBasic\matrix.h">
+      <Filter>Header Files\dnnbasic</Filter>
     </ClInclude>
     <ClInclude Include="..\DNNBasic\tensor.h">
-      <Filter>Header Files\dnnBasic</Filter>
+      <Filter>Header Files\dnnbasic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DNNBasic\mean_squared_loss.h">
+      <Filter>Header Files\dnnbasic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DNNBasic\sgd.h">
+      <Filter>Header Files\dnnbasic</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -17,12 +17,10 @@ namespace dnnbasic::loss
 	
 		lossData(tensor<T> gradient, tensor<T> error, std::shared_ptr<tensorNode<T>> leafNode);
 
-	void backward(optimizer::optimizer* opti);
+		void backward(optimizer::optimizer* opti);
 
 	};
 
 	template<typename T>
 	lossData<T> meanSquaredLoss(tensor<T> expected, tensor<T> actual);
-
-
 }

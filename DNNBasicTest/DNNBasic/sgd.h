@@ -6,7 +6,7 @@
 
 namespace dnnbasic::optimizer
 {
-	class sgd : optimizer
+	class sgd : public optimizer
 	{
 	private:
 		float learningRate;

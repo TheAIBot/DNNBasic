@@ -66,6 +66,12 @@
     <ClInclude Include="..\DNNBasic\tensor.h">
       <Filter>Header Files\dnnbasic</Filter>
     </ClInclude>
+    <ClInclude Include="..\DNNBasic\mean_squared_loss.h">
+      <Filter>Header Files\dnnbasic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DNNBasic\sgd.h">
+      <Filter>Header Files\dnnbasic</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="tensor_elementwise_operator_tests.cpp">

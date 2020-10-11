@@ -2,13 +2,15 @@
 #include "tensor_node_linear.h"
 #include "auto_graph.h"
 
+#include <iostream>
+
 namespace dnnbasic
 {
 	namespace layer
 	{
 
 		template<typename T>
-		linear<T>::linear(const uint32_t inputDim, const uint32_t outputDim, const bool useBias) : weights({ inputDim,outputDim }), biases({ useBias ? outputDim : 0 })
+		linear<T>::linear(const uint32_t inputDim, const uint32_t outputDim, const bool useBias) : weights({ outputDim, inputDim }), biases({ useBias ? outputDim : 1 })
 		{
 			this->useBias = useBias;
 			//this->weights.makeRandom();
@@ -36,6 +38,9 @@ namespace dnnbasic
 		{
 			autoGraph::scopeLevelDisableAutoGraph t;
 
+			// error for layer L
+			const tensor<T> newLoss = this->weights.permute({ 1, 0 }).matMul(estimatedLoss);
+
 			// Partial derivative cost for weight
 			opti->updateWeights(this->weights, estimatedLoss * input);
 
@@ -45,22 +50,19 @@ namespace dnnbasic
 				opti->updateWeights(this->biases, estimatedLoss);
 			}
 
-			// error for layer L
-			const tensor<T> newLoss = this->weights.permute({ 1, 0 }).matMul(estimatedLoss);
-
 			return newLoss;
 		}
 
-		template class linear<bool>;
-		template class linear<uint8_t>;
-		template class linear<uint16_t>;
-		template class linear<uint32_t>;
-		template class linear<uint64_t>;
-		template class linear<int8_t>;
-		template class linear<int16_t>;
-		template class linear<int32_t>;
-		template class linear<int64_t>;
+		//template class linear<bool>;
+		//template class linear<uint8_t>;
+		//template class linear<uint16_t>;
+		//template class linear<uint32_t>;
+		//template class linear<uint64_t>;
+		//template class linear<int8_t>;
+		//template class linear<int16_t>;
+		//template class linear<int32_t>;
+		//template class linear<int64_t>;
 		template class linear<float>;
-		template class linear<double>;
+		//template class linear<double>;
 	}
 }

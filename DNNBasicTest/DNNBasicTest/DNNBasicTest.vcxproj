@@ -183,6 +183,8 @@
     <ClInclude Include="..\DNNBasic\FBPropagation.h" />
     <ClInclude Include="..\DNNBasic\Functions.h" />
     <ClInclude Include="..\DNNBasic\matrix.h" />
+    <ClInclude Include="..\DNNBasic\mean_squared_loss.h" />
+    <ClInclude Include="..\DNNBasic\sgd.h" />
     <ClInclude Include="..\DNNBasic\tensor.h" />
     <ClInclude Include="test_tools.h" />
   </ItemGroup>
