@@ -33,7 +33,7 @@ namespace dnnbasic::loss
 		tensor<T> error = 0.5f * (gradient * gradient);
 
 		std::vector<T> errorValues = error.getValuesOnCPU();
-		T errorSum = std::accumulate(errorValues.begin(), errorValues.end(), 0, std::plus<T>());
+		T errorSum = std::accumulate(errorValues.begin(), errorValues.end(), (T)0);
 		T meanError = errorSum / errorValues.size();
 
 
