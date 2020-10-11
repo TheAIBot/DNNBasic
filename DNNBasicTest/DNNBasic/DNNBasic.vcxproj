@@ -54,7 +54,6 @@
     <ClCompile Include="mean_squared_loss.cpp" />
     <ClCompile Include="random.cpp" />
     <ClCompile Include="tensor_basic_math_operators.cpp" />
-    <ClCompile Include="tensor_broadcast.cpp" />
     <ClCompile Include="tensor_cast.cpp" />
     <ClCompile Include="tensor_data.cpp" />
     <ClCompile Include="tensor_matrixMultiply.cpp" />
