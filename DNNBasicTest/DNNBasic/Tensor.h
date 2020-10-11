@@ -3,31 +3,20 @@
 #include <string>
 #include <vector>
 #include <cstdint>
-#include <random>
-#include <numeric>
+#include <memory>
+#include <stdexcept>
+#include "optional.h"
 #include "span.h"
-#include "gpuArray.h"
 #include "matrix.h"
+#include "tensor_data.h"
 
 namespace dnnbasic
 {
-	struct namedDim
-	{
-		std::string name;
-		uint32_t dim;
-
-		namedDim(uint32_t dim, std::string name);
-	};
-
 	template<typename T>
 	class tensor
 	{
 	private:
-		std::vector<namedDim> dimension;
-		cudabasic::gpuArray<T> arr;
-		std::vector<const tensor<T>*> connections;
-
-		void addConnection(const tensor<T>* newConnection);
+		std::shared_ptr<tensorData<T>> data;
 
 	public:
 		static constexpr uint32_t MAX_DIMENSION_COUNT = 10;
@@ -36,6 +25,9 @@ namespace dnnbasic
 		tensor(std::vector<uint32_t> dims, std::vector<T> values);
 		tensor(std::vector<uint32_t> dimensions, std::vector<std::string> names);
 		tensor(std::vector<uint32_t> dimensions, std::vector<std::string> names, std::vector<T> values);
+
+		void setNode(tensorNode<T>* inNode);
+		optional<std::shared_ptr<tensorNode<T>>> getNode();
 
 		void makeRandom(T min, T max);
 		uint32_t elementCount() const;
@@ -47,27 +39,27 @@ namespace dnnbasic
 		//void permute();
 		//void view();
 		//void resize();
-		matrix<T> getMatrix() const;
-		matrix<T> getMatrixWith1Width() const;
-		matrix<T> getMatrixWith1Height() const;
 
-		tensor<T>* matMul(const tensor<T>& right) const;
-		tensor<T>* permute(std::initializer_list<uint32_t> dims) const;
-		tensor<T>* permute(std::vector<uint32_t> dims) const;
-		tensor<T>* permute(std::initializer_list<std::string> dims) const;
-		tensor<T>* permute(std::vector<std::string> dims) const;
+		tensor<T> matMul(const tensor<T>& right) const;
+		tensor<T> permute(std::initializer_list<uint32_t> dims) const;
+		tensor<T> permute(std::vector<uint32_t> dims) const;
+		tensor<T> permute(std::initializer_list<std::string> dims) const;
+		tensor<T> permute(std::vector<std::string> dims) const;
+
+		template<typename U>
+		tensor<U> cast() const;
 	};
 
 	template<typename T> bool operator==(const tensor<T>& left, const tensor<T>& right);
 	template<typename T> bool operator!=(const tensor<T>& left, const tensor<T>& right);
-	template<typename T> tensor<T>* operator*(const tensor<T>& left, const tensor<T>& right);
-	template<typename T> tensor<T>* operator*(const tensor<T>& left, const T& right);
-	template<typename T> tensor<T>* operator*(const T& left, const tensor<T>& right);
-	template<typename T> tensor<T>* operator+(const tensor<T>& left, const tensor<T>& right);
-	template<typename T> tensor<T>* operator+(const tensor<T>& left, const T& right);
-	template<typename T> tensor<T>* operator+(const T& left, const tensor<T>& right);
-	template<typename T> tensor<T>* operator-(const tensor<T>& left, const tensor<T>& right);
-	template<typename T> tensor<T>* operator-(const tensor<T>& left, const T& right);
-	template<typename T> tensor<T>* operator-(const T& left, const tensor<T>& right);
-	template<typename T> tensor<T>* operator-(const tensor<T>& left);
+	template<typename T> tensor<T> operator*(const tensor<T>& left, const tensor<T>& right);
+	template<typename T> tensor<T> operator*(const tensor<T>& left, const T& right);
+	template<typename T> tensor<T> operator*(const T& left, const tensor<T>& right);
+	template<typename T> tensor<T> operator+(const tensor<T>& left, const tensor<T>& right);
+	template<typename T> tensor<T> operator+(const tensor<T>& left, const T& right);
+	template<typename T> tensor<T> operator+(const T& left, const tensor<T>& right);
+	template<typename T> tensor<T> operator-(const tensor<T>& left, const tensor<T>& right);
+	template<typename T> tensor<T> operator-(const tensor<T>& left, const T& right);
+	template<typename T> tensor<T> operator-(const T& left, const tensor<T>& right);
+	template<typename T> tensor<T> operator-(const tensor<T>& left);
 }

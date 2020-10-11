@@ -3,6 +3,9 @@
 #include <cuda_runtime.h>
 #include <cstdint>
 #include <cassert>
+#include "span.h"
+
+#include <stdio.h>
 
 namespace dnnbasic
 {
@@ -23,16 +26,16 @@ namespace dnnbasic
 			this->rows = rows;
 		}
 
-		__device__ __host__ T* operator[](const uint32_t rowIndex)
+		__device__ __host__ cudabasic::span<T> operator[](const uint32_t rowIndex)
 		{
 			assert(rowIndex < rows);
-			return &arr[rowIndex * columns];
+			return cudabasic::span<T>(arr + rowIndex * columns, columns);
 		}
 
-		__device__ __host__ const T* operator[](const uint32_t rowIndex) const
+		__device__ __host__ const cudabasic::span<T> operator[](const uint32_t rowIndex) const
 		{
 			assert(rowIndex < rows);
-			return &arr[rowIndex * columns];
+			return cudabasic::span<T>(arr + rowIndex * columns, columns);
 		}
 
 		__device__ __host__ uint32_t getColumns() const
@@ -48,6 +51,16 @@ namespace dnnbasic
 		__device__ __host__ bool withinBounds(const uint32_t column, const uint32_t row) const
 		{
 			return column < this->columns&& row < this->rows;
+		}
+
+		__device__ __host__ T* begin() const
+		{
+			return arr;
+		}
+
+		__device__ __host__ T* end() const
+		{
+			return arr + columns * rows;
 		}
 	};
 }

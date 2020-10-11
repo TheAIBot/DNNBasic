@@ -9,13 +9,6 @@ namespace dnnbasic
 	template <typename T>
 	__global__ void matrixMultiplication(const matrix<T> a, const matrix<T> b, matrix<T> c, const uint32_t num_sub_blocks, const uint32_t blockSize)
 	{
-		//Define some shared memory for a sub block of matrices A an B
-		extern __shared__ __align__(sizeof(T)) int8_t sharedArray[];
-		T* sharedMemT = reinterpret_cast<T*>(sharedArray);
-
-		matrix<T> As(sharedMemT, blockSize, blockSize);
-		matrix<T> Bs(sharedMemT + blockSize * blockSize, blockSize, blockSize);
-
 		// Block index
 		const uint32_t bx = blockIdx.x;
 		const uint32_t by = blockIdx.y;
@@ -23,6 +16,15 @@ namespace dnnbasic
 		const uint32_t ty = threadIdx.y;
 		//Running sum of product of A and B matrices
 		T Csub = 0;
+		
+		// need to fix shared memory offset for multidim matrix multiplication
+
+		//Define some shared memory for a sub block of matrices A an B
+		extern __shared__ __align__(sizeof(T)) int8_t sharedArray[];
+		T* sharedMemT = reinterpret_cast<T*>(sharedArray);
+
+		matrix<T> As(sharedMemT, blockSize, blockSize);
+		matrix<T> Bs(sharedMemT + blockSize * blockSize, blockSize, blockSize);
 
 		//iterate through the number of sub matrices of A and B
 		for (uint32_t i = 0; i < num_sub_blocks; i++) {
@@ -38,6 +40,7 @@ namespace dnnbasic
 			As[ty][tx] = a.withinBounds(a_x, a_y) ? a[a_y][a_x] : (T)0;
 			Bs[ty][tx] = b.withinBounds(b_x, b_y) ? b[b_y][b_x] : (T)0;
 
+			// change this so that we have min(a height, blocksize) <- is this valid?
 			// Wait untill all threads have loaded their values into shared memory.
 			__syncthreads();
 			for (uint32_t k = 0; k < blockSize; ++k)
@@ -60,6 +63,7 @@ namespace dnnbasic
 
 		c[c_y][c_x] = Csub;
 	}
+
 
 	template <typename T>
 	void tensorMatrixMulInternal(const matrix<T>& left, const matrix<T>& right, matrix<T>& result)

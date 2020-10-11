@@ -15,9 +15,9 @@ namespace DNNBasicTest
 			dnnbasic::tensor<T> b({ 2, 1, 3 }, {3, 4, 5, 6, 7, 8});
 
 			dnnbasic::tensor<T> expected({ 2, 1, 3 }, { (T)3, (T)8, (T)15, (T)24, (T)35, (T)48 });
-			auto* actual = a * b;
+			auto actual = a * b;
 
-			Assert::AreEqual(expected, *actual);
+			Assert::AreEqual(expected, actual);
 		}
 		TEST_ALL_OP_TYPES(tensorMulTensor)
 
@@ -28,9 +28,9 @@ namespace DNNBasicTest
 			T b = 5;
 
 			dnnbasic::tensor<T> expected({ 2, 1, 3 }, { (T)5, (T)10, (T)15, (T)20, (T)25, (T)30 });
-			auto* actual = a * b;
+			auto actual = a * b;
 
-			Assert::AreEqual(expected, *actual);
+			Assert::AreEqual(expected, actual);
 		}
 		TEST_ALL_OP_TYPES(TensorMulScalar)
 
@@ -41,9 +41,9 @@ namespace DNNBasicTest
 			dnnbasic::tensor<T> b({ 2, 1, 3 }, { 3, 4, 5, 6, 7, 8 });
 
 			dnnbasic::tensor<T> expected({ 2, 1, 3 }, { (T)12, (T)16, (T)20, (T)24, (T)28, (T)32 });
-			auto* actual = a * b;
+			auto actual = a * b;
 
-			Assert::AreEqual(expected, *actual);
+			Assert::AreEqual(expected, actual);
 		}
 		TEST_ALL_OP_TYPES(ScalarMulTensor)
 
@@ -54,9 +54,9 @@ namespace DNNBasicTest
 			dnnbasic::tensor<T> b({ 2, 1, 3 }, { 3, 4, 5, 6, 7, 8 });
 
 			dnnbasic::tensor<T> expected({ 2, 1, 3 }, { (T)4, (T)6, (T)8, (T)10, (T)12, (T)14 });
-			auto* actual = a + b;
+			auto actual = a + b;
 
-			Assert::AreEqual(expected, *actual);
+			Assert::AreEqual(expected, actual);
 		}
 		TEST_ALL_OP_TYPES(TensorAddTensor)
 
@@ -67,9 +67,9 @@ namespace DNNBasicTest
 			T b = 7;
 
 			dnnbasic::tensor<T> expected({ 2, 1, 3 }, { (T)8, (T)9, (T)10, (T)11, (T)12, (T)13 });
-			auto* actual = a + b;
+			auto actual = a + b;
 
-			Assert::AreEqual(expected, *actual);
+			Assert::AreEqual(expected, actual);
 		}
 		TEST_ALL_OP_TYPES(TensorAddScalar)
 
@@ -80,9 +80,9 @@ namespace DNNBasicTest
 			dnnbasic::tensor<T> b({ 2, 1, 3 }, { 1, 2, 3, 4, 5, 6 });
 
 			dnnbasic::tensor<T> expected({ 2, 1, 3 }, { (T)28, (T)29, (T)30, (T)31, (T)32, (T)33 });
-			auto* actual = a + b;
+			auto actual = a + b;
 
-			Assert::AreEqual(expected, *actual);
+			Assert::AreEqual(expected, actual);
 		}
 		TEST_ALL_OP_TYPES(ScalarAddTensor)
 
@@ -93,9 +93,9 @@ namespace DNNBasicTest
 			dnnbasic::tensor<T> b({ 2, 1, 3 }, { 3, 4, 5, 6, 7, 8 });
 
 			dnnbasic::tensor<T> expected({ 2, 1, 3 }, { (T)-2, (T)-2, (T)-2, (T)-2, (T)-2, (T)-2 });
-			auto* actual = a - b;
+			auto actual = a - b;
 
-			Assert::AreEqual(expected, *actual);
+			Assert::AreEqual(expected, actual);
 		}
 		TEST_SIGNED_OP_TYPES(TensorSubTensor)
 
@@ -106,9 +106,9 @@ namespace DNNBasicTest
 			T b = 13;
 
 			dnnbasic::tensor<T> expected({ 2, 1, 3 }, { (T)-12, (T)-11, (T)-10, (T)-9, (T)-8, (T)-7 });
-			auto* actual = a - b;
+			auto actual = a - b;
 
-			Assert::AreEqual(expected, *actual);
+			Assert::AreEqual(expected, actual);
 		}
 		TEST_SIGNED_OP_TYPES(TensorSubScalar)
 
@@ -119,9 +119,9 @@ namespace DNNBasicTest
 			dnnbasic::tensor<T> b({ 2, 1, 3 }, { 1, 2, 3, 4, 5, 6 });
 
 			dnnbasic::tensor<T> expected({ 2, 1, 3 }, { (T)46, (T)45, (T)44, (T)43, (T)42, (T)41 });
-			auto* actual = a - b;
+			auto actual = a - b;
 
-			Assert::AreEqual(expected, *actual);
+			Assert::AreEqual(expected, actual);
 		}
 		TEST_SIGNED_OP_TYPES(ScalarSubTensor)
 
@@ -131,9 +131,9 @@ namespace DNNBasicTest
 			dnnbasic::tensor<T> a({ 2, 1, 3 }, { 1, 2, 3, 4, 5, 6 });
 
 			dnnbasic::tensor<T> expected({ 2, 1, 3 }, { (T)-1, (T)-2, (T)-3, (T)-4, (T)-5, (T)-6});
-			auto* actual = -a;
+			auto actual = -a;
 
-			Assert::AreEqual(expected, *actual);
+			Assert::AreEqual(expected, actual);
 		}
 		TEST_SIGNED_OP_TYPES(TensorSub)
 	};
