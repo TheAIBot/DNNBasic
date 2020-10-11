@@ -9,7 +9,7 @@ namespace dnnbasic
 
 		template<typename T>
 		linear<T>::linear(const uint32_t inputDim, const uint32_t outputDim, const bool useBias) : 
-			weights(tensor<T>::random({ outputDim, inputDim })), 
+			weights(tensor<T>::random({ inputDim, outputDim })),
 			biases(tensor<T>::random({ useBias ? outputDim : 1 })),
 			useBias(useBias)
 		{ }
@@ -20,8 +20,8 @@ namespace dnnbasic
 			autoGraph::scopeLevelDisableAutoGraph t;
 
 			tensor<T> output = this->useBias ? 
-				this->weights.matMul(x) + this->biases :
-				this->weights.matMul(x);
+				x.matMul(this->weights) + this->biases :
+				x.matMul(this->weights);
 			output.setNode(new tensorNodeLinearLayer<T>(x, output, this));
 
 			return output;
@@ -33,7 +33,7 @@ namespace dnnbasic
 			autoGraph::scopeLevelDisableAutoGraph t;
 
 			// error for layer L
-			const tensor<T> newLoss = this->weights.permute({ 1, 0 }).matMul(estimatedLoss);
+			const tensor<T> newLoss = estimatedLoss.matMul(this->weights.permute({ 1, 0 }));
 
 			// Partial derivative cost for weight
 			opti->updateWeights(this->weights, estimatedLoss * input);

@@ -1,7 +1,7 @@
-#include "mean_squared_loss.h"
-#include "auto_graph.h"
 #include <stdexcept>
 #include <vector>
+#include "mean_squared_loss.h"
+#include "auto_graph.h"
 
 namespace dnnbasic::loss
 {
@@ -22,6 +22,18 @@ namespace dnnbasic::loss
 	template<typename T>
 	lossData<T> meanSquaredLoss(tensor<T> expected, tensor<T> actual) 
 	{
+		return meanSquaredLoss(expected, actual, false, 0);
+	}
+
+	template<typename T>
+	lossData<T> meanSquaredLoss(tensor<T> expected, tensor<T> actual, const uint32_t batchDim)
+	{
+		return meanSquaredLoss(expected, actual, true, batchDim);
+	}
+
+	template<typename T>
+	lossData<T> meanSquaredLoss(tensor<T> expected, tensor<T> actual, bool meanOverBatch, const uint32_t batchDim)
+	{
 		if (!actual.getNode().has_value())
 		{
 			throw std::runtime_error("Can't make loss when argument actual is not part of a graph.");
@@ -30,6 +42,10 @@ namespace dnnbasic::loss
 		autoGraph::scopeLevelDisableAutoGraph k;
 
 		tensor<T> gradient = actual - expected;
+		if (meanOverBatch)
+		{
+			gradient = gradient.sum(batchDim) / (T)gradient.getDimensions()[batchDim].dim;
+		}
 		tensor<T> error = 0.5f * (gradient * gradient);
 
 		std::vector<T> errorValues = error.getValuesOnCPU();
@@ -50,6 +66,8 @@ namespace dnnbasic::loss
 	//template lossData<int32_t> meanSquaredLoss(tensor<int32_t> expected, tensor<int32_t> actual);
 	//template lossData<int64_t> meanSquaredLoss(tensor<int64_t> expected, tensor<int64_t> actual);
 	template lossData<float> meanSquaredLoss(tensor<float> expected, tensor<float> actual);
+	template lossData<float> meanSquaredLoss(tensor<float> expected, tensor<float> actual, const uint32_t batchDim);
+	template lossData<float> meanSquaredLoss(tensor<float> expected, tensor<float> actual, bool meanOverBatch, const uint32_t batchDim);
 	//template lossData<double> meanSquaredLoss(tensor<double> expected, tensor<double> actual);
 
 	template class lossData<bool>;
