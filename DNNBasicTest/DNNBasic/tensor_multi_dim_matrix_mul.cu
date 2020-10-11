@@ -98,7 +98,6 @@ namespace dnnbasic
 	template <typename T>
 	void tensorMultiDimMatMul(const tensor<T>& a, const tensor<T>& b, const tensor<T>& c)
 	{
-
 		std::vector<uint32_t> aDims(c.getDimensions().size());
 		std::vector<uint32_t> bDims(c.getDimensions().size());
 		std::vector<uint32_t> cDims(c.getDimensions().size());

@@ -1,11 +1,13 @@
 #include <string>
 #include <vector>
 #include <cstdint>
+#include <tuple>
 #include "span.h"
 #include "tensor.h"
 #include "tensor_elementwise_kernels.cuh"
 #include "auto_graph.h"
 #include "tensor_node_no_grad.h"
+#include "tensor_broadcast.h"
 
 namespace dnnbasic
 {
@@ -32,20 +34,31 @@ namespace dnnbasic
 	}
 
 	template<typename T>
-	static tensor<T> createTensorWithSameDims(const tensor<T>& a, const tensor<T>& b)
+	static std::tuple<tensor<T>, bool> createTensorWithSameDims(const tensor<T>& a, const tensor<T>& b)
 	{
-		auto& aDims = a.getDimensions();
-		auto& bDims = b.getDimensions();
-
-		std::vector<uint32_t> new_dim;
-		std::vector<std::string> new_name;
-		for (size_t i = 0; i < aDims.size(); i++)
+		if (hasSameDimensions(a, b))
 		{
-			new_dim.push_back(aDims[i].dim);
-			new_name.push_back(aDims.front().name != "" ? aDims[i].name : bDims[i].name);
-		}
+			auto& aDims = a.getDimensions();
+			auto& bDims = b.getDimensions();
 
-		return tensor<T>(new_dim, new_name);
+			std::vector<uint32_t> new_dim;
+			std::vector<std::string> new_name;
+			for (size_t i = 0; i < aDims.size(); i++)
+			{
+				new_dim.push_back(aDims[i].dim);
+				new_name.push_back(aDims.front().name != "" ? aDims[i].name : bDims[i].name);
+			}
+
+			return std::make_tuple(tensor<T>(new_dim, new_name), false);
+		}
+		else if (canBroadcastTensors(a, b))
+		{
+			return std::make_tuple(createBroadcastedTensor(a, b), true);
+		}
+		else
+		{
+			throw std::exception("Dimension mismatch.");
+		}
 	}
 
 	template<typename T>
@@ -87,19 +100,14 @@ namespace dnnbasic
 	template<typename T>
 	tensor<T> operator*(const tensor<T>& left, const tensor<T>& right)
 	{
-		if (!hasSameDimensions(left, right))
-		{
-			throw std::exception("Dimensions of left hand side tensor do not match dimension of right hand side tensor.");
-		}
-
-		tensor<T> child = createTensorWithSameDims(left, right);
+		auto& [child, isBroadcasted] = createTensorWithSameDims(left, right);
 		if (autoGraph::getMakeGraph())
 		{
 			child.setNode(new tensorNodeNoGrad<T>({ left, right }));
 		}
 
 		// make kernel call
-		tensorMultiply(left, right, child);
+		tensorMultiply(left, right, child, isBroadcasted);
 
 		return child;
 	}
@@ -120,7 +128,7 @@ namespace dnnbasic
 		}
 
 		// make kernel call
-		tensorMultiply(left, right, child);
+		tensorMultiply(left, right, child, false);
 
 		return child;
 	}
@@ -128,19 +136,14 @@ namespace dnnbasic
 	template<typename T>
 	tensor<T> operator+(const tensor<T>& left, const tensor<T>& right)
 	{
-		if (!hasSameDimensions(left, right))
-		{
-			throw std::exception("Dimensions of left hand side tensor do not match dimension of right hand side tensor.");
-		}
-
-		tensor<T> child = createTensorWithSameDims(left, right);
+		auto& [child, isBroadcasted] = createTensorWithSameDims(left, right);
 		if (autoGraph::getMakeGraph())
 		{
 			child.setNode(new tensorNodeNoGrad<T>({ left, right }));
 		}
 
 		// make kernel call
-		tensorAdd(left, right, child);
+		tensorAdd(left, right, child, isBroadcasted);
 
 		return child;
 	}
@@ -161,7 +164,7 @@ namespace dnnbasic
 		}
 
 		// make kernel call
-		tensorAdd(left, right, child);
+		tensorAdd(left, right, child, false);
 
 		return child;
 	}
@@ -169,18 +172,13 @@ namespace dnnbasic
 	template<typename T>
 	tensor<T> operator-(const tensor<T>& left, const tensor<T>& right)
 	{
-		if (!hasSameDimensions(left, right))
-		{
-			throw std::exception("Dimensions of left hand side tensor do not match dimension of right hand side tensor.");
-		}
-
-		tensor<T> child = createTensorWithSameDims(left, right);
+		auto& [child, isBroadcasted] = createTensorWithSameDims(left, right);
 		if (autoGraph::getMakeGraph())
 		{
 			child.setNode(new tensorNodeNoGrad<T>({ left, right }));
 		}
 		// make kernel call
-		tensorSubtract(left, right, child);
+		tensorSubtract(left, right, child, isBroadcasted);
 
 		return child;
 	}
@@ -202,7 +200,7 @@ namespace dnnbasic
 		}
 
 		// make kernel call
-		tensorSubtract(left, right, child);
+		tensorSubtract(left, right, child, false);
 
 		return child;
 	}

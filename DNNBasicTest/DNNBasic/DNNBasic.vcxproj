@@ -33,6 +33,7 @@
     <ClInclude Include="random.h" />
     <ClInclude Include="sgd.h" />
     <ClInclude Include="tensor.h" />
+    <ClInclude Include="tensor_broadcast.h" />
     <ClInclude Include="tensor_cast_kernel.cuh" />
     <ClInclude Include="tensor_data.h" />
     <ClInclude Include="tensor_elementwise_kernels.cuh" />
@@ -53,6 +54,7 @@
     <ClCompile Include="mean_squared_loss.cpp" />
     <ClCompile Include="random.cpp" />
     <ClCompile Include="tensor_basic_math_operators.cpp" />
+    <ClCompile Include="tensor_broadcast.cpp" />
     <ClCompile Include="tensor_cast.cpp" />
     <ClCompile Include="tensor_data.cpp" />
     <ClCompile Include="tensor_matrixMultiply.cpp" />

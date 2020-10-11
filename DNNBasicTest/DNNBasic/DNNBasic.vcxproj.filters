@@ -123,6 +123,9 @@
     <ClInclude Include="random.h">
       <Filter>dnnbasic</Filter>
     </ClInclude>
+    <ClInclude Include="tensor_broadcast.h">
+      <Filter>dnnbasic\tensor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\CudaBasicClasses\cudaBasics.cpp">
@@ -165,6 +168,9 @@
       <Filter>dnnbasic\losses</Filter>
     </ClCompile>
     <ClCompile Include="random.cpp" />
+    <ClCompile Include="tensor_broadcast.cpp">
+      <Filter>dnnbasic\tensor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="tensor_elementwise_kernels.cu">
