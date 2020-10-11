@@ -5,8 +5,6 @@
 
 namespace dnnbasic
 {
-	
-
 	using dimsArray = smallGPUArray<uint32_t, tensor<uint32_t>::MAX_DIMENSION_COUNT>;
 
 	template<typename T>

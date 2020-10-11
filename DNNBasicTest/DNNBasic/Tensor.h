@@ -44,6 +44,7 @@ namespace dnnbasic
 		//void resize();
 
 		tensor<T> matMul(const tensor<T>& right) const;
+
 		tensor<T> permute(std::initializer_list<uint32_t> dims) const;
 		tensor<T> permute(std::vector<uint32_t> dims) const;
 		tensor<T> permute(std::initializer_list<std::string> dims) const;
@@ -51,6 +52,9 @@ namespace dnnbasic
 
 		template<typename U>
 		tensor<U> cast() const;
+
+		tensor<T> sum(const uint32_t sumDim) const;
+		tensor<T> sum(const std::string sumDim) const;
 	};
 
 	template<typename T> bool operator==(const tensor<T>& left, const tensor<T>& right);

@@ -126,6 +126,9 @@
     <ClInclude Include="tensor_broadcast.h">
       <Filter>dnnbasic\tensor</Filter>
     </ClInclude>
+    <ClInclude Include="tensor_sum_kernel.cuh">
+      <Filter>dnnbasic\tensor\kernels</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\CudaBasicClasses\cudaBasics.cpp">
@@ -168,6 +171,9 @@
       <Filter>dnnbasic\losses</Filter>
     </ClCompile>
     <ClCompile Include="random.cpp" />
+    <ClCompile Include="tensor_sum.cpp">
+      <Filter>dnnbasic\tensor\operators</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="tensor_elementwise_kernels.cu">
@@ -183,6 +189,9 @@
       <Filter>dnnbasic\tensor\kernels</Filter>
     </CudaCompile>
     <CudaCompile Include="tensor_cast_kernel.cu">
+      <Filter>dnnbasic\tensor\kernels</Filter>
+    </CudaCompile>
+    <CudaCompile Include="tensor_sum_kernel.cu">
       <Filter>dnnbasic\tensor\kernels</Filter>
     </CudaCompile>
   </ItemGroup>

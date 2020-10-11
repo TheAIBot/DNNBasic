@@ -7,6 +7,7 @@
 #include "tensor.h"
 #include "random.h"
 
+#include "tensor_sum.cpp"
 #include "tensor_cast.cpp"
 #include "tensor_permute.cpp"
 #include "tensor_matrixMultiply.cpp"

@@ -43,6 +43,7 @@
     <ClInclude Include="tensor_node_no_grad.h" />
     <ClInclude Include="tensor_node_linear.h" />
     <ClInclude Include="tensor_permute_kernel.cuh" />
+    <ClInclude Include="tensor_sum_kernel.cuh" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\CudaBasicClasses\cudaBasics.cpp" />
@@ -59,6 +60,7 @@
     <ClCompile Include="tensor_matrixMultiply.cpp" />
     <ClCompile Include="tensor_permute.cpp" />
     <ClCompile Include="tensor.cpp" />
+    <ClCompile Include="tensor_sum.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="tensor_cast_kernel.cu" />
@@ -66,6 +68,7 @@
     <CudaCompile Include="tensor_matrix_kernels.cu" />
     <CudaCompile Include="tensor_multi_dim_matrix_mul.cu" />
     <CudaCompile Include="tensor_permute_kernel.cu" />
+    <CudaCompile Include="tensor_sum_kernel.cu" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{E758B47C-B0F3-4E31-8DA1-5D4C0379AD84}</ProjectGuid>
