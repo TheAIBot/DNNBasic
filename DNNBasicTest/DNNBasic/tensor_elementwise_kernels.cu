@@ -2,6 +2,7 @@
 #include "tensor_elementwise_kernels.cuh"
 #include "kernel_tools.h"
 #include "cudaBasics.h"
+#include "cuda_settings.h"
 
 namespace dnnbasic
 {
@@ -142,26 +143,26 @@ namespace dnnbasic
 
 				const dim3 blockDim(256);
 				const dim3 gridDim(integerCeilDivision(result.elementCount(), blockDim.x));
-				cudabasic::executeKernel(biArgElementWiseKernelSpanSpanBroadcast<OP, T>, blockDim, gridDim, left.getGPUArray(), right.getGPUArray(), result.getGPUArray(), aStrides, bStrides, cStrides);
+				cudabasic::executeKernel(biArgElementWiseKernelSpanSpanBroadcast<OP, T>, blockDim, gridDim, 0, cuda::getDefaultStream(), left.getGPUArray(), right.getGPUArray(), result.getGPUArray(), aStrides, bStrides, cStrides);
 			}
 			else
 			{
 				const dim3 blockDim(256);
 				const dim3 gridDim(integerCeilDivision(result.elementCount(), blockDim.x));
-				cudabasic::executeKernel(biArgElementWiseKernelSpanSpan<OP, T>, blockDim, gridDim, left.getGPUArray(), right.getGPUArray(), result.getGPUArray());
+				cudabasic::executeKernel(biArgElementWiseKernelSpanSpan<OP, T>, blockDim, gridDim, 0, cuda::getDefaultStream(), left.getGPUArray(), right.getGPUArray(), result.getGPUArray());
 			}
 		}
 		static void execute(const T left, const tensor<T>& right, const tensor<T>& result, const bool isBroadcasted)
 		{
 			const dim3 blockDim(256);
 			const dim3 gridDim(integerCeilDivision(result.elementCount(), blockDim.x));
-			cudabasic::executeKernel(biArgElementWiseKernelScalarSpan<OP, T>, blockDim, gridDim, left, right.getGPUArray(), result.getGPUArray());
+			cudabasic::executeKernel(biArgElementWiseKernelScalarSpan<OP, T>, blockDim, gridDim, 0, cuda::getDefaultStream(), left, right.getGPUArray(), result.getGPUArray());
 		}
 		static void execute(const tensor<T>& left, const T right, const tensor<T>& result, const bool isBroadcasted)
 		{
 			const dim3 blockDim(256);
 			const dim3 gridDim(integerCeilDivision(result.elementCount(), blockDim.x));
-			cudabasic::executeKernel(biArgElementWiseKernelScalarSpan<OP, T>, blockDim, gridDim, left.getGPUArray(), right, result.getGPUArray());
+			cudabasic::executeKernel(biArgElementWiseKernelScalarSpan<OP, T>, blockDim, gridDim, 0, cuda::getDefaultStream(), left.getGPUArray(), right, result.getGPUArray());
 		}
 	};
 

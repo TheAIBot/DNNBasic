@@ -22,6 +22,7 @@
     <ClInclude Include="..\..\..\CudaBasicClasses\matrix.h" />
     <ClInclude Include="..\..\..\CudaBasicClasses\span.h" />
     <ClInclude Include="auto_graph.h" />
+    <ClInclude Include="cuda_settings.h" />
     <ClInclude Include="FBPropagation.h" />
     <ClInclude Include="Functions.h" />
     <ClInclude Include="kernel_tools.h" />
@@ -50,6 +51,7 @@
     <ClCompile Include="..\..\..\CudaBasicClasses\cudaStream.cpp" />
     <ClCompile Include="..\..\..\CudaBasicClasses\cudaTimer.cpp" />
     <ClCompile Include="auto_graph.cpp" />
+    <ClCompile Include="cuda_settings.cpp" />
     <ClCompile Include="kernel_tools.cpp" />
     <ClCompile Include="linear.cpp" />
     <ClCompile Include="mean_squared_loss.cpp" />

@@ -3,6 +3,7 @@
 #include "tensor_cast_kernel.cuh"
 #include "kernel_tools.h"
 #include "cudaBasics.h"
+#include "cuda_settings.h"
 
 namespace dnnbasic
 {
@@ -30,7 +31,7 @@ namespace dnnbasic
 	{
 		const dim3 blockDim(256);
 		const dim3 gridDim(integerCeilDivision(from.elementCount(), blockDim.x));
-		cudabasic::executeKernel(cast<From, To>, blockDim, gridDim, from.getGPUArrayConst(), to.getGPUArray());
+		cudabasic::executeKernel(cast<From, To>, blockDim, gridDim, 0, cuda::getDefaultStream(), from.getGPUArrayConst(), to.getGPUArray());
 	}
 
 #define CAST_FROM_TO(fromTyp, toTyp) \

@@ -6,6 +6,7 @@
 #include "matrix.h"
 #include "tensor.h"
 #include "random.h"
+#include "cuda_settings.h"
 
 #include "tensor_sum.cpp"
 #include "tensor_cast.cpp"
@@ -140,7 +141,7 @@ namespace dnnbasic
 	template<typename T>
 	void tensor<T>::copyTo(const tensor<T>& other)
 	{
-		this->data->arr.copyToGPUArray(other.data->arr);
+		this->data->arr.copyToGPUArray(other.data->arr, cuda::getDefaultStream());
 	}
 
 

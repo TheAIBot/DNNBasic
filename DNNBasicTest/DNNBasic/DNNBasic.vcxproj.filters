@@ -129,6 +129,9 @@
     <ClInclude Include="tensor_sum_kernel.cuh">
       <Filter>dnnbasic\tensor\kernels</Filter>
     </ClInclude>
+    <ClInclude Include="cuda_settings.h">
+      <Filter>dnnbasic</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\CudaBasicClasses\cudaBasics.cpp">
@@ -170,9 +173,14 @@
     <ClCompile Include="mean_squared_loss.cpp">
       <Filter>dnnbasic\losses</Filter>
     </ClCompile>
-    <ClCompile Include="random.cpp" />
     <ClCompile Include="tensor_sum.cpp">
       <Filter>dnnbasic\tensor\operators</Filter>
+    </ClCompile>
+    <ClCompile Include="cuda_settings.cpp">
+      <Filter>dnnbasic</Filter>
+    </ClCompile>
+    <ClCompile Include="random.cpp">
+      <Filter>dnnbasic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

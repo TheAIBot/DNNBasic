@@ -2,6 +2,7 @@
 #include "tensor_permute_kernel.cuh"
 #include "kernel_tools.h"
 #include "cudaBasics.h"
+#include "cuda_settings.h"
 
 namespace dnnbasic
 {
@@ -59,7 +60,7 @@ namespace dnnbasic
 		}
 
 
-		cudabasic::executeKernel(permute<T>, blockDim, gridDim, input.getGPUArrayConst(), output.getGPUArray(), inSumDims, outSumDims, permutedIdx);
+		cudabasic::executeKernel(permute<T>, blockDim, gridDim, 0, cuda::getDefaultStream(), input.getGPUArrayConst(), output.getGPUArray(), inSumDims, outSumDims, permutedIdx);
 	}
 
 	template void tensorPermute(const tensor<bool>& input, const tensor<bool>& output, const std::vector<uint32_t>& dims);

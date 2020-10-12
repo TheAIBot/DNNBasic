@@ -2,6 +2,7 @@
 #include <assert.h>
 #include "auto_graph.h"
 #include "cudaBasics.h"
+#include "cuda_settings.h"
 
 namespace dnnbasic::autoGraph
 {
@@ -126,7 +127,7 @@ namespace dnnbasic::autoGraph
 		recordWholeGraph = true;
 		currentRecorder = this;
 
-		cudaStreamBeginCapture(0, cudaStreamCaptureModeGlobal);
+		cudaStreamBeginCapture(cuda::getDefaultStream(), cudaStreamCaptureModeGlobal);
 	}
 	void graphRecorder::stopRecording()
 	{
@@ -137,8 +138,9 @@ namespace dnnbasic::autoGraph
 		currentRecorder = nullptr;
 		this->hasRecordedGraph = true;
 
-		cudaStreamEndCapture(0, &this->graph);
+		cudaStreamEndCapture(cuda::getDefaultStream(), &this->graph);
 		cudaGraphInstantiate(&this->graphExe, this->graph, nullptr, nullptr, 0);
+		cudabasic::checkForCudaError();
 	}
 	void graphRecorder::replay() const
 	{
