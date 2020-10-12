@@ -22,7 +22,7 @@ namespace dnnbasic
 			tensor<T> output = this->useBias ? 
 				x.matMul(this->weights) + this->biases :
 				x.matMul(this->weights);
-			output.setNode(new tensorNodeLinearLayer<T>(x, output, this));
+			autoGraph::forceMakeGraph(output, std::function<tensorNode<T>* ()>([&]() {return new tensorNodeLinearLayer<T>(x, output, this); }));
 
 			return output;
 		}

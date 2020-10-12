@@ -101,10 +101,7 @@ namespace dnnbasic
 	tensor<T> operator*(const tensor<T>& left, const tensor<T>& right)
 	{
 		auto& [child, isBroadcasted] = createTensorWithSameDims(left, right);
-		if (autoGraph::getMakeGraph())
-		{
-			child.setNode(new tensorNodeNoGrad<T>({ left, right }));
-		}
+		autoGraph::handleMakeGraph(child, std::function<tensorNode<T>* ()>([&]() {return new tensorNodeNoGrad<T>({ left, right }); }));
 
 		// make kernel call
 		tensorMultiply(left, right, child, isBroadcasted);
@@ -122,10 +119,7 @@ namespace dnnbasic
 	tensor<T> operator*(const T& left, const tensor<T>& right)
 	{
 		tensor<T> child = createTensorWithSameDims(right);
-		if (autoGraph::getMakeGraph())
-		{
-			child.setNode(new tensorNodeNoGrad<T>({ right }));
-		}
+		autoGraph::handleMakeGraph(child, std::function<tensorNode<T>* ()>([&]() {return new tensorNodeNoGrad<T>({ right }); }));
 
 		// make kernel call
 		tensorMultiply(left, right, child, false);
@@ -137,10 +131,7 @@ namespace dnnbasic
 	tensor<T> operator+(const tensor<T>& left, const tensor<T>& right)
 	{
 		auto& [child, isBroadcasted] = createTensorWithSameDims(left, right);
-		if (autoGraph::getMakeGraph())
-		{
-			child.setNode(new tensorNodeNoGrad<T>({ left, right }));
-		}
+		autoGraph::handleMakeGraph(child, std::function<tensorNode<T>* ()>([&]() {return new tensorNodeNoGrad<T>({ left, right }); }));
 
 		// make kernel call
 		tensorAdd(left, right, child, isBroadcasted);
@@ -158,10 +149,7 @@ namespace dnnbasic
 	tensor<T> operator+(const T& left, const tensor<T>& right)
 	{
 		tensor<T> child = createTensorWithSameDims(right);
-		if (autoGraph::getMakeGraph())
-		{
-			child.setNode(new tensorNodeNoGrad<T>({right}));
-		}
+		autoGraph::handleMakeGraph(child, std::function<tensorNode<T>* ()>([&]() {return new tensorNodeNoGrad<T>({ right }); }));
 
 		// make kernel call
 		tensorAdd(left, right, child, false);
@@ -173,10 +161,8 @@ namespace dnnbasic
 	tensor<T> operator-(const tensor<T>& left, const tensor<T>& right)
 	{
 		auto& [child, isBroadcasted] = createTensorWithSameDims(left, right);
-		if (autoGraph::getMakeGraph())
-		{
-			child.setNode(new tensorNodeNoGrad<T>({ left, right }));
-		}
+		autoGraph::handleMakeGraph(child, std::function<tensorNode<T>* ()>([&]() {return new tensorNodeNoGrad<T>({ left, right }); }));
+
 		// make kernel call
 		tensorSubtract(left, right, child, isBroadcasted);
 
@@ -194,10 +180,7 @@ namespace dnnbasic
 	tensor<T> operator-(const T& left, const tensor<T>& right)
 	{
 		tensor<T> child = createTensorWithSameDims(right);
-		if (autoGraph::getMakeGraph())
-		{
-			child.setNode(new tensorNodeNoGrad<T>({ right }));
-		}
+		autoGraph::handleMakeGraph(child, std::function<tensorNode<T>* ()>([&]() {return new tensorNodeNoGrad<T>({ right }); }));
 
 		// make kernel call
 		tensorSubtract(left, right, child, false);
@@ -222,10 +205,7 @@ namespace dnnbasic
 		else
 		{
 			tensor<T> child = createTensorWithSameDims(left);
-			if (autoGraph::getMakeGraph())
-			{
-				child.setNode(new tensorNodeNoGrad<T>({ left }));
-			}
+			autoGraph::handleMakeGraph(child, std::function<tensorNode<T>* ()>([&]() {return new tensorNodeNoGrad<T>({ left }); }));
 
 			// make kernel call
 			tensorDiv(left, right, child, false);

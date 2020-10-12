@@ -6,16 +6,24 @@
 namespace dnnbasic::loss
 {
 	template<typename T>
-	lossData<T>::lossData(tensor<T> gradient, T error, std::shared_ptr<tensorNode<T>> leafNode) :
+	lossData<T>::lossData(tensor<T> gradient, tensor<T> error, std::shared_ptr<tensorNode<T>> leafNode, const std::function<T(tensor<T>)>& errorCalcMethod) :
 		gradient(gradient),
-		error(error),
-		leafNode(leafNode) { }
+		errorTensor(error),
+		leafNode(leafNode),
+		errorCalcMethod(errorCalcMethod)
+	{ }
 
 
 	template<typename T>
 	void lossData<T>::backward(optimizer::optimizer* opti)
 	{
 		this->leafNode->backward(this->gradient, opti);
+	}
+
+	template<typename T>
+	T lossData<T>::getError()
+	{
+		return this->errorCalcMethod(this->errorTensor);
 	}
 
 
@@ -48,12 +56,15 @@ namespace dnnbasic::loss
 		}
 		tensor<T> error = 0.5f * (gradient * gradient);
 
-		std::vector<T> errorValues = error.getValuesOnCPU();
-		T errorSum = std::accumulate(errorValues.begin(), errorValues.end(), (T)0);
-		T meanError = errorSum / errorValues.size();
+		auto errorMethod = [](const tensor<T>& ten)
+		{
+			std::vector<T> errorValues = ten.getValuesOnCPU();
+			T errorSum = std::accumulate(errorValues.begin(), errorValues.end(), (T)0);
+			return errorSum / errorValues.size();
+		};
 
 
-		return lossData(gradient, meanError, actual.getNode().value());
+		return lossData<T>(gradient, error, actual.getNode().value(), errorMethod);
 	}
 
 	//template lossData<bool> meanSquaredLoss(tensor<bool> expected, tensor<bool> actual);

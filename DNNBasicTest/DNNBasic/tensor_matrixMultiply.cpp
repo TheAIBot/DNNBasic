@@ -5,6 +5,7 @@
 #include "tensor_node_no_grad.h"
 #include "tensor_matrix_kernels.cuh"
 #include "tensor_multi_dim_matrix_mul.cuh"
+#include "auto_graph.h"
 
 namespace dnnbasic
 {
@@ -200,10 +201,7 @@ namespace dnnbasic
 		if (canMatrixMultiplyMatrix(*this, right))
 		{
 			tensor<T> child = createTensorWithMatrixMultiplyMatrixDims(*this, right);
-			if (autoGraph::getMakeGraph())
-			{
-				child.setNode(new tensorNodeNoGrad<T>({ *this, right }));
-			}
+			autoGraph::handleMakeGraph(child, std::function<tensorNode<T>* ()>([&]() {return new tensorNodeNoGrad<T>({ *this, right }); }));
 
 			matrix<T> leftM = this->data->getMatrix();
 			matrix<T> rightM = right.data->getMatrix();
@@ -217,10 +215,7 @@ namespace dnnbasic
 		else if (canMatrixMultiplyVector(*this, right))
 		{
 			tensor<T> child = createTensorWithMatrixMultiplyVectorDims(*this, right);
-			if (autoGraph::getMakeGraph())
-			{
-				child.setNode(new tensorNodeNoGrad<T>({ *this, right }));
-			}
+			autoGraph::handleMakeGraph(child, std::function<tensorNode<T>* ()>([&]() {return new tensorNodeNoGrad<T>({ *this, right }); }));
 
 			matrix<T> leftM = this->data->getMatrix();
 			matrix<T> rightM = right.data->getMatrixWith1Width();
@@ -234,10 +229,7 @@ namespace dnnbasic
 		else if (canVectorMultiplyMatrix(*this, right))
 		{
 			tensor<T> child = createTensorWithVectorMultiplyMatrixDims(*this, right);
-			if (autoGraph::getMakeGraph())
-			{
-				child.setNode(new tensorNodeNoGrad<T>({ *this, right }));
-			}
+			autoGraph::handleMakeGraph(child, std::function<tensorNode<T>* ()>([&]() {return new tensorNodeNoGrad<T>({ *this, right }); }));
 
 			matrix<T> leftM = this->data->getMatrixWith1Height();
 			matrix<T> rightM = right.data->getMatrix();
@@ -251,10 +243,7 @@ namespace dnnbasic
 		else if (canBroadcastMatrixMultiplyBroadcastMatrix(*this, right))
 		{
 			tensor<T> child = createTensorWithBroadcastMatrixMultiplyBroadcastMatrixDims(*this, right);
-			if (autoGraph::getMakeGraph())
-			{
-				child.setNode(new tensorNodeNoGrad<T>({ *this, right }));
-			}
+			autoGraph::handleMakeGraph(child, std::function<tensorNode<T>* ()>([&]() {return new tensorNodeNoGrad<T>({ *this, right }); }));
 
 			// make kernel call
 			tensorMultiDimMatrixMul(*this, right, child);

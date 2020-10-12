@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 #include "FBPropagation.h"
 
 namespace dnnbasic
@@ -12,5 +13,7 @@ namespace dnnbasic
 		{
 			throw new std::runtime_error("Wait how you do that?");
 		}
+	public:
+		virtual std::vector<tensor<T>> getTensors() const = 0;
 	};
 }

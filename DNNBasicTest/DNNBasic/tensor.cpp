@@ -137,6 +137,12 @@ namespace dnnbasic
 	//void view();
 	//void resize();
 
+	template<typename T>
+	void tensor<T>::copyTo(const tensor<T>& other)
+	{
+		this->data->arr.copyToGPUArray(other.data->arr);
+	}
+
 
 	template class tensor<bool>;
 	template class tensor<uint8_t>;

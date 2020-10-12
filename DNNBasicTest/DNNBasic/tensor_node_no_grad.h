@@ -7,14 +7,16 @@ namespace dnnbasic
 	template<typename T>
 	class tensorNodeNoGrad : public tensorNode<T>
 	{
-		std::vector<std::shared_ptr<tensorNode <T>>> nodes;
+		std::vector<std::shared_ptr<tensorNode<T>>> nodes;
+		std::vector<tensor<T>> tensors;
 
 	public:
-		tensorNodeNoGrad(std::vector<tensor<T>> tensorNodePtrs)
+		tensorNodeNoGrad(std::vector<tensor<T>> tensors)
 		{
-			for (size_t i = 0; i < tensorNodePtrs.size(); i++)
+			for (size_t i = 0; i < tensors.size(); i++)
 			{
-				auto tensorNode = tensorNodePtrs[i].getNode();
+				this->tensors.push_back(tensors[i]);
+				auto tensorNode = tensors[i].getNode();
 				if (tensorNode.has_value())
 				{
 					nodes.push_back(tensorNode.value());
@@ -28,6 +30,11 @@ namespace dnnbasic
 			{
 				nodes[i]->backward(estimatedLoss, opti);
 			}
+		}
+
+		virtual std::vector<tensor<T>> getTensors() const override
+		{
+			return this->tensors;
 		}
 	};
 }

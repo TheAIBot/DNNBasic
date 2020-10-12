@@ -2,6 +2,7 @@
 #include "tensor_permute_kernel.cuh"
 #include "tensor.h"
 #include "tensor_node_no_grad.h"
+#include "auto_graph.h"
 
 namespace dnnbasic
 {
@@ -43,10 +44,8 @@ namespace dnnbasic
 		}
 
 		tensor<T> child = createTensorWithPermutedDims(*this, dims);
-		if (autoGraph::getMakeGraph())
-		{
-			child.setNode(new tensorNodeNoGrad<T>({ *this }));
-		}
+		autoGraph::handleMakeGraph(child, std::function<tensorNode<T>*()>([&]() {return new tensorNodeNoGrad<T>({ *this }); }));
+
 		// make kernel call
 		tensorPermute(*this, child, dims);
 

@@ -43,6 +43,8 @@ namespace dnnbasic
 		//void view();
 		//void resize();
 
+		void copyTo(const tensor<T>& other);
+
 		tensor<T> matMul(const tensor<T>& right) const;
 
 		tensor<T> permute(std::initializer_list<uint32_t> dims) const;

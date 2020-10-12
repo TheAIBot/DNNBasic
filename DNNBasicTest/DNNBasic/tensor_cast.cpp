@@ -3,6 +3,7 @@
 #include "tensor_cast_kernel.cuh"
 #include "tensor.h"
 #include "tensor_node_no_grad.h"
+#include "auto_graph.h"
 
 namespace dnnbasic
 {
@@ -28,6 +29,7 @@ namespace dnnbasic
 			}
 
 			tensor<To> to(newDims, newDimNames);
+			//autoGraph::handleMakeGraph(to, std::function<tensorNode<T>* ()>([&]() {return new tensorNodeNoGrad<From>({ *this }); }));
 
 			tensorCast(*this, to);
 

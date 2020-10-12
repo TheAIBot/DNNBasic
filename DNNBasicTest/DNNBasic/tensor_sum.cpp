@@ -3,6 +3,7 @@
 #include "tensor_sum_kernel.cuh"
 #include "tensor.h"
 #include "tensor_node_no_grad.h"
+#include "auto_graph.h"
 
 namespace dnnbasic
 {
@@ -35,10 +36,7 @@ namespace dnnbasic
 		}
 
 		tensor<T> child = createTensorWithSameDimsButWithoutSumDim(*this, sumDim);
-		if (autoGraph::getMakeGraph())
-		{
-			child.setNode(new tensorNodeNoGrad<T>({ *this }));
-		}
+		autoGraph::handleMakeGraph(child, std::function<tensorNode<T>*()>([&]() {return new tensorNodeNoGrad<T>({ *this }); }));
 
 		tensorSum(*this, child, sumDim);
 

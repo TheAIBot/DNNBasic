@@ -27,5 +27,10 @@ namespace dnnbasic
 				inputNode.value()->backward(newLoss, opti);
 			}
 		}
+
+		virtual std::vector<tensor<T>> getTensors() const override
+		{
+			return { inputTensor, outputTensor };
+		}
 	};
 }
