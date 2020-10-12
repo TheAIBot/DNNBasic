@@ -47,8 +47,12 @@ namespace dnnbasic::autoGraph
 			tensor<double>>> tensors;
 		cudaGraph_t graph;
 		cudaGraphExec_t graphExe;
+		bool hasRecordedGraph;
 
 	public:
+		graphRecorder();
+		~graphRecorder();
+
 		template<typename T>
 		void addTensor(tensor<T>& ten)
 		{

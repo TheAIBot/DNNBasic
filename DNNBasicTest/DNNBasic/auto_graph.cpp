@@ -102,10 +102,26 @@ namespace dnnbasic::autoGraph
 	template void forceMakeGraph(tensor<double>& ten, const std::function<tensorNode<double>* ()>& makeTensorNode);
 
 
+	graphRecorder::graphRecorder()
+	{
+		cudaGraphCreate(&this->graph, 0);
+		this->graphExe = nullptr;
+		this->hasRecordedGraph = false;
+	}
+	graphRecorder::~graphRecorder()
+	{
+		cudaGraphDestroy(this->graph);
+		if (this->hasRecordedGraph)
+		{
+			cudaGraphExecDestroy(this->graphExe);
+		}
+	}
+
 	void graphRecorder::startRecording()
 	{
 		assert(!recordWholeGraph);
 		assert(currentRecorder == nullptr);
+		assert(!this->hasRecordedGraph);
 
 		recordWholeGraph = true;
 		currentRecorder = this;
@@ -119,6 +135,7 @@ namespace dnnbasic::autoGraph
 
 		recordWholeGraph = false;
 		currentRecorder = nullptr;
+		this->hasRecordedGraph = true;
 
 		cudaStreamEndCapture(0, &this->graph);
 		cudaGraphInstantiate(&this->graphExe, this->graph, nullptr, nullptr, 0);
