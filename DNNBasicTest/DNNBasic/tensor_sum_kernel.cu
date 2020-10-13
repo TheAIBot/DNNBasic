@@ -3,6 +3,7 @@
 #include "kernel_tools.h"
 #include "cudaBasics.h"
 #include "cuda_settings.h"
+#include "auto_graph.h"
 
 namespace dnnbasic
 {
@@ -79,7 +80,14 @@ namespace dnnbasic
 
 		const dim3 blockDim(256);
 		const dim3 gridDim(integerCeilDivision(output.elementCount(), blockDim.x));
-		cudabasic::executeKernel(sumKernel<T>, blockDim, gridDim, 0, cuda::getDefaultStream(), input.getGPUArrayConst(), output.getGPUArray(), sumStride, input.getDimensions()[sumDimIdx].dim, inputStrides, outputStrides);
+		if (autoGraph::isRecordingGraph())
+		{
+			autoGraph::addKernelNode(sumKernel<T>, blockDim, gridDim, 0, input.getGPUArrayConst(), output.getGPUArray(), sumStride, input.getDimensions()[sumDimIdx].dim, inputStrides, outputStrides);
+		}
+		else
+		{
+			cudabasic::executeKernel(sumKernel<T>, blockDim, gridDim, 0, cuda::getDefaultStream(), input.getGPUArrayConst(), output.getGPUArray(), sumStride, input.getDimensions()[sumDimIdx].dim, inputStrides, outputStrides);
+		}
 	}
 
 	template void tensorSum(const tensor<bool>& input, tensor<bool>& output, const uint32_t sumDimIdx);

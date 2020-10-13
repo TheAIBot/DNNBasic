@@ -4,6 +4,7 @@
 #include "matrix.h"
 #include "kernel_tools.h"
 #include "cuda_settings.h"
+#include "auto_graph.h"
 
 namespace dnnbasic
 {
@@ -78,7 +79,14 @@ namespace dnnbasic
 		const dim3 gridDim(integerCeilDivision(matrixWidth, blockDim.x), integerCeilDivision(matrixHeight, blockDim.y));
 		const uint32_t num_sub_blocks = integerCeilDivision(left.getColumns(), blockSize);
 		
-		cudabasic::executeKernel(matrixMultiplication<T>, blockDim, gridDim, sharedMemory, cuda::getDefaultStream(), left, right, result, num_sub_blocks, blockSize);
+		if (autoGraph::isRecordingGraph())
+		{
+			autoGraph::addKernelNode(matrixMultiplication<T>, blockDim, gridDim, sharedMemory, left, right, result, num_sub_blocks, blockSize);
+		}
+		else
+		{
+			cudabasic::executeKernel(matrixMultiplication<T>, blockDim, gridDim, sharedMemory, cuda::getDefaultStream(), left, right, result, num_sub_blocks, blockSize);
+		}
 	}
 	void tensorMatrixMul(const matrix<bool>& left, const matrix<bool>& right, matrix<bool>& result){tensorMatrixMulInternal(left, right, result);}
 	void tensorMatrixMul(const matrix<uint8_t>& left, const matrix<uint8_t>& right, matrix<uint8_t>& result) { tensorMatrixMulInternal(left, right, result); }

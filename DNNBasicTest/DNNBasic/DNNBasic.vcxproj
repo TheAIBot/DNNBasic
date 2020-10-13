@@ -25,6 +25,7 @@
     <ClInclude Include="cuda_settings.h" />
     <ClInclude Include="FBPropagation.h" />
     <ClInclude Include="Functions.h" />
+    <ClInclude Include="graphRecorder.h" />
     <ClInclude Include="kernel_tools.h" />
     <ClInclude Include="linear.h" />
     <ClInclude Include="matrix.h" />
@@ -52,6 +53,7 @@
     <ClCompile Include="..\..\..\CudaBasicClasses\cudaTimer.cpp" />
     <ClCompile Include="auto_graph.cpp" />
     <ClCompile Include="cuda_settings.cpp" />
+    <ClCompile Include="graphRecorder.cpp" />
     <ClCompile Include="kernel_tools.cpp" />
     <ClCompile Include="linear.cpp" />
     <ClCompile Include="mean_squared_loss.cpp" />

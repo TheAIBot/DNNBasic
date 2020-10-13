@@ -1,72 +1,60 @@
 #pragma once
 
-#include <vector>
-#include <variant>
 #include <functional>
-#include <cuda_runtime.h>
 #include "tensor.h"
 
-//namespace dnnbasic
-//{
-//	template<typename T>
-//	class tensor;
-//
-//	template<typename T>
-//	class tensorNode;
-//}
-
-namespace dnnbasic::autoGraph
+namespace dnnbasic
 {
-	void setMakeGraph(bool value);
-	bool getMakeGraph();
+	class graphRecorder;
+}
 
-	class scopeLevelDisableAutoGraph
+namespace dnnbasic
+{
+	namespace autoGraph
 	{
-	private:
-		bool oldValue;
+		class scopeLevelDisableAutoGraph
+		{
+		private:
+			bool oldValue;
 
-	public:
-		scopeLevelDisableAutoGraph();
-		~scopeLevelDisableAutoGraph();
-	};
-
-	class graphRecorder
-	{
-	private:
-		std::vector<std::variant<
-			tensor<bool>,
-			tensor<uint8_t>,
-			tensor<uint16_t>, 
-			tensor<uint32_t>, 
-			tensor<uint64_t>, 
-			tensor<int8_t>, 
-			tensor<int16_t>, 
-			tensor<int32_t>, 
-			tensor<int64_t>, 
-			tensor<float>, 
-			tensor<double>>> tensors;
-		cudaGraph_t graph;
-		cudaGraphExec_t graphExe;
-		bool hasRecordedGraph;
-
-	public:
-		graphRecorder();
-		~graphRecorder();
+		public:
+			scopeLevelDisableAutoGraph();
+			~scopeLevelDisableAutoGraph();
+		};
 
 		template<typename T>
-		void addTensor(tensor<T>& ten)
+		void handleMakeGraph(tensor<T>& ten, const std::function<tensorNode<T>* ()>& makeTensorNode);
+
+		template<typename T>
+		void forceMakeGraph(tensor<T>& ten, const std::function<tensorNode<T>* ()>& makeTensorNode);
+
+
+		bool isRecordingGraph();
+		graphRecorder* getRecordingGraph();
+		void setGraphRecorder(graphRecorder* recorder);
+		void addNodeToGraph(cudaKernelNodeParams* kernelParams);
+
+		template<typename... Args>
+		void addKernelNode(void(*kernel)(Args...), dim3 blockDim, dim3 gridDim, size_t sharedMemSize, Args... args)
 		{
-			tensors.emplace_back(ten);
+			if (!isRecordingGraph())
+			{
+				throw std::runtime_error("Tried to record kernel node without starting to record first.");
+			}
+
+			std::array<void*, sizeof...(args)> arguments = {
+				&args...
+			};
+
+			cudaKernelNodeParams kernelParams;
+			kernelParams.func = kernel;
+			kernelParams.blockDim = blockDim;
+			kernelParams.gridDim = gridDim;
+			kernelParams.sharedMemBytes = sharedMemSize;
+			kernelParams.kernelParams = &arguments[0];
+			kernelParams.extra = nullptr;
+
+			addNodeToGraph(&kernelParams);
 		}
-
-		void startRecording();
-		void stopRecording();
-		void replay() const;
-	};
-
-	template<typename T>
-	void handleMakeGraph(tensor<T>& ten, const std::function<tensorNode<T>* ()>& makeTensorNode);
-
-	template<typename T>
-	void forceMakeGraph(tensor<T>& ten, const std::function<tensorNode<T>* ()>& makeTensorNode);
+	}
 }

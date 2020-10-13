@@ -4,6 +4,7 @@
 #include "kernel_tools.h"
 #include "cudaBasics.h"
 #include "cuda_settings.h"
+#include "auto_graph.h"
 
 namespace dnnbasic
 {
@@ -31,7 +32,14 @@ namespace dnnbasic
 	{
 		const dim3 blockDim(256);
 		const dim3 gridDim(integerCeilDivision(from.elementCount(), blockDim.x));
-		cudabasic::executeKernel(cast<From, To>, blockDim, gridDim, 0, cuda::getDefaultStream(), from.getGPUArrayConst(), to.getGPUArray());
+		if (autoGraph::isRecordingGraph())
+		{
+			autoGraph::addKernelNode(cast<From, To>, blockDim, gridDim, 0, from.getGPUArrayConst(), to.getGPUArray());
+		}
+		else
+		{
+			cudabasic::executeKernel(cast<From, To>, blockDim, gridDim, 0, cuda::getDefaultStream(), from.getGPUArrayConst(), to.getGPUArray());
+		}
 	}
 
 #define CAST_FROM_TO(fromTyp, toTyp) \

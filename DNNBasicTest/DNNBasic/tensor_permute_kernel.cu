@@ -3,6 +3,7 @@
 #include "kernel_tools.h"
 #include "cudaBasics.h"
 #include "cuda_settings.h"
+#include "auto_graph.h"
 
 namespace dnnbasic
 {
@@ -59,8 +60,14 @@ namespace dnnbasic
 			outSumDims[i] = outTotalDim;
 		}
 
-
-		cudabasic::executeKernel(permute<T>, blockDim, gridDim, 0, cuda::getDefaultStream(), input.getGPUArrayConst(), output.getGPUArray(), inSumDims, outSumDims, permutedIdx);
+		if (autoGraph::isRecordingGraph())
+		{
+			autoGraph::addKernelNode(permute<T>, blockDim, gridDim, 0, input.getGPUArrayConst(), output.getGPUArray(), inSumDims, outSumDims, permutedIdx);
+		}
+		else
+		{
+			cudabasic::executeKernel(permute<T>, blockDim, gridDim, 0, cuda::getDefaultStream(), input.getGPUArrayConst(), output.getGPUArray(), inSumDims, outSumDims, permutedIdx);
+		}
 	}
 
 	template void tensorPermute(const tensor<bool>& input, const tensor<bool>& output, const std::vector<uint32_t>& dims);

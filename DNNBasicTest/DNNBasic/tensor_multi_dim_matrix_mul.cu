@@ -8,6 +8,7 @@
 #include "kernel_tools.h"
 #include "tensor_matrix_kernels.cuh"
 #include "cuda_settings.h"
+#include "auto_graph.h"
 
 namespace dnnbasic
 {
@@ -169,8 +170,16 @@ namespace dnnbasic
 		const dim3 gridDim(1);
 		const uint32_t num_sub_blocks = integerCeilDivision(aWidth, blockSize);
 
-		cudabasic::executeKernel(multiDimMatrixMultiplication<T>, blockDim, gridDim, 0, cuda::getDefaultStream(), a.getGPUArrayConst(), b.getGPUArrayConst(), c.getGPUArray(),
-			aStrides, bStrides, cStrides, aWidth, aHeight, bWidth, bHeight, num_sub_blocks);
+		if (autoGraph::isRecordingGraph())
+		{
+			autoGraph::addKernelNode(multiDimMatrixMultiplication<T>, blockDim, gridDim, 0, a.getGPUArrayConst(), b.getGPUArrayConst(), c.getGPUArray(),
+				aStrides, bStrides, cStrides, aWidth, aHeight, bWidth, bHeight, num_sub_blocks);
+		}
+		else
+		{
+			cudabasic::executeKernel(multiDimMatrixMultiplication<T>, blockDim, gridDim, 0, cuda::getDefaultStream(), a.getGPUArrayConst(), b.getGPUArrayConst(), c.getGPUArray(),
+				aStrides, bStrides, cStrides, aWidth, aHeight, bWidth, bHeight, num_sub_blocks);
+		}
 	}
 	void tensorMultiDimMatrixMul(const tensor<bool>& a, const tensor<bool>& b, const tensor<bool>& c) { tensorMultiDimMatMul(a, b, c); }
 	void tensorMultiDimMatrixMul(const tensor<uint8_t>& a, const tensor<uint8_t>& b, tensor<uint8_t>& c) { tensorMultiDimMatMul(a, b, c); }

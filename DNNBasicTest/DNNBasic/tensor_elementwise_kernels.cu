@@ -3,6 +3,7 @@
 #include "kernel_tools.h"
 #include "cudaBasics.h"
 #include "cuda_settings.h"
+#include "auto_graph.h"
 
 namespace dnnbasic
 {
@@ -143,26 +144,54 @@ namespace dnnbasic
 
 				const dim3 blockDim(256);
 				const dim3 gridDim(integerCeilDivision(result.elementCount(), blockDim.x));
-				cudabasic::executeKernel(biArgElementWiseKernelSpanSpanBroadcast<OP, T>, blockDim, gridDim, 0, cuda::getDefaultStream(), left.getGPUArray(), right.getGPUArray(), result.getGPUArray(), aStrides, bStrides, cStrides);
+				if (autoGraph::isRecordingGraph())
+				{
+					autoGraph::addKernelNode(biArgElementWiseKernelSpanSpanBroadcast<OP, T>, blockDim, gridDim, 0, left.getGPUArray(), right.getGPUArray(), result.getGPUArray(), aStrides, bStrides, cStrides);
+				}
+				else
+				{
+					cudabasic::executeKernel(biArgElementWiseKernelSpanSpanBroadcast<OP, T>, blockDim, gridDim, 0, cuda::getDefaultStream(), left.getGPUArray(), right.getGPUArray(), result.getGPUArray(), aStrides, bStrides, cStrides);
+				}
 			}
 			else
 			{
 				const dim3 blockDim(256);
 				const dim3 gridDim(integerCeilDivision(result.elementCount(), blockDim.x));
-				cudabasic::executeKernel(biArgElementWiseKernelSpanSpan<OP, T>, blockDim, gridDim, 0, cuda::getDefaultStream(), left.getGPUArray(), right.getGPUArray(), result.getGPUArray());
+				if (autoGraph::isRecordingGraph())
+				{
+					autoGraph::addKernelNode(biArgElementWiseKernelSpanSpan<OP, T>, blockDim, gridDim, (size_t)0, left.getGPUArray(), right.getGPUArray(), result.getGPUArray());
+				}
+				else
+				{
+					cudabasic::executeKernel(biArgElementWiseKernelSpanSpan<OP, T>, blockDim, gridDim, 0, cuda::getDefaultStream(), left.getGPUArray(), right.getGPUArray(), result.getGPUArray());
+				}
 			}
 		}
 		static void execute(const T left, const tensor<T>& right, const tensor<T>& result, const bool isBroadcasted)
 		{
 			const dim3 blockDim(256);
 			const dim3 gridDim(integerCeilDivision(result.elementCount(), blockDim.x));
-			cudabasic::executeKernel(biArgElementWiseKernelScalarSpan<OP, T>, blockDim, gridDim, 0, cuda::getDefaultStream(), left, right.getGPUArray(), result.getGPUArray());
+			if (autoGraph::isRecordingGraph())
+			{
+				autoGraph::addKernelNode(biArgElementWiseKernelScalarSpan<OP, T>, blockDim, gridDim, (size_t)0, left, right.getGPUArray(), result.getGPUArray());
+			}
+			else
+			{
+				cudabasic::executeKernel(biArgElementWiseKernelScalarSpan<OP, T>, blockDim, gridDim, 0, cuda::getDefaultStream(), left, right.getGPUArray(), result.getGPUArray());
+			}
 		}
 		static void execute(const tensor<T>& left, const T right, const tensor<T>& result, const bool isBroadcasted)
 		{
 			const dim3 blockDim(256);
 			const dim3 gridDim(integerCeilDivision(result.elementCount(), blockDim.x));
-			cudabasic::executeKernel(biArgElementWiseKernelScalarSpan<OP, T>, blockDim, gridDim, 0, cuda::getDefaultStream(), left.getGPUArray(), right, result.getGPUArray());
+			if (autoGraph::isRecordingGraph())
+			{
+				autoGraph::addKernelNode(biArgElementWiseKernelScalarSpan<OP, T>, blockDim, gridDim, (size_t)0, left.getGPUArray(), right, result.getGPUArray());
+			}
+			else
+			{
+				cudabasic::executeKernel(biArgElementWiseKernelScalarSpan<OP, T>, blockDim, gridDim, 0, cuda::getDefaultStream(), left.getGPUArray(), right, result.getGPUArray());
+			}
 		}
 	};
 

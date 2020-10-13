@@ -132,6 +132,9 @@
     <ClInclude Include="cuda_settings.h">
       <Filter>dnnbasic</Filter>
     </ClInclude>
+    <ClInclude Include="graphRecorder.h">
+      <Filter>dnnbasic</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\CudaBasicClasses\cudaBasics.cpp">
@@ -180,6 +183,9 @@
       <Filter>dnnbasic</Filter>
     </ClCompile>
     <ClCompile Include="random.cpp">
+      <Filter>dnnbasic</Filter>
+    </ClCompile>
+    <ClCompile Include="graphRecorder.cpp">
       <Filter>dnnbasic</Filter>
     </ClCompile>
   </ItemGroup>

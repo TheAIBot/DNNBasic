@@ -3,23 +3,11 @@
 #include "auto_graph.h"
 #include "cudaBasics.h"
 #include "cuda_settings.h"
+#include "graphRecorder.h"
 
 namespace dnnbasic::autoGraph
 {
 	static thread_local bool makeGraph = true;
-
-	static thread_local bool recordWholeGraph = false;
-	static thread_local graphRecorder* currentRecorder = nullptr;
-
-	void setMakeGraph(bool value)
-	{
-		makeGraph = value;
-	}
-
-	bool getMakeGraph()
-	{
-		return makeGraph;
-	}
 
 	scopeLevelDisableAutoGraph::scopeLevelDisableAutoGraph()
 	{
@@ -42,19 +30,21 @@ namespace dnnbasic::autoGraph
 			ten.setNode(node);
 		}
 
-		if (recordWholeGraph)
+		if (isRecordingGraph())
 		{
-			assert(currentRecorder != nullptr);
-
-			currentRecorder->addTensor(ten);
-			if (node != nullptr)
+			if (node == nullptr)
 			{
-				auto tensors = node->getTensors();
-				for (size_t i = 0; i < tensors.size(); i++)
-				{
-					currentRecorder->addTensor(tensors[i]);
-				}
+				node = makeTensorNode();
 			}
+
+			auto graph = getRecordingGraph();
+
+			auto tensors = node->getTensors();
+			for (size_t i = 0; i < tensors.size(); i++)
+			{
+				graph->addTensor(tensors[i]);
+			}
+			graph->addTensor(ten);
 		}
 	}
 
@@ -64,17 +54,21 @@ namespace dnnbasic::autoGraph
 		tensorNode<T>* node = makeTensorNode();
 		ten.setNode(node);
 
-		if (recordWholeGraph)
+		if (isRecordingGraph())
 		{
-			assert(currentRecorder != nullptr);
+			if (node == nullptr)
+			{
+				node = makeTensorNode();
+			}
 
-			currentRecorder->addTensor(ten);
+			auto graph = getRecordingGraph();
 
 			auto tensors = node->getTensors();
 			for (size_t i = 0; i < tensors.size(); i++)
 			{
-				currentRecorder->addTensor(tensors[i]);
+				graph->addTensor(tensors[i]);
 			}
+			graph->addTensor(ten);
 		}
 	}
 
@@ -102,49 +96,25 @@ namespace dnnbasic::autoGraph
 	template void forceMakeGraph(tensor<float>& ten, const std::function<tensorNode<float>* ()>& makeTensorNode);
 	template void forceMakeGraph(tensor<double>& ten, const std::function<tensorNode<double>* ()>& makeTensorNode);
 
+	static thread_local graphRecorder* currentRecorder = nullptr;
 
-	graphRecorder::graphRecorder()
+	bool isRecordingGraph()
 	{
-		cudaGraphCreate(&this->graph, 0);
-		this->graphExe = nullptr;
-		this->hasRecordedGraph = false;
-	}
-	graphRecorder::~graphRecorder()
-	{
-		cudaGraphDestroy(this->graph);
-		if (this->hasRecordedGraph)
-		{
-			cudaGraphExecDestroy(this->graphExe);
-		}
+		return currentRecorder != nullptr;
 	}
 
-	void graphRecorder::startRecording()
+	graphRecorder* getRecordingGraph()
 	{
-		assert(!recordWholeGraph);
-		assert(currentRecorder == nullptr);
-		assert(!this->hasRecordedGraph);
-
-		recordWholeGraph = true;
-		currentRecorder = this;
-
-		cudaStreamBeginCapture(cuda::getDefaultStream(), cudaStreamCaptureModeGlobal);
+		return currentRecorder;
 	}
-	void graphRecorder::stopRecording()
+
+	void setGraphRecorder(graphRecorder* recorder)
 	{
-		assert(recordWholeGraph);
-		assert(currentRecorder == this);
-
-		recordWholeGraph = false;
-		currentRecorder = nullptr;
-		this->hasRecordedGraph = true;
-
-		cudaStreamEndCapture(cuda::getDefaultStream(), &this->graph);
-		cudaGraphInstantiate(&this->graphExe, this->graph, nullptr, nullptr, 0);
-		cudabasic::checkForCudaError();
+		currentRecorder = recorder;
 	}
-	void graphRecorder::replay() const
+
+	void addNodeToGraph(cudaKernelNodeParams* kernelParams)
 	{
-		cudaGraphLaunch(this->graphExe, 0);
-		cudabasic::cudaSynchronize();
+		currentRecorder->addKernelNode(kernelParams);
 	}
 }
