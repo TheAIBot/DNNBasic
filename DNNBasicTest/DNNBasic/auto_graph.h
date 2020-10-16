@@ -47,7 +47,7 @@ namespace dnnbasic
 			};
 
 			cudaKernelNodeParams kernelParams;
-			kernelParams.func = kernel;
+			kernelParams.func = reinterpret_cast<void*>(kernel);
 			kernelParams.blockDim = blockDim;
 			kernelParams.gridDim = gridDim;
 			kernelParams.sharedMemBytes = sharedMemSize;

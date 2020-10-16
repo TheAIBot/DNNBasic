@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include "Tensor.h"
+#include "tensor.h"
 #include "optional.h"
 namespace dnnbasic
 {

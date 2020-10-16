@@ -1,4 +1,6 @@
 #include <string>
+#include <stdexcept>
+#include <vector>
 #include "tensor_permute_kernel.cuh"
 #include "tensor.h"
 #include "tensor_node_no_grad.h"
@@ -33,13 +35,13 @@ namespace dnnbasic
 	{
 		if (dims.size() != this->data->dimension.size())
 		{
-			throw std::exception("cannot perform permutation due to incorrect number of permute dimensions.");
+			throw std::runtime_error("cannot perform permutation due to incorrect number of permute dimensions.");
 		}
 		for (uint32_t i = 0; i < this->data->dimension.size(); i++)
 		{
 			if (dims[i] >= this->data->dimension.size())
 			{
-				throw std::exception("permute dimensions indicies cannot be higher than tensor dimnesion count.");
+				throw std::runtime_error("permute dimensions indicies cannot be higher than tensor dimnesion count.");
 			}
 		}
 
@@ -63,14 +65,15 @@ namespace dnnbasic
 	{
 		if (dimNames.size() != this->getDimensions().size())
 		{
-			throw std::exception("cannot perform permutation due to incorrect number of permute dimensions.");
+			throw std::runtime_error("cannot perform permutation due to incorrect number of permute dimensions.");
 		}
 
 		std::vector<uint32_t> namedDimIndices;
 
 		auto& tensorDims = this->getDimensions();
-		for each (const std::string & dimName in dimNames)
+		for (size_t z = 0; z < dimNames.size(); z++)
 		{
+			const std::string& dimName = dimNames[z];
 			bool foundDim = false;
 			for (uint32_t i = 0; i < tensorDims.size(); i++)
 			{
@@ -84,10 +87,10 @@ namespace dnnbasic
 
 			if (!foundDim)
 			{
-				throw std::exception("Tensor does not contain a dimension with the name: ");
+				throw std::runtime_error("Tensor does not contain a dimension with the name: ");
 			}
 		}
-
+		
 		return permute(namedDimIndices);
 	}
 }

@@ -9,7 +9,7 @@ namespace dnnbasic
 		T vvalue;
 		bool hasValue;
 	public:
-		optional(T& val) : vvalue(val)
+		optional(T val) : vvalue(val)
 		{
 			this->hasValue = true;
 		}

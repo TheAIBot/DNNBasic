@@ -26,19 +26,7 @@ namespace dnnbasic::loss
 		return this->errorCalcMethod(this->errorTensor);
 	}
 
-
-	template<typename T>
-	lossData<T> meanSquaredLoss(tensor<T> expected, tensor<T> actual) 
-	{
-		return meanSquaredLoss(expected, actual, false, 0);
-	}
-
-	template<typename T>
-	lossData<T> meanSquaredLoss(tensor<T> expected, tensor<T> actual, const uint32_t batchDim)
-	{
-		return meanSquaredLoss(expected, actual, true, batchDim);
-	}
-
+	
 	template<typename T>
 	lossData<T> meanSquaredLoss(tensor<T> expected, tensor<T> actual, bool meanOverBatch, const uint32_t batchDim)
 	{
@@ -65,6 +53,18 @@ namespace dnnbasic::loss
 
 
 		return lossData<T>(gradient, error, actual.getNode().value(), errorMethod);
+	}
+
+	template<typename T>
+	lossData<T> meanSquaredLoss(tensor<T> expected, tensor<T> actual) 
+	{
+		return meanSquaredLoss(expected, actual, false, 0);
+	}
+
+	template<typename T>
+	lossData<T> meanSquaredLoss(tensor<T> expected, tensor<T> actual, const uint32_t batchDim)
+	{
+		return meanSquaredLoss(expected, actual, true, batchDim);
 	}
 
 	//template lossData<bool> meanSquaredLoss(tensor<bool> expected, tensor<bool> actual);

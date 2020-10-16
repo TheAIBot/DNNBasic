@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <vector>
 #include <cuda_runtime.h>
+#include <assert.h>
 
 namespace dnnbasic
 {

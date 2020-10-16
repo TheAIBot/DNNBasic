@@ -1,6 +1,7 @@
 #include <string>
 #include <vector>
 #include <cstdint>
+#include <stdexcept>
 #include <tuple>
 #include "span.h"
 #include "tensor.h"
@@ -57,7 +58,7 @@ namespace dnnbasic
 		}
 		else
 		{
-			throw std::exception("Dimension mismatch.");
+			throw std::runtime_error("Dimension mismatch.");
 		}
 	}
 
@@ -82,7 +83,7 @@ namespace dnnbasic
 	{
 		if (!hasSameDimensions(left, right))
 		{
-			throw std::exception("Dimensions of left hand side tensor do not match dimension of right hand side tensor.");
+			throw std::runtime_error("Dimensions of left hand side tensor do not match dimension of right hand side tensor.");
 		}
 
 		auto leftValues = left.getValuesOnCPU();
@@ -100,7 +101,7 @@ namespace dnnbasic
 	template<typename T>
 	tensor<T> operator*(const tensor<T>& left, const tensor<T>& right)
 	{
-		auto& [child, isBroadcasted] = createTensorWithSameDims(left, right);
+		auto [child, isBroadcasted] = createTensorWithSameDims(left, right);
 		autoGraph::handleMakeGraph(child, std::function<tensorNode<T>* ()>([&]() {return new tensorNodeNoGrad<T>({ left, right }); }));
 
 		// make kernel call
@@ -130,7 +131,7 @@ namespace dnnbasic
 	template<typename T>
 	tensor<T> operator+(const tensor<T>& left, const tensor<T>& right)
 	{
-		auto& [child, isBroadcasted] = createTensorWithSameDims(left, right);
+		auto [child, isBroadcasted] = createTensorWithSameDims(left, right);
 		autoGraph::handleMakeGraph(child, std::function<tensorNode<T>* ()>([&]() {return new tensorNodeNoGrad<T>({ left, right }); }));
 
 		// make kernel call
@@ -160,7 +161,7 @@ namespace dnnbasic
 	template<typename T>
 	tensor<T> operator-(const tensor<T>& left, const tensor<T>& right)
 	{
-		auto& [child, isBroadcasted] = createTensorWithSameDims(left, right);
+		auto [child, isBroadcasted] = createTensorWithSameDims(left, right);
 		autoGraph::handleMakeGraph(child, std::function<tensorNode<T>* ()>([&]() {return new tensorNodeNoGrad<T>({ left, right }); }));
 
 		// make kernel call

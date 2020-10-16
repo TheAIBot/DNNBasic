@@ -1,11 +1,13 @@
 #include <string>
 #include <vector>
 #include <cstdint>
+#include <stdexcept>
 #include "span.h"
 #include "gpuArray.h"
 #include "matrix.h"
 #include "tensor.h"
 #include "random.h"
+#include "optional.h"
 #include "cuda_settings.h"
 
 #include "tensor_sum.cpp"
@@ -51,27 +53,27 @@ namespace dnnbasic
 		this->data = std::make_shared<tensorData <T>>(dimensions);
 		if (dimensions.size() == 0)
 		{
-			throw std::exception("Cannot make tensor with 0 dimensions.");
+			throw std::runtime_error("Cannot make tensor with 0 dimensions.");
 		}
 
 		if (dimensions.size() > tensor<T>::MAX_DIMENSION_COUNT)
 		{
-			throw std::exception("A tensor can not have more than 10 dimensions.");
+			throw std::runtime_error("A tensor can not have more than 10 dimensions.");
 		}
 
 		if (dimensions.size() != names.size())
 		{
-			throw std::exception("Number of dimensions and dimension names do not match.");
+			throw std::runtime_error("Number of dimensions and dimension names do not match.");
 		}
 
 		if (std::any_of(dimensions.begin(), dimensions.end(), [](auto& dim) { return dim == 0; }))
 		{
-			throw std::exception("Dimensions with size 0 are not allowed in a tensor.");
+			throw std::runtime_error("Dimensions with size 0 are not allowed in a tensor.");
 		}
 
 		if (values.size() > this->data->arr.size())
 		{
-			throw std::exception("Initializtion vector contain too many values.");
+			throw std::runtime_error("Initializtion vector contain too many values.");
 		}
 
 		for (size_t i = 0; i < dimensions.size(); i++)
@@ -88,7 +90,7 @@ namespace dnnbasic
 	template<typename T>
 	void tensor<T>::setNode(tensorNode<T>* inNode)
 	{
-		this->data->tensorOp = std::shared_ptr<tensorNode<T>>(inNode);
+		this->data->tensorOp = optional(std::shared_ptr<tensorNode<T>>(inNode));
 	}
 
 	template<typename T>
@@ -141,7 +143,7 @@ namespace dnnbasic
 	template<typename T>
 	void tensor<T>::copyTo(const tensor<T>& other)
 	{
-		this->data->arr.copyToGPUArray(other.data->arr, cuda::getDefaultStream());
+		//this->data->arr.copyToGPUArray(other.data->arr, cuda::getDefaultStream());
 	}
 
 

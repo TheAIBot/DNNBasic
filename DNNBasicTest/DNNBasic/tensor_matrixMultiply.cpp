@@ -1,6 +1,7 @@
 #include <string>
 #include <vector>
 #include <cstdint>
+#include <stdexcept>
 #include "tensor.h"
 #include "tensor_node_no_grad.h"
 #include "tensor_matrix_kernels.cuh"
@@ -252,7 +253,7 @@ namespace dnnbasic
 		}
 		else
 		{
-			throw std::exception("Left hand side tensor cannot matrix multiply with right hand side tensor.");
+			throw std::runtime_error("Left hand side tensor cannot matrix multiply with right hand side tensor.");
 		}
 
 	}
