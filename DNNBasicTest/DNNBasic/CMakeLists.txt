@@ -61,6 +61,7 @@ add_library(dnn_basic
     "graphRecorder.h"
     "graphRecorder.cpp"
     "sgd.h"
+    "sgd.cpp"
 )
 
 target_compile_features(dnn_basic PUBLIC cxx_std_17)

@@ -9,7 +9,7 @@ project ("DNNBasicstuff")
 # Include sub-projects.
 add_subdirectory ("DNNBasicTest/DNNBasic/")
 #add_subdirectory ("/DNNBasicBench/")
-#add_subdirectory ("/DNNBasicRun/")
+add_subdirectory ("DNNBasicTest/DNNBasicRun/")
 #add_subdirectory ("/DNNBasicTest/")
 
 # TODO: Add tests and install targets if needed.

@@ -6,7 +6,7 @@ namespace dnnbasic
 {
 	template<typename T>
 	class tensor;
-
+	
 	namespace optimizer
 	{
 		class optimizer
