@@ -188,6 +188,9 @@
     <ClCompile Include="graphRecorder.cpp">
       <Filter>dnnbasic</Filter>
     </ClCompile>
+    <ClCompile Include="sgd.cpp">
+      <Filter>dnnbasic\optimizers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="tensor_elementwise_kernels.cu">
