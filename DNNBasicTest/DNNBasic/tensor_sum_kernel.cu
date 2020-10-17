@@ -9,6 +9,9 @@ namespace dnnbasic
 {
 	using gpuArray = smallGPUArray<uint32_t, tensor<uint32_t>::MAX_DIMENSION_COUNT>;
 
+	static const uint32_t THREADS_PER_BLOCK = 1024;
+	static const uint32_t THREADS_PER_WARP = 32;
+
 	template<typename T>
 	__global__ void sumKernel(
 		const cudabasic::span<T> input, 
@@ -18,6 +21,9 @@ namespace dnnbasic
 		const gpuArray inputStrides,
 		const gpuArray outputStrides)
 	{
+		extern __shared__ __align__(sizeof(T)) int8_t sharedArray[];
+		T* sharedMemT = reinterpret_cast<T*>(sharedArray);
+
 		const uint32_t idx = blockIdx.x * blockDim.x + threadIdx.x;
 
 		if (idx >= output.size())
@@ -39,7 +45,40 @@ namespace dnnbasic
 			inputIndex += index[i] * inputStrides[i];
 		}
 
-		T sum = 0;
+		const T value = input[inputIndex + threadIdx.x * sumStride];
+
+		//Make warp sum
+		T warpSum = value;
+		for (uint32_t i = THREADS_PER_WARP / 2; i > 0; i /= 2)
+		{
+			warpSum += __shfl_down_sync(0xffffffff, warpSum, i);
+		}
+
+		//First thread in each warp will store their sum
+		//in shared memory so the first warp can sum it up
+		if (threadIdx.x % THREADS_PER_WARP == 0)
+		{
+			sharedMemT[threadIdx.x / THREADS_PER_WARP] = warpSum;
+		}
+		__syncthreads();
+
+		//First warp in each block will now
+		//make a block sum
+		T blockSum = 0;
+		if (threadIdx.x < THREADS_PER_WARP)
+		{
+			blockSum = sharedMemT[threadIdx.x];
+			for (uint32_t i = THREADS_PER_WARP / 2; i > 0; i /= 2)
+			{
+				blockSum += __shfl_down_sync(0xffffffff, blockSum, i);
+			}
+		}
+		__syncthreads();
+
+		//First thread in block will now atomic add the result
+		
+		
+		
 		for (uint32_t i = 0; i < sumDimSize; i++)
 		{
 			sum += input[inputIndex + i * sumStride];
@@ -78,8 +117,13 @@ namespace dnnbasic
 			sumStride *= input.getDimensions()[i].dim;
 		}
 
-		const dim3 blockDim(256);
-		const dim3 gridDim(integerCeilDivision(output.elementCount(), blockDim.x));
+		const uint32_t sumDim = input.getDimensions()[sumDimIdx].dim;
+		const uint32_t threadsPerDim = sumDim;
+		const uint32_t dimsToSum = output.elementCount();
+		const uint32_t totalThreadsNeeded = threadsPerDim * dimsToSum;
+
+		const dim3 blockDim(1024);
+		const dim3 gridDim(integerCeilDivision(totalThreadsNeeded, blockDim.x));
 		if (autoGraph::isRecordingGraph())
 		{
 			autoGraph::addKernelNode(sumKernel<T>, blockDim, gridDim, 0, input.getGPUArrayConst(), output.getGPUArray(), sumStride, input.getDimensions()[sumDimIdx].dim, inputStrides, outputStrides);
