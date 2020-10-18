@@ -28,16 +28,17 @@ std::vector<float> getVectorWithRandomNumbers(const uint32_t size)
     return numbers;
 }
 
-float benchMarkFunc(std::function<void(void)> func)
+template<typename T>
+float benchMarkFunc(const std::function<dnnbasic::tensor<T>(void)>& func)
 {
     std::vector<float> benchTimes;
     cudabasic::cudaTimer timer;
 
-    const int32_t benchCount = 100;
+    const int32_t benchCount = 20;
     for (size_t i = 0; i < benchCount; i++)
     {
         timer.startTimer();
-        func();
+        auto tmp = func();
         timer.stopTimer();
         benchTimes.push_back(timer.getElapsedMiliseconds());
     }
@@ -94,38 +95,30 @@ void benchMarkMatrixMultColumnsVsRows(std::string folder, std::string filename, 
     std::ofstream file(filepath);
     file << "cols/rows; time in ms" << std::endl;
 
+    auto randomValues = getVectorWithRandomNumbers(elementCount);
+
+    auto benchSeq = [&](const matrixSize& matSize)
     {
-        const matrixSize matSize = matSizes[0];
+        const std::size_t matElemCount = matSize.columns * matSize.rows;
+        std::vector<float> aRange(randomValues.begin(), randomValues.begin() + matElemCount);
+        std::vector<float> bRange(randomValues.begin(), randomValues.begin() + matElemCount);
 
-        auto aData = getVectorWithRandomNumbers(matSize.columns * matSize.rows);
-        auto bData = getVectorWithRandomNumbers(matSize.columns * matSize.rows);
+        dnnbasic::tensor<float> a({ matSize.rows, matSize.columns }, aRange);
+        dnnbasic::tensor<float> b({ matSize.columns, matSize.rows }, bRange);
 
-        dnnbasic::tensor<float> a({ matSize.rows, matSize.columns }, aData);
-        dnnbasic::tensor<float> b({ matSize.columns, matSize.rows }, bData);
-
-        std::vector<dnnbasic::tensor<float>> resultTensors;
-        float time = benchMarkFunc([&]()
+        return benchMarkFunc(std::function<dnnbasic::tensor<float>(void)>([=]()
             {
-                resultTensors.push_back(a.matMul(b));
-            });
+                return a.matMul(b);
+            }));
+    };
 
-    }
+    //Warmup
+    benchSeq(matSizes[0]);
 
     for (size_t i = 0; i < matSizes.size(); i++)
     {
         const matrixSize matSize = matSizes[i];
-
-        auto aData = getVectorWithRandomNumbers(matSize.columns * matSize.rows);
-        auto bData = getVectorWithRandomNumbers(matSize.columns * matSize.rows);
-
-        dnnbasic::tensor<float> a({ matSize.rows, matSize.columns }, aData);
-        dnnbasic::tensor<float> b({ matSize.columns, matSize.rows }, bData);
-
-        std::vector<dnnbasic::tensor<float>> resultTensors;
-        float time = benchMarkFunc([&]()
-            {
-                resultTensors.push_back(a.matMul(b));
-            });
+        float time = benchSeq(matSize);
 
         const float colRowRatio = (float)matSize.columns / elementCount;
         file << std::to_string(colRowRatio) << "; " << std::to_string(time) << std::endl;
@@ -136,7 +129,7 @@ void benchMarkMatrixMultColumnsVsRows(std::string folder, std::string filename, 
 
 int main()
 {
-    for (uint32_t i = 256; i <= 2048; i += 256)
+    for (uint32_t i = 1024; i <= 1024 * 16; i += 1024)
     {
         benchMarkMatrixMultColumnsVsRows("matmul/static_block_size", "matrix_size-" + std::to_string(i), i);
     }
