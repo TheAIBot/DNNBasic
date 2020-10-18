@@ -155,9 +155,9 @@
     </Link>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
-      <Optimization>Od</Optimization>
-      <GPUDebugInfo>true</GPUDebugInfo>
-      <HostDebugInfo>true</HostDebugInfo>
+      <Optimization>O2</Optimization>
+      <GPUDebugInfo>false</GPUDebugInfo>
+      <HostDebugInfo>false</HostDebugInfo>
       <GenerateRelocatableDeviceCode>true</GenerateRelocatableDeviceCode>
       <CodeGeneration>compute_60,sm_60</CodeGeneration>
     </CudaCompile>
