@@ -2,6 +2,7 @@
 
 #include <typeinfo>
 #include <codecvt>
+#include <string>
 #include <vector>
 #include <random>
 
