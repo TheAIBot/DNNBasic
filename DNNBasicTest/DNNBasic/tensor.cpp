@@ -143,7 +143,7 @@ namespace dnnbasic
 	template<typename T>
 	void tensor<T>::copyTo(const tensor<T>& other)
 	{
-		//this->data->arr.copyToGPUArray(other.data->arr, cuda::getDefaultStream());
+		this->data->arr.copyToGPUArray(other.data->arr, cuda::getDefaultStream());
 	}
 
 

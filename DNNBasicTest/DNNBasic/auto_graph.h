@@ -2,6 +2,7 @@
 
 #include <functional>
 #include "tensor.h"
+#include "span.h"
 
 namespace dnnbasic
 {
@@ -33,6 +34,7 @@ namespace dnnbasic
 		graphRecorder* getRecordingGraph();
 		void setGraphRecorder(graphRecorder* recorder);
 		void addNodeToGraph(cudaKernelNodeParams* kernelParams);
+		void addMemsetNodeToGraph(cudaMemsetParams* memsetParams);
 
 		template<typename... Args>
 		void addKernelNode(void(*kernel)(Args...), dim3 blockDim, dim3 gridDim, size_t sharedMemSize, Args... args)
@@ -55,6 +57,25 @@ namespace dnnbasic
 			kernelParams.extra = nullptr;
 
 			addNodeToGraph(&kernelParams);
+		}
+
+		template<typename T>
+		void addMemsetNode(cudabasic::span<T> dst, uint32_t value)
+		{
+			if (!isRecordingGraph())
+			{
+				throw std::runtime_error("Tried to record memset node without starting to record first.");
+			}
+
+			cudaMemsetParams memsetParams;
+			memsetParams.dst = reinterpret_cast<void*>(dst.begin());
+			memsetParams.elementSize = 1;
+			memsetParams.height = 1;
+			memsetParams.pitch = 1;
+			memsetParams.value = value;
+			memsetParams.width = dst.size() * sizeof(T);
+
+			addMemsetNodeToGraph(&memsetParams);
 		}
 	}
 }
