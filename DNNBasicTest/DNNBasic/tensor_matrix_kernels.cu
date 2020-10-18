@@ -9,7 +9,7 @@
 namespace dnnbasic
 {
 	template <typename T>
-	__global__ void matrixMultiplication(const matrix<T> a, const matrix<T> b, matrix<T> c, const uint32_t num_sub_blocks, const uint32_t blockSize)
+	__global__ void matrixMultiplication(const matrix<T> a, const matrix<T> b, matrix<T> c, const uint32_t num_sub_blocks, const uint32_t blockSize, const uint32_t blockLoads)
 	{
 		// Block index
 		const uint32_t bx = blockIdx.x;
@@ -25,27 +25,30 @@ namespace dnnbasic
 		extern __shared__ __align__(sizeof(T)) int8_t sharedArray[];
 		T* sharedMemT = reinterpret_cast<T*>(sharedArray);
 
-		matrix<T> As(sharedMemT, blockSize, blockSize);
-		matrix<T> Bs(sharedMemT + blockSize * blockSize, blockSize, blockSize);
+		matrix<T> As(sharedMemT, blockSize * blockLoads, blockSize);
+		matrix<T> Bs(sharedMemT + As.size(), blockSize, blockSize * blockLoads);
 
 		//iterate through the number of sub matrices of A and B
-		for (uint32_t i = 0; i < num_sub_blocks; i++) {
-			const uint32_t a_x = tx + i * blockSize;
-			const uint32_t a_y = ty + by * blockSize;
-			const uint32_t b_x = tx + bx * blockSize;
-			const uint32_t b_y = ty + i * blockSize;
+		for (uint32_t i = 0; i < num_sub_blocks; i += blockLoads) {
+			for (uint32_t q = 0; q < blockLoads; q++)
+			{
+				const uint32_t a_x = tx + (i + q) * blockSize;
+				const uint32_t a_y = ty + by * blockSize;
+				const uint32_t b_x = tx + bx * blockSize;
+				const uint32_t b_y = ty + (i + q) * blockSize;
 
-			//a submatrix can lie both inside and outside the bounds of the matrix.
-			//We can't load any part that lies outside the bounds so instead 0 is
-			//loaded into the submatrix because it doesn't change the result of
-			//the sub matrix multiplication.
-			As[ty][tx] = a.withinBounds(a_x, a_y) ? a[a_y][a_x] : (T)0;
-			Bs[ty][tx] = b.withinBounds(b_x, b_y) ? b[b_y][b_x] : (T)0;
+				//a submatrix can lie both inside and outside the bounds of the matrix.
+				//We can't load any part that lies outside the bounds so instead 0 is
+				//loaded into the submatrix because it doesn't change the result of
+				//the sub matrix multiplication.
+				As[ty][tx + (q * blockSize)] = a.withinBounds(a_x, a_y) ? a[a_y][a_x] : (T)0;
+				Bs[ty + (q * blockSize)][tx] = b.withinBounds(b_x, b_y) ? b[b_y][b_x] : (T)0;
+			}
 
 			// change this so that we have min(a height, blocksize) <- is this valid?
 			// Wait untill all threads have loaded their values into shared memory.
 			__syncthreads();
-			for (uint32_t k = 0; k < blockSize; ++k)
+			for (uint32_t k = 0; k < blockSize * blockLoads; ++k)
 			{
 				Csub += As[ty][k] * Bs[k][tx];
 			}
@@ -75,17 +78,22 @@ namespace dnnbasic
 		
 		const uint32_t blockSize = 32; 
 		const dim3 blockDim(blockSize, blockSize);
-		const uint32_t sharedMemory = sizeof(T) * blockSize * blockSize * 2;
 		const dim3 gridDim(integerCeilDivision(matrixWidth, blockDim.x), integerCeilDivision(matrixHeight, blockDim.y));
-		const uint32_t num_sub_blocks = integerCeilDivision(left.getColumns(), blockSize);
+
+		uint32_t sharedMemory = sizeof(T) * blockSize * blockSize * 2;
+		uint32_t dwa = (1024 * 32) / sharedMemory;
+		uint32_t num_sub_blocks = integerCeilDivision(left.getColumns(), blockSize);
+
+		dwa = std::min(dwa, num_sub_blocks);
+		sharedMemory *= dwa;
 		
 		if (autoGraph::isRecordingGraph())
 		{
-			autoGraph::addKernelNode(matrixMultiplication<T>, blockDim, gridDim, sharedMemory, left, right, result, num_sub_blocks, blockSize);
+			autoGraph::addKernelNode(matrixMultiplication<T>, blockDim, gridDim, sharedMemory, left, right, result, num_sub_blocks, blockSize, dwa);
 		}
 		else
 		{
-			cudabasic::executeKernel(matrixMultiplication<T>, blockDim, gridDim, sharedMemory, cuda::getDefaultStream(), left, right, result, num_sub_blocks, blockSize);
+			cudabasic::executeKernel(matrixMultiplication<T>, blockDim, gridDim, sharedMemory, cuda::getDefaultStream(), left, right, result, num_sub_blocks, blockSize, dwa);
 		}
 	}
 	void tensorMatrixMul(const matrix<bool>& left, const matrix<bool>& right, matrix<bool>& result){tensorMatrixMulInternal(left, right, result);}

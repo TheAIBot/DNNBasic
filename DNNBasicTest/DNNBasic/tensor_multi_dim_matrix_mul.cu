@@ -91,7 +91,7 @@ namespace dnnbasic
 			const matrix<T> bMatrix(&b[bMatrixIndex], bWidth, bHeight);
 			matrix<T> cMatrix(&c[cMatrixIndex], cMatrixWidth, cMatrixHeight);
 
-			matrixMultiplication << <gridDimq, blockDimq, sharedMemory, stream >> > (aMatrix, bMatrix, cMatrix, num_sub_blocks, blockDimq.x);
+			matrixMultiplication << <gridDimq, blockDimq, sharedMemory, stream >> > (aMatrix, bMatrix, cMatrix, num_sub_blocks, blockDimq.x, 1);
 		}
 
 		cudaStreamDestroy(stream);
