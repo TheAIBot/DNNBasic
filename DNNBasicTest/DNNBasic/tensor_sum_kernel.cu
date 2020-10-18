@@ -5,6 +5,8 @@
 #include "cuda_settings.h"
 #include "auto_graph.h"
 
+__device__ void __syncthreads();
+
 namespace dnnbasic
 {
 	using gpuArray = smallGPUArray<uint32_t, tensor<uint32_t>::MAX_DIMENSION_COUNT>;
@@ -13,46 +15,39 @@ namespace dnnbasic
 	static const uint32_t THREADS_PER_WARP = 32;
 
 	template<typename T>
-	__global__ void sumKernel(
-		const cudabasic::span<T> input, 
-		cudabasic::span<T> output,
-		const uint32_t sumStride,
-		const uint32_t sumDimSize,
-		const gpuArray inputStrides,
-		const gpuArray outputStrides)
+	__device__ T getWarpSum(const T threadValue)
 	{
-		extern __shared__ __align__(sizeof(T)) int8_t sharedArray[];
-		T* sharedMemT = reinterpret_cast<T*>(sharedArray);
-
-		const uint32_t idx = blockIdx.x * blockDim.x + threadIdx.x;
-
-		if (idx >= output.size())
-		{
-			return;
-		}
-
-		uint32_t index[gpuArray::MAX_LENGTH];
-		uint32_t x = idx;
-		for (uint32_t i = 0; i < outputStrides.size(); i++)
-		{
-			index[i] = x / outputStrides[i];
-			x = x % outputStrides[i];
-		}
-
-		uint32_t inputIndex = 0;
-		for (size_t i = 0; i < outputStrides.size(); i++)
-		{
-			inputIndex += index[i] * inputStrides[i];
-		}
-
-		const T value = input[inputIndex + threadIdx.x * sumStride];
-
-		//Make warp sum
-		T warpSum = value;
+		T warpSum = threadValue;
 		for (uint32_t i = THREADS_PER_WARP / 2; i > 0; i /= 2)
 		{
 			warpSum += __shfl_down_sync(0xffffffff, warpSum, i);
 		}
+
+		return warpSum;
+	}
+
+	template<typename T>
+	__global__ void sumKernel(
+		const cudabasic::span<T> input, 
+		cudabasic::span<T> output,
+		const uint32_t sumElementStride,
+		const uint32_t sumStride,
+		const uint32_t sumDimSize)
+	{
+		extern __shared__ __align__(sizeof(T)) int8_t sharedArray[];
+		T* sharedMemT = reinterpret_cast<T*>(sharedArray);
+
+		const uint32_t sumElemIdx = blockIdx.x * blockDim.x + threadIdx.x;
+
+		if (sumElemIdx >= sumDimSize)
+		{
+			return;
+		}
+
+		const T value = input[sumElemIdx * sumElementStride + blockIdx.y * sumStride];
+
+		//Make warp sum
+		const T warpSum = getWarpSum(value);
 
 		//First thread in each warp will store their sum
 		//in shared memory so the first warp can sum it up
@@ -67,70 +62,53 @@ namespace dnnbasic
 		T blockSum = 0;
 		if (threadIdx.x < THREADS_PER_WARP)
 		{
-			blockSum = sharedMemT[threadIdx.x];
-			for (uint32_t i = THREADS_PER_WARP / 2; i > 0; i /= 2)
-			{
-				blockSum += __shfl_down_sync(0xffffffff, blockSum, i);
-			}
+			blockSum = getWarpSum(sharedMemT[threadIdx.x]);
 		}
 		__syncthreads();
 
 		//First thread in block will now atomic add the result
-		
-		
-		
-		for (uint32_t i = 0; i < sumDimSize; i++)
+		if (threadIdx.x == 0)
 		{
-			sum += input[inputIndex + i * sumStride];
+			atomicAdd(&output[blockIdx.y], blockSum);
 		}
-
-		output[idx] = sum;
 	}
 
 	template<typename T>
 	void tensorSum(const tensor<T>& input, tensor<T>& output, const uint32_t sumDimIdx)
 	{
-		gpuArray inputStrides(input.getDimensions().size());
-		gpuArray outputStrides(input.getDimensions().size());
-
-		for (uint32_t i = 0; i < input.getDimensions().size(); i++)
+		if constexpr (sizeof(T) < 4 || std::is_integral<T>::value && !std::is_unsigned<T>::value)
 		{
-			uint32_t stride = 1;
-
-			// To get the correct stride when using an array we multiply the following dimensions
-			// together such that they correspond to accessing index i of the corresponding matrix 
-			// with similar dimensions
-			for (uint32_t g = i + 1; g < input.getDimensions().size(); g++)
-			{
-				stride *= input.getDimensions()[g].dim;
-			}
-			// if dimension is broadcasted then the stride should be 0 to reuse the same matrix again
-			inputStrides[i] = stride;
-			outputStrides[i] = stride;
-		}
-
-		inputStrides[sumDimIdx] = 0;
-
-		uint32_t sumStride = 1;
-		for (size_t i = sumDimIdx + 1; i < input.getDimensions().size(); i++)
-		{
-			sumStride *= input.getDimensions()[i].dim;
-		}
-
-		const uint32_t sumDim = input.getDimensions()[sumDimIdx].dim;
-		const uint32_t threadsPerDim = sumDim;
-		const uint32_t dimsToSum = output.elementCount();
-		const uint32_t totalThreadsNeeded = threadsPerDim * dimsToSum;
-
-		const dim3 blockDim(1024);
-		const dim3 gridDim(integerCeilDivision(totalThreadsNeeded, blockDim.x));
-		if (autoGraph::isRecordingGraph())
-		{
-			autoGraph::addKernelNode(sumKernel<T>, blockDim, gridDim, 0, input.getGPUArrayConst(), output.getGPUArray(), sumStride, input.getDimensions()[sumDimIdx].dim, inputStrides, outputStrides);
+			throw std::runtime_error("Sum is currently not supported for that tensor type.");
 		}
 		else
 		{
-			cudabasic::executeKernel(sumKernel<T>, blockDim, gridDim, 0, cuda::getDefaultStream(), input.getGPUArrayConst(), output.getGPUArray(), sumStride, input.getDimensions()[sumDimIdx].dim, inputStrides, outputStrides);
+			uint32_t sumStride = 1;
+			for (size_t i = sumDimIdx + 1; i < input.getDimensions().size(); i++)
+			{
+				sumStride *= input.getDimensions()[i].dim;
+			}
+
+			uint32_t dimStride = 1;
+			for (size_t i = 0; i < sumDimIdx; i++)
+			{
+				dimStride *= input.getDimensions()[i].dim;
+			}
+
+			const uint32_t sumDim = input.getDimensions()[sumDimIdx].dim;
+			const uint32_t dimsToSum = output.elementCount();
+
+			const dim3 blockDim(THREADS_PER_BLOCK);
+			const dim3 gridDim(integerCeilDivision(sumDim, blockDim.x), dimsToSum);
+			if (autoGraph::isRecordingGraph())
+			{
+				autoGraph::addMemsetNode(output.getGPUArray(), 0);
+				autoGraph::addKernelNode(sumKernel<T>, blockDim, gridDim, sizeof(T) * 32, input.getGPUArrayConst(), output.getGPUArray(), sumStride, dimStride, input.getDimensions()[sumDimIdx].dim);
+			}
+			else
+			{
+				cudaMemset(output.getGPUArray().begin(), 0, output.elementCount() * sizeof(T));
+				cudabasic::executeKernel(sumKernel<T>, blockDim, gridDim, sizeof(T) * 32, cuda::getDefaultStream(), input.getGPUArrayConst(), output.getGPUArray(), sumStride, dimStride, input.getDimensions()[sumDimIdx].dim);
+			}
 		}
 	}
 
