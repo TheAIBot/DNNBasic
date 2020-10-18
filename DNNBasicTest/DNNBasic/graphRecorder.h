@@ -63,5 +63,24 @@ namespace dnnbasic
 
 			this->prevNode = node;
 		}
+
+		void addMemsetNode(const cudaMemsetParams* memsetParams)
+		{
+			std::array<cudaGraphNode_t, 1> dependencies = {
+				prevNode
+			};
+
+			//root node has no dependencies
+			const std::size_t depCount = prevNode == nullptr ? 0 : 1;
+
+			cudaGraphNode_t node;
+			const cudaError_t status = cudaGraphAddMemsetNode(&node, this->graph, &dependencies[0], depCount, memsetParams);
+			if (status != cudaError::cudaSuccess)
+			{
+				cudabasic::checkForCudaError();
+			}
+
+			this->prevNode = node;
+		}
 	};
 }

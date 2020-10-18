@@ -117,4 +117,9 @@ namespace dnnbasic::autoGraph
 	{
 		currentRecorder->addKernelNode(kernelParams);
 	}
+
+	void addMemsetNodeToGraph(cudaMemsetParams* memsetParams)
+	{
+		currentRecorder->addMemsetNode(memsetParams);
+	}
 }
