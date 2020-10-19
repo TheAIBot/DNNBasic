@@ -48,6 +48,11 @@ namespace dnnbasic
 			return rows;
 		}
 
+		__device__ __host__ uint32_t size() const
+		{
+			return columns * rows;
+		}
+
 		__device__ __host__ bool withinBounds(const uint32_t column, const uint32_t row) const
 		{
 			return column < this->columns&& row < this->rows;
