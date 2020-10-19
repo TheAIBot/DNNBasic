@@ -25,22 +25,16 @@ namespace dnnbasic
 			return;
 		}
 
-		uint32_t index[gpuArray::MAX_LENGTH];
-		uint32_t x = idx;
-		// make x, y, z, .. indecies
-		for (uint32_t i = 0; i < outputStrides.size(); i++)
-		{
-			index[i] = x / outputStrides[i];
-			x = x % outputStrides[i];
-		}
-
-		// Convert to matricies
 		uint32_t leftIndex = 0;
 		uint32_t rightIndex = 0;
-		for (size_t i = 0; i < outputStrides.size(); i++)
+		uint32_t x = idx;
+		for (uint32_t i = 0; i < outputStrides.size(); i++)
 		{
-			leftIndex += index[i] * leftStrides[i];
-			rightIndex += index[i] * rightStrides[i];
+			const uint32_t index = x / outputStrides[i];
+			leftIndex += index * leftStrides[i];
+			rightIndex += index * rightStrides[i];
+
+			x = x % outputStrides[i];
 		}
 
 		output[idx] = OP::operation(left[leftIndex], right[rightIndex]);
