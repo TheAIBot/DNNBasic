@@ -1,4 +1,5 @@
 #include <cuda_runtime.h>
+#include <array>
 #include "tensor_matrix_kernels.cuh"
 #include "cudaBasics.h"
 #include "matrix.h"
@@ -14,8 +15,12 @@ namespace dnnbasic
 		// Block index
 		const uint32_t bx = blockIdx.x;
 		const uint32_t by = blockIdx.y;
-		const uint32_t tx = threadIdx.x;
-		const uint32_t ty = threadIdx.y;
+		const uint32_t otx = threadIdx.x;
+		const uint32_t oty = threadIdx.y;
+		const uint32_t tx = threadIdx.x % blockSize;
+		const uint32_t ty = threadIdx.y % blockSize;
+		const uint32_t xSubBlockOffset = (threadIdx.x / blockSize) * blockSize;
+		const uint32_t ySubBlockOffset = (threadIdx.y / blockSize) * blockSize;
 		//Running sum of product of A and B matrices
 		T Csub = 0;
 		
@@ -25,36 +30,36 @@ namespace dnnbasic
 		extern __shared__ __align__(sizeof(T)) int8_t sharedArray[];
 		T* sharedMemT = reinterpret_cast<T*>(sharedArray);
 
-		matrix<T> As(sharedMemT, blockSize, blockSize);
-		matrix<T> Bs(sharedMemT + blockSize * blockSize, blockSize, blockSize);
+		matrix<T> As(sharedMemT, blockDim.x, blockDim.y);
+		matrix<T> Bs(sharedMemT + As.size(), blockDim.x, blockDim.y);
 
 		//iterate through the number of sub matrices of A and B
 		for (uint32_t i = 0; i < num_sub_blocks; i++) {
 			const uint32_t a_x = tx + i * blockSize;
-			const uint32_t a_y = ty + by * blockSize;
-			const uint32_t b_x = tx + bx * blockSize;
+			const uint32_t a_y = ty + by * blockDim.y + ySubBlockOffset;
+			const uint32_t b_x = tx + bx * blockDim.x + xSubBlockOffset;
 			const uint32_t b_y = ty + i * blockSize;
 
 			//a submatrix can lie both inside and outside the bounds of the matrix.
 			//We can't load any part that lies outside the bounds so instead 0 is
 			//loaded into the submatrix because it doesn't change the result of
 			//the sub matrix multiplication.
-			As[ty][tx] = a.withinBounds(a_x, a_y) ? a[a_y][a_x] : (T)0;
-			Bs[ty][tx] = b.withinBounds(b_x, b_y) ? b[b_y][b_x] : (T)0;
+			As[oty][otx] = a.withinBounds(a_x, a_y) ? a[a_y][a_x] : (T)0;
+			Bs[oty][otx] = b.withinBounds(b_x, b_y) ? b[b_y][b_x] : (T)0;
 
 			// change this so that we have min(a height, blocksize) <- is this valid?
 			// Wait untill all threads have loaded their values into shared memory.
 			__syncthreads();
 			for (uint32_t k = 0; k < blockSize; ++k)
 			{
-				Csub += As[ty][k] * Bs[k][tx];
+				Csub += As[oty][k + xSubBlockOffset] * Bs[k + ySubBlockOffset][otx];
 			}
 			__syncthreads();
 
 		}
 
-		const uint32_t c_x = tx + bx * blockSize;
-		const uint32_t c_y = ty + by * blockSize;
+		const uint32_t c_x = otx + bx * blockDim.x;
+		const uint32_t c_y = oty + by * blockDim.y;
 
 		// Write the resulting matrix multiplication into the result matrix if 
 		// within bounds.
@@ -66,26 +71,78 @@ namespace dnnbasic
 		c[c_y][c_x] = Csub;
 	}
 
+	class blockConfig
+	{
+	private:
+		uint32_t subBlockSize;
+		uint32_t blocksWidth;
+		uint32_t blocksHeight;
+
+		template<typename T>
+		uint32_t calcSuitability(const matrix<T>& mat, const uint32_t width, const uint32_t height) const
+		{
+			return std::min(mat.getColumns(), subBlockSize * width) * std::min(mat.getRows(), subBlockSize * height);
+		}
+
+	public:
+		blockConfig(const uint32_t subBlockSize, const uint32_t width, const uint32_t height)
+			: subBlockSize(subBlockSize), blocksWidth(width), blocksHeight(height)
+		{ }
+
+		template<typename T>
+		uint32_t calcSuitability(const matrix<T>& left, const matrix<T>& right) const
+		{
+			return calcSuitability(left, blocksWidth, blocksHeight) + calcSuitability(right, blocksHeight, blocksWidth);
+		}
+
+		uint32_t getSubBlockSize() const
+		{
+			return subBlockSize;
+		}
+
+		dim3 getBlockDim() const
+		{
+			return dim3(subBlockSize * blocksWidth, subBlockSize * blocksHeight);
+		}
+	};
+
+	const std::array<blockConfig, 4> blockConfigs =
+	{
+		blockConfig(32,  1,  1),
+		blockConfig(16,  1,  4),
+		blockConfig( 8,  1, 16),
+		blockConfig( 4,  1, 64)
+	};
 
 	template <typename T>
 	void tensorMatrixMulInternal(const matrix<T>& left, const matrix<T>& right, matrix<T>& result)
 	{
-		const int matrixWidth = result.getColumns();
-		const int matrixHeight = result.getRows();
-		
-		const uint32_t blockSize = 32; 
-		const dim3 blockDim(blockSize, blockSize);
-		const uint32_t sharedMemory = sizeof(T) * blockSize * blockSize * 2;
-		const dim3 gridDim(integerCeilDivision(matrixWidth, blockDim.x), integerCeilDivision(matrixHeight, blockDim.y));
-		const uint32_t num_sub_blocks = integerCeilDivision(left.getColumns(), blockSize);
+		blockConfig bestConfig(0, 0, 0);
+		uint32_t bestScore = 0;
+		for (size_t i = 0; i < blockConfigs.size(); i++)
+		{
+			const uint32_t score = blockConfigs[i].calcSuitability(left, right);
+			if (score > bestScore)
+			{
+				bestConfig = blockConfigs[i];
+				bestScore = score;
+			}
+		}
+
+
+		const uint32_t subBlockSize = bestConfig.getSubBlockSize();
+		const dim3 blockDim = bestConfig.getBlockDim();
+		const uint32_t sharedMemory = sizeof(T) * blockDim.x * blockDim.y * 2;
+		const dim3 gridDim(integerCeilDivision(result.getColumns(), blockDim.x), integerCeilDivision(result.getRows(), blockDim.y));
+		const uint32_t num_sub_blocks = integerCeilDivision(left.getColumns(), subBlockSize);
 		
 		if (autoGraph::isRecordingGraph())
 		{
-			autoGraph::addKernelNode(matrixMultiplication<T>, blockDim, gridDim, sharedMemory, left, right, result, num_sub_blocks, blockSize);
+			autoGraph::addKernelNode(matrixMultiplication<T>, blockDim, gridDim, sharedMemory, left, right, result, num_sub_blocks, subBlockSize);
 		}
 		else
 		{
-			cudabasic::executeKernel(matrixMultiplication<T>, blockDim, gridDim, sharedMemory, cuda::getDefaultStream(), left, right, result, num_sub_blocks, blockSize);
+			cudabasic::executeKernel(matrixMultiplication<T>, blockDim, gridDim, sharedMemory, cuda::getDefaultStream(), left, right, result, num_sub_blocks, subBlockSize);
 		}
 	}
 	void tensorMatrixMul(const matrix<bool>& left, const matrix<bool>& right, matrix<bool>& result){tensorMatrixMulInternal(left, right, result);}
