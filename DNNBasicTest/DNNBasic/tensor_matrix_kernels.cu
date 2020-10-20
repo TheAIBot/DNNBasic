@@ -33,52 +33,54 @@ namespace dnnbasic
 		matrix<T> As(sharedMemT, blockDim.x, blockDim.y * 2);
 		matrix<T> Bs(sharedMemT + As.size(), blockDim.x, blockDim.y * 2);
 
+		T bAs;
+		T bBs;
+
 		{
 			const uint32_t a_x = tx;
-			const uint32_t a_y = ty + by * blockDim.y + ySubBlockOffset;
-			const uint32_t b_x = tx + bx * blockDim.x + xSubBlockOffset;
+			const uint32_t a_y = oty + by * blockDim.y;
+			const uint32_t b_x = otx + bx * blockDim.x;
 			const uint32_t b_y = ty;
 
 			//a submatrix can lie both inside and outside the bounds of the matrix.
 			//We can't load any part that lies outside the bounds so instead 0 is
 			//loaded into the submatrix because it doesn't change the result of
 			//the sub matrix multiplication.
-			As[oty][otx] = a.withinBounds(a_x, a_y) ? a[a_y][a_x] : (T)0;
-			Bs[oty][otx] = b.withinBounds(b_x, b_y) ? b[b_y][b_x] : (T)0;
+			bAs = a.withinBounds(a_x, a_y) ? a[a_y][a_x] : (T)0;
+			bBs = b.withinBounds(b_x, b_y) ? b[b_y][b_x] : (T)0;
 		}
 
 		uint32_t shifter = 0;
 
 		//iterate through the number of sub matrices of A and B
 		for (uint32_t i = 0; i < num_sub_blocks; i++) {
-			uint32_t oldShifter = shifter;
+			shifter = ++shifter % 2;
+			As[oty + shifter * blockDim.y][otx] = bAs;
+			Bs[oty + shifter * blockDim.y][otx] = bBs;
 
 			if (i + 1 < num_sub_blocks)
 			{
-				shifter = ++shifter % 2;
-
 				const uint32_t a_x = tx + (i + 1) * blockSize;
-				const uint32_t a_y = ty + by * blockDim.y + ySubBlockOffset;
-				const uint32_t b_x = tx + bx * blockDim.x + xSubBlockOffset;
+				const uint32_t a_y = oty + by * blockDim.y;
+				const uint32_t b_x = otx + bx * blockDim.x;
 				const uint32_t b_y = ty + (i + 1) * blockSize;
 
 				//a submatrix can lie both inside and outside the bounds of the matrix.
 				//We can't load any part that lies outside the bounds so instead 0 is
 				//loaded into the submatrix because it doesn't change the result of
 				//the sub matrix multiplication.
-				As[oty + shifter * blockDim.y][otx] = a.withinBounds(a_x, a_y) ? a[a_y][a_x] : (T)0;
-				Bs[oty + shifter * blockDim.y][otx] = b.withinBounds(b_x, b_y) ? b[b_y][b_x] : (T)0;
+				bAs = a.withinBounds(a_x, a_y) ? a[a_y][a_x] : (T)0;
+				bBs = b.withinBounds(b_x, b_y) ? b[b_y][b_x] : (T)0;
 			}
 
 			// change this so that we have min(a height, blocksize) <- is this valid?
 			// Wait untill all threads have loaded their values into shared memory.
 			__syncthreads();
+#pragma unroll 4
 			for (uint32_t k = 0; k < blockSize; ++k)
 			{
-				Csub += As[oty + oldShifter * blockDim.y][k + xSubBlockOffset] * Bs[k + ySubBlockOffset + oldShifter * blockDim.y][otx];
+				Csub += As[oty + shifter * blockDim.y][k + xSubBlockOffset] * Bs[k + ySubBlockOffset + shifter * blockDim.y][otx];
 			}
-			__syncthreads();
-
 		}
 
 		const uint32_t c_x = otx + bx * blockDim.x;
