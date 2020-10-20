@@ -160,6 +160,7 @@
       <HostDebugInfo>false</HostDebugInfo>
       <GenerateRelocatableDeviceCode>true</GenerateRelocatableDeviceCode>
       <CodeGeneration>compute_60,sm_60</CodeGeneration>
+      <GenerateLineInfo>true</GenerateLineInfo>
     </CudaCompile>
     <CudaLink>
       <AdditionalDependencies>cudadevrt.lib</AdditionalDependencies>
