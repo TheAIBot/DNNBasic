@@ -122,4 +122,9 @@ namespace dnnbasic::autoGraph
 	{
 		currentRecorder->addMemsetNode(memsetParams);
 	}
+
+	void addMemcpyNodeToGraph(cudaMemcpy3DParms* memcpyParams)
+	{
+		currentRecorder->addMemcpyNode(memcpyParams);
+	}
 }

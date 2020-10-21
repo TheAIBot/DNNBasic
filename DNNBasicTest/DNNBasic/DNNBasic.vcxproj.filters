@@ -191,6 +191,9 @@
     <ClCompile Include="sgd.cpp">
       <Filter>dnnbasic\optimizers</Filter>
     </ClCompile>
+    <ClCompile Include="tensor_reshape.cpp">
+      <Filter>dnnbasic\tensor\operators</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="tensor_elementwise_kernels.cu">

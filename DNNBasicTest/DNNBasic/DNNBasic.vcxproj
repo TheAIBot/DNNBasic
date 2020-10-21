@@ -65,6 +65,7 @@
     <ClCompile Include="tensor_matrixMultiply.cpp" />
     <ClCompile Include="tensor_permute.cpp" />
     <ClCompile Include="tensor.cpp" />
+    <ClCompile Include="tensor_reshape.cpp" />
     <ClCompile Include="tensor_sum.cpp" />
   </ItemGroup>
   <ItemGroup>

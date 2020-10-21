@@ -9,10 +9,12 @@
 #include "random.h"
 #include "optional.h"
 #include "cuda_settings.h"
+#include "auto_graph.h"
 
 #include "tensor_sum.cpp"
 #include "tensor_cast.cpp"
 #include "tensor_permute.cpp"
+#include "tensor_reshape.cpp"
 #include "tensor_matrixMultiply.cpp"
 #include "tensor_basic_math_operators.cpp"
 
@@ -135,15 +137,45 @@ namespace dnnbasic
 	{
 		return this->data->arr.copyToCPU();
 	}
+	template<typename T>
+	uint32_t tensor<T>::getDimension(const uint32_t dimIdx) const
+	{
+		if (dimIdx >= this->data->dimension.size())
+		{
+			throw std::runtime_error("Tried to access a dimension that this tensor doesn't have.");
+		}
+
+		return this->data->dimension[dimIdx].dim;
+	}
+	template<typename T>
+	uint32_t tensor<T>::getDimension(const std::string& dimName) const
+	{
+		for (size_t i = 0; i < this->data->dimension.size(); i++)
+		{
+			if (this->data->dimension[i].name == dimName)
+			{
+				return this->data->dimension[i].dim;
+			}
+		}
+
+		throw std::runtime_error("Tensor does not have a dimension with that name.");
+	}
 	//void transpose();
 	//void permute();
 	//void view();
 	//void resize();
 
 	template<typename T>
-	void tensor<T>::copyTo(const tensor<T>& other)
+	void tensor<T>::copyTo(const tensor<T>& other) const
 	{
-		this->data->arr.copyToGPUArray(other.data->arr, cuda::getDefaultStream());
+		if (autoGraph::isRecordingGraph())
+		{
+			autoGraph::addMemcpyNode(this->data->arr.getGPUArray(), other.data->arr.getGPUArray());
+		}
+		else
+		{
+			this->data->arr.copyToGPUArray(other.data->arr, cuda::getDefaultStream());
+		}
 	}
 
 

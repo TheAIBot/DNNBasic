@@ -16,7 +16,11 @@ namespace dnnbasic
 		std::string name;
 		uint32_t dim;
 
+		namedDim(uint32_t dim);
+		namedDim(std::string name);
 		namedDim(uint32_t dim, std::string name);
+
+		bool hasName() const;
 	};
 
 

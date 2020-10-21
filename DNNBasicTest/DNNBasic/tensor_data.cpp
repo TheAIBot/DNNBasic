@@ -2,10 +2,19 @@
 
 namespace dnnbasic
 {
-	namedDim::namedDim(uint32_t dim, std::string name = "")
+	namedDim::namedDim(uint32_t dim) : dim(dim)
 	{
-		this->name = name;
-		this->dim = dim;
+	}
+	namedDim::namedDim(std::string name) : dim(0), name(name)
+	{
+	}
+	namedDim::namedDim(uint32_t dim, std::string name) : dim(dim), name(name)
+	{
+	}
+
+	bool namedDim::hasName() const
+	{
+		return !this->name.empty();
 	}
 
 	template<typename T>

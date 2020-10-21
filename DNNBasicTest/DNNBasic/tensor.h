@@ -38,12 +38,11 @@ namespace dnnbasic
 		cudabasic::span<T> getGPUArray() const;
 		const cudabasic::span<T> getGPUArrayConst() const;
 		std::vector<T> getValuesOnCPU() const;
-		//void transpose();
-		//void permute();
-		//void view();
-		//void resize();
 
-		void copyTo(const tensor<T>& other);
+		uint32_t getDimension(const uint32_t dimIdx) const;
+		uint32_t getDimension(const std::string& dimName) const;
+
+		void copyTo(const tensor<T>& other) const;
 
 		tensor<T> matMul(const tensor<T>& right) const;
 
@@ -57,6 +56,9 @@ namespace dnnbasic
 
 		tensor<T> sum(const uint32_t sumDim) const;
 		tensor<T> sum(const std::string sumDim) const;
+
+		tensor<T> reshape(std::initializer_list<namedDim> dims) const;
+		tensor<T> reshape(std::vector<namedDim> dims) const;
 	};
 
 	template<typename T> bool operator==(const tensor<T>& left, const tensor<T>& right);

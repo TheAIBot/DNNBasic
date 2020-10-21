@@ -82,5 +82,24 @@ namespace dnnbasic
 
 			this->prevNode = node;
 		}
+
+		void addMemcpyNode(const cudaMemcpy3DParms* memcpyParams)
+		{
+			std::array<cudaGraphNode_t, 1> dependencies = {
+				prevNode
+			};
+
+			//root node has no dependencies
+			const std::size_t depCount = prevNode == nullptr ? 0 : 1;
+
+			cudaGraphNode_t node;
+			const cudaError_t status = cudaGraphAddMemcpyNode(&node, this->graph, &dependencies[0], depCount, memcpyParams);
+			if (status != cudaError::cudaSuccess)
+			{
+				cudabasic::checkForCudaError();
+			}
+
+			this->prevNode = node;
+		}
 	};
 }
