@@ -1,5 +1,6 @@
 #pragma once
 
+#include <CppUnitTest.h>
 #include <typeinfo>
 #include <codecvt>
 #include <string>
@@ -92,5 +93,28 @@ namespace DNNBasicTest
 		}
 
 		return numbers;
+	}
+
+	template<typename T>
+	void resultCloseEnough(dnnbasic::tensor<T> expected, dnnbasic::tensor<T> actual)
+	{
+		auto expVals = expected.getValuesOnCPU();
+		auto actVals = actual.getValuesOnCPU();
+
+		if constexpr (std::is_floating_point<T>::value)
+		{
+			Assert::AreEqual(expVals.size(), actVals.size());
+			for (size_t i = 0; i < expVals.size(); i++)
+			{
+				if (std::abs(expVals[i] - actVals[i]) >= (T)0.0001)
+				{
+					Assert::Fail();
+				}
+			}
+		}
+		else
+		{
+			Assert::IsTrue(expVals == actVals);
+		}
 	}
 }

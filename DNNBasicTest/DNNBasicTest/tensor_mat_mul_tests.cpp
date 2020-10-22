@@ -152,29 +152,6 @@ namespace DNNBasicTest
 		}
 
 		template<typename T>
-		static void resultCloseEnough(dnnbasic::tensor<T> expected, dnnbasic::tensor<T> actual)
-		{
-			auto expVals = expected.getValuesOnCPU();
-			auto actVals = actual.getValuesOnCPU();
-
-			if constexpr (std::is_floating_point<T>::value)
-			{
-				Assert::AreEqual(expVals.size(), actVals.size());
-				for (size_t i = 0; i < expVals.size(); i++)
-				{
-					if (std::abs(expVals[i] - actVals[i]) >= (T)0.0001)
-					{
-						Assert::Fail();
-					}
-				}
-			}
-			else
-			{
-				Assert::IsTrue(expVals == actVals);
-			}
-		}
-
-		template<typename T>
 		static void matMulTest(uint32_t aWidth, uint32_t aHeight, uint32_t bWidth, uint32_t bHeight)
 		{
 			auto aData = GetVectorWithRandomNumbers<T>(aWidth * aHeight);
