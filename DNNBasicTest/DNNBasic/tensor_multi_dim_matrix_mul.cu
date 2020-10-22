@@ -55,7 +55,7 @@ namespace dnnbasic
 		const uint32_t blockSize = min(32u, max(cMatrixWidth, cMatrixHeight));
 		const dim3 blockDimq(blockSize, blockSize);
 		const dim3 gridDimq(icd(cMatrixWidth, blockDimq.x), icd(cMatrixHeight, blockDimq.y));
-		const uint32_t sharedMemory = sizeof(T) * blockDimq.x * blockDimq.y * 2;
+		const uint32_t sharedMemory = sizeof(T) * blockDimq.x * blockDimq.y * 2 * 2;
 
 		for (size_t qweqwe = 0; ; qweqwe++)
 		{
