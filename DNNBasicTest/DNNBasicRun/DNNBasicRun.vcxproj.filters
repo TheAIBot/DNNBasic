@@ -77,5 +77,8 @@
     <ClInclude Include="..\DNNBasic\graphRecorder.h">
       <Filter>Header Files\dnnbasic</Filter>
     </ClInclude>
+    <ClInclude Include="..\DNNBasic\mnist.h">
+      <Filter>Header Files\dnnbasic</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

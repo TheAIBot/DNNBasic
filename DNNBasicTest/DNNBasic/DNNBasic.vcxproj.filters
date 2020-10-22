@@ -28,6 +28,9 @@
     <Filter Include="dnnbasic\losses">
       <UniqueIdentifier>{50bc1cf6-b762-45ac-8f78-e1292e34cc55}</UniqueIdentifier>
     </Filter>
+    <Filter Include="dnnbasic\datasets">
+      <UniqueIdentifier>{e0454401-7252-42a8-8761-a59721463e75}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\CudaBasicClasses\cpuGpuArray.h">
@@ -135,6 +138,15 @@
     <ClInclude Include="graphRecorder.h">
       <Filter>dnnbasic</Filter>
     </ClInclude>
+    <ClInclude Include="dataloader.h">
+      <Filter>dnnbasic\datasets</Filter>
+    </ClInclude>
+    <ClInclude Include="mnist.h">
+      <Filter>dnnbasic\datasets</Filter>
+    </ClInclude>
+    <ClInclude Include="supervisedDataset.h">
+      <Filter>dnnbasic\datasets</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\CudaBasicClasses\cudaBasics.cpp">
@@ -190,6 +202,9 @@
     </ClCompile>
     <ClCompile Include="sgd.cpp">
       <Filter>dnnbasic\optimizers</Filter>
+    </ClCompile>
+    <ClCompile Include="mnist.cpp">
+      <Filter>dnnbasic\datasets</Filter>
     </ClCompile>
     <ClCompile Include="tensor_reshape.cpp">
       <Filter>dnnbasic\tensor\operators</Filter>

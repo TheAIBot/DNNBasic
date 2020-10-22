@@ -167,6 +167,7 @@
     <ClInclude Include="..\DNNBasic\graphRecorder.h" />
     <ClInclude Include="..\DNNBasic\matrix.h" />
     <ClInclude Include="..\DNNBasic\mean_squared_loss.h" />
+    <ClInclude Include="..\DNNBasic\mnist.h" />
     <ClInclude Include="..\DNNBasic\sgd.h" />
     <ClInclude Include="..\DNNBasic\tensor.h" />
   </ItemGroup>
