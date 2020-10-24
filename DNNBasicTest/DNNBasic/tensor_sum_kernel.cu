@@ -102,7 +102,7 @@ namespace dnnbasic
 			if (autoGraph::isRecordingGraph())
 			{
 				autoGraph::addMemsetNode(output.getGPUArray(), 0);
-				autoGraph::addKernelNode(sumKernel<T>, blockDim, gridDim, sizeof(T) * 32, input.getGPUArrayConst(), output.getGPUArray(), sumStride, dimStride, input.getDimensions()[sumDimIdx].dim);
+				autoGraph::addKernelNode(sumKernel<T>, blockDim, gridDim, (uint32_t)sizeof(T) * 32, input.getGPUArrayConst(), output.getGPUArray(), sumStride, dimStride, input.getDimensions()[sumDimIdx].dim);
 			}
 			else
 			{

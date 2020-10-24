@@ -140,7 +140,7 @@ namespace dnnbasic
 				const dim3 gridDim(integerCeilDivision(result.elementCount(), blockDim.x));
 				if (autoGraph::isRecordingGraph())
 				{
-					autoGraph::addKernelNode(biArgElementWiseKernelSpanSpanBroadcast<OP, T>, blockDim, gridDim, 0, left.getGPUArray(), right.getGPUArray(), result.getGPUArray(), aStrides, bStrides);
+					autoGraph::addKernelNode(biArgElementWiseKernelSpanSpanBroadcast<OP, T>, blockDim, gridDim, 0u, left.getGPUArray(), right.getGPUArray(), result.getGPUArray(), aStrides, bStrides);
 				}
 				else
 				{
@@ -153,7 +153,7 @@ namespace dnnbasic
 				const dim3 gridDim(integerCeilDivision(result.elementCount(), blockDim.x));
 				if (autoGraph::isRecordingGraph())
 				{
-					autoGraph::addKernelNode(biArgElementWiseKernelSpanSpan<OP, T>, blockDim, gridDim, (size_t)0, left.getGPUArray(), right.getGPUArray(), result.getGPUArray());
+					autoGraph::addKernelNode(biArgElementWiseKernelSpanSpan<OP, T>, blockDim, gridDim, 0u, left.getGPUArray(), right.getGPUArray(), result.getGPUArray());
 				}
 				else
 				{
@@ -167,7 +167,7 @@ namespace dnnbasic
 			const dim3 gridDim(integerCeilDivision(result.elementCount(), blockDim.x));
 			if (autoGraph::isRecordingGraph())
 			{
-				autoGraph::addKernelNode(biArgElementWiseKernelScalarSpan<OP, T>, blockDim, gridDim, (size_t)0, left, right.getGPUArray(), result.getGPUArray());
+				autoGraph::addKernelNode(biArgElementWiseKernelScalarSpan<OP, T>, blockDim, gridDim, 0u, left, right.getGPUArray(), result.getGPUArray());
 			}
 			else
 			{
@@ -180,7 +180,7 @@ namespace dnnbasic
 			const dim3 gridDim(integerCeilDivision(result.elementCount(), blockDim.x));
 			if (autoGraph::isRecordingGraph())
 			{
-				autoGraph::addKernelNode(biArgElementWiseKernelScalarSpan<OP, T>, blockDim, gridDim, (size_t)0, left.getGPUArray(), right, result.getGPUArray());
+				autoGraph::addKernelNode(biArgElementWiseKernelScalarSpan<OP, T>, blockDim, gridDim, 0u, left.getGPUArray(), right, result.getGPUArray());
 			}
 			else
 			{

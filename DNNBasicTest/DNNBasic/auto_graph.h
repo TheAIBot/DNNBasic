@@ -38,7 +38,7 @@ namespace dnnbasic
 		void addMemcpyNodeToGraph(cudaMemcpy3DParms* memcpyParams);
 
 		template<typename... Args>
-		void addKernelNode(void(*kernel)(Args...), dim3 blockDim, dim3 gridDim, size_t sharedMemSize, Args... args)
+		void addKernelNode(void(*kernel)(Args...), dim3 blockDim, dim3 gridDim, uint32_t sharedMemSize, Args... args)
 		{
 			if (!isRecordingGraph())
 			{
