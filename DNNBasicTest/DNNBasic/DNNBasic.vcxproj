@@ -21,6 +21,7 @@
     <ClInclude Include="..\..\..\CudaBasicClasses\gpuArray.h" />
     <ClInclude Include="..\..\..\CudaBasicClasses\matrix.h" />
     <ClInclude Include="..\..\..\CudaBasicClasses\span.h" />
+    <ClInclude Include="activation_function.h" />
     <ClInclude Include="auto_graph.h" />
     <ClInclude Include="cuda_settings.h" />
     <ClInclude Include="dataloader.h" />
@@ -35,9 +36,11 @@
     <ClInclude Include="optimizer.h" />
     <ClInclude Include="optional.h" />
     <ClInclude Include="random.h" />
+    <ClInclude Include="relu.h" />
     <ClInclude Include="sgd.h" />
     <ClInclude Include="supervisedDataset.h" />
     <ClInclude Include="tensor.h" />
+    <ClInclude Include="tensor_activation_kernels.cuh" />
     <ClInclude Include="tensor_broadcast.h" />
     <ClInclude Include="tensor_cast_kernel.cuh" />
     <ClInclude Include="tensor_data.h" />
@@ -45,6 +48,7 @@
     <ClInclude Include="tensor_matrix_kernels.cuh" />
     <ClInclude Include="tensor_multi_dim_matrix_mul.cuh" />
     <ClInclude Include="tensor_node.h" />
+    <ClInclude Include="tensor_node_activation.h" />
     <ClInclude Include="tensor_node_no_grad.h" />
     <ClInclude Include="tensor_node_linear.h" />
     <ClInclude Include="tensor_permute_kernel.cuh" />
@@ -62,6 +66,7 @@
     <ClCompile Include="mean_squared_loss.cpp" />
     <ClCompile Include="mnist.cpp" />
     <ClCompile Include="random.cpp" />
+    <ClCompile Include="relu.cpp" />
     <ClCompile Include="sgd.cpp" />
     <ClCompile Include="tensor_basic_math_operators.cpp" />
     <ClCompile Include="tensor_cast.cpp" />
@@ -73,6 +78,7 @@
     <ClCompile Include="tensor_sum.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <CudaCompile Include="tensor_activation_kernels.cu" />
     <CudaCompile Include="tensor_cast_kernel.cu" />
     <CudaCompile Include="tensor_elementwise_kernels.cu" />
     <CudaCompile Include="tensor_matrix_kernels.cu" />

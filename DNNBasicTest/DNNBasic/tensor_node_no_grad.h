@@ -24,11 +24,11 @@ namespace dnnbasic
 			}
 		}
 
-		void backward(const tensor<T>& estimatedLoss, optimizer::optimizer* opti) const override
+		void backward(const tensor<T>& estimatedLoss, optimizer::optimizer* opti, std::vector<activations::activationFunction<T>*> actFuncs, bool isFirstLayer) const override
 		{
 			for (size_t i = 0; i < nodes.size(); i++)
 			{
-				nodes[i]->backward(estimatedLoss, opti);
+				nodes[i]->backward(estimatedLoss, opti, actFuncs, isFirstLayer);
 			}
 		}
 
