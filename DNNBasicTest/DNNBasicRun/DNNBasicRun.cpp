@@ -7,6 +7,7 @@
 #include <array>
 #include <functional>
 #include <chrono>
+#include "cudaBasics.h"
 #include "tensor.h"
 #include "linear.h"
 #include "mean_squared_loss.h"
