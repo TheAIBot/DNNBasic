@@ -175,10 +175,6 @@ namespace dnnbasic
 
 		throw std::runtime_error("Tensor does not have a dimension with that name.");
 	}
-	//void transpose();
-	//void permute();
-	//void view();
-	//void resize();
 
 	template<typename T>
 	void tensor<T>::copyTo(const tensor<T>& other) const
