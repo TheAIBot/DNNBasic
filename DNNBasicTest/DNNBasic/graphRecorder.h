@@ -2,11 +2,8 @@
 
 #include <cstdint>
 #include <vector>
-#include <array>
 #include <variant>
-#include <stdexcept>
 #include <cuda_runtime.h>
-#include "cudaBasics.h"
 #include "tensor.h"
 
 namespace dnnbasic

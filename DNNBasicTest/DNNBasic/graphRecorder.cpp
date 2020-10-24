@@ -1,7 +1,10 @@
 #include <thread>
+#include <array>
+#include <stdexcept>
 #include "graphRecorder.h"
 #include "auto_graph.h"
 #include "cuda_settings.h"
+#include "cudaBasics.h"
 
 namespace dnnbasic
 {
