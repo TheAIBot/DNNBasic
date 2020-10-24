@@ -5,6 +5,7 @@
 namespace dnnbasic::random
 {
 	static thread_local uint32_t rngSeed = 27;
+	static thread_local std::default_random_engine rngGen(rngSeed);
 
 	void setRandomSeed(const uint32_t seed)
 	{
@@ -16,7 +17,6 @@ namespace dnnbasic::random
 	{
 		std::vector<T> numbers;
 
-		std::default_random_engine rngGen(rngSeed);
 		if constexpr (std::is_floating_point<T>::value)
 		{
 			std::uniform_real_distribution<T> dist(min, max);
