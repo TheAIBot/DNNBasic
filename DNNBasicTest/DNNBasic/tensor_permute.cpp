@@ -25,13 +25,13 @@ namespace dnnbasic
 	}
 
 	template<typename T>
-	tensor<T> tensor<T>::permute(std::initializer_list<namedDim> dims) const
+	tensor<T> tensor<T>::permute(const std::initializer_list<namedDim>& dims) const
 	{
 		return permute(std::vector<namedDim>(dims));
 	}
 
 	template<typename T>
-	tensor<T> tensor<T>::permute(std::vector<namedDim> dims) const
+	tensor<T> tensor<T>::permute(const std::vector<namedDim>& dims) const
 	{
 		if (dims.size() != this->data->dimension.size())
 		{

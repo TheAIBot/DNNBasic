@@ -49,8 +49,8 @@ namespace dnnbasic
 
 		tensor<T> matMul(const tensor<T>& right) const;
 
-		tensor<T> permute(std::initializer_list<namedDim> dims) const;
-		tensor<T> permute(std::vector<namedDim> dims) const;
+		tensor<T> permute(const std::initializer_list<namedDim>& dims) const;
+		tensor<T> permute(const std::vector<namedDim>& dims) const;
 
 		template<typename U>
 		tensor<U> cast() const;
@@ -58,8 +58,8 @@ namespace dnnbasic
 		tensor<T> sum(const uint32_t sumDim) const;
 		tensor<T> sum(const std::string sumDim) const;
 
-		tensor<T> reshape(std::initializer_list<namedDim> dims) const;
-		tensor<T> reshape(std::vector<namedDim> dims) const;
+		tensor<T> reshape(const std::initializer_list<namedDim>& dims) const;
+		tensor<T> reshape(const std::vector<namedDim>& dims) const;
 
 		template<typename ...Ts> tensor<T> permute(const Ts& ... args) const 
 		{ 
