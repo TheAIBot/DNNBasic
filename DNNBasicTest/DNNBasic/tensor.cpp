@@ -102,17 +102,6 @@ namespace dnnbasic
 	}
 
 	template<typename T>
-	void tensor<T>::makeRandom(T min, T max)
-	{
-		//std::default_random_engine rngGen;
-		//std::uniform_real_distribution<T> dist(min, max);
-
-		//for (uint32_t i = 0; i < arr.size(); i++)
-		//{
-		//	this->arr[i] = dist(rngGen);
-		//}
-	}
-	template<typename T>
 	uint32_t tensor<T>::elementCount() const
 	{
 		return this->data->arr.size();

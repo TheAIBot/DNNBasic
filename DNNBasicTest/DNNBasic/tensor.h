@@ -33,7 +33,6 @@ namespace dnnbasic
 		void setNode(tensorNode<T>* inNode);
 		optional<std::shared_ptr<tensorNode<T>>> getNode();
 
-		void makeRandom(T min, T max);
 		uint32_t elementCount() const;
 		const std::vector<namedDim>& getDimensions() const;
 		cudabasic::span<T> getGPUArray() const;
