@@ -32,11 +32,11 @@ namespace dnnbasic
 		const uint32_t sum = std::accumulate(dims.begin(), dims.end(), 1, std::multiplies<uint32_t>());
 		if constexpr (std::is_unsigned<T>::value)
 		{
-			return tensor<T>(dims, random::getRandomNumbers<T>(sum, 0, 2));
+			return tensor<T>(dims, random::getRandomNumbers<T>(sum, (T)0, (T)2));
 		}
 		else
 		{
-			return tensor<T>(dims, random::getRandomNumbers<T>(sum, -1, 1));
+			return tensor<T>(dims, random::getRandomNumbers<T>(sum, (T)-1, (T)1));
 		}
 	}
 

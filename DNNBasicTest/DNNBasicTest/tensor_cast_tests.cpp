@@ -28,10 +28,10 @@ namespace DNNBasicTest
 		{
 			std::vector<From> cases =
 			{
-				(From)(std::numeric_limits<To>::min() * 2),
-				(From)(std::numeric_limits<To>::min()),
-				(From)(std::numeric_limits<To>::max()),
-				(From)(std::numeric_limits<To>::max() * 2),
+				(From)(((From)std::numeric_limits<To>::min()) * 2),
+				(From)(((From)std::numeric_limits<To>::min())),
+				(From)(((From)std::numeric_limits<To>::max())),
+				(From)(((From)std::numeric_limits<To>::max()) * 2),
 			};
 
 			dnnbasic::tensor<From> from({ (uint32_t)cases.size() }, cases);

@@ -48,7 +48,7 @@ namespace dnnbasic
 	{
 		uint32_t dim = 0;
 		bool foundDim = false;
-		for (size_t i = 0; i < this->getDimensions().size(); i++)
+		for (uint32_t i = 0; i < this->getDimensions().size(); i++)
 		{
 			if (this->getDimensions()[i].name == sumDim)
 			{
