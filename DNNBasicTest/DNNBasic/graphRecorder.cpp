@@ -65,4 +65,79 @@ namespace dnnbasic
 		cudaGraphLaunch(this->graphExe, 0);
 		cudaStreamSynchronize(cuda::getDefaultStream());
 	}
+
+	template<typename T>
+	void graphRecorder::addTensor(tensor<T>& ten)
+	{
+		tensors.emplace_back(ten);
+	}
+
+	template void graphRecorder::addTensor(tensor<bool>& ten);
+	template void graphRecorder::addTensor(tensor<uint8_t>& ten);
+	template void graphRecorder::addTensor(tensor<uint16_t>& ten);
+	template void graphRecorder::addTensor(tensor<uint32_t>& ten);
+	template void graphRecorder::addTensor(tensor<uint64_t>& ten);
+	template void graphRecorder::addTensor(tensor<int8_t>& ten);
+	template void graphRecorder::addTensor(tensor<int16_t>& ten);
+	template void graphRecorder::addTensor(tensor<int32_t>& ten);
+	template void graphRecorder::addTensor(tensor<int64_t>& ten);
+	template void graphRecorder::addTensor(tensor<float>& ten);
+	template void graphRecorder::addTensor(tensor<double>& ten);
+
+	void graphRecorder::addKernelNode(const cudaKernelNodeParams* kernelParams)
+	{
+		std::array<cudaGraphNode_t, 1> dependencies = {
+			prevNode
+		};
+
+		//root node has no dependencies
+		const std::size_t depCount = prevNode == nullptr ? 0 : 1;
+
+		cudaGraphNode_t node;
+		const cudaError_t status = cudaGraphAddKernelNode(&node, this->graph, &dependencies[0], depCount, kernelParams);
+		if (status != cudaError::cudaSuccess)
+		{
+			cudabasic::checkForCudaError();
+		}
+
+		this->prevNode = node;
+	}
+
+	void graphRecorder::addMemsetNode(const cudaMemsetParams* memsetParams)
+	{
+		std::array<cudaGraphNode_t, 1> dependencies = {
+			prevNode
+		};
+
+		//root node has no dependencies
+		const std::size_t depCount = prevNode == nullptr ? 0 : 1;
+
+		cudaGraphNode_t node;
+		const cudaError_t status = cudaGraphAddMemsetNode(&node, this->graph, &dependencies[0], depCount, memsetParams);
+		if (status != cudaError::cudaSuccess)
+		{
+			cudabasic::checkForCudaError();
+		}
+
+		this->prevNode = node;
+	}
+
+	void graphRecorder::addMemcpyNode(const cudaMemcpy3DParms* memcpyParams)
+	{
+		std::array<cudaGraphNode_t, 1> dependencies = {
+			prevNode
+		};
+
+		//root node has no dependencies
+		const std::size_t depCount = prevNode == nullptr ? 0 : 1;
+
+		cudaGraphNode_t node;
+		const cudaError_t status = cudaGraphAddMemcpyNode(&node, this->graph, &dependencies[0], depCount, memcpyParams);
+		if (status != cudaError::cudaSuccess)
+		{
+			cudabasic::checkForCudaError();
+		}
+
+		this->prevNode = node;
+	}
 }
