@@ -25,7 +25,7 @@ namespace DNNBasicTest
 					4,7,1,0
 				});
 
-			auto actual = input.permute({ 1,0 });
+			auto actual = input.permute(1, 0);
 			Assert::AreEqual(expected, actual);
 		}
 		TEST_ALL_OP_TYPES(matrixPermute2x4)
@@ -49,7 +49,7 @@ namespace DNNBasicTest
 					0,0,0,1
 				});
 
-			auto actual = input.permute({ 1,0 });
+			auto actual = input.permute(1, 0);
 			Assert::AreEqual(expected, actual);
 		}
 		TEST_ALL_OP_TYPES(matrixPermute4x4)
@@ -75,7 +75,7 @@ namespace DNNBasicTest
 					12,13,14,15
 				});
 
-			auto actual = input.permute({ 1,0,2 });
+			auto actual = input.permute(1, 0, 2);
 
 			Assert::AreEqual(expected, actual);
 		}
@@ -98,7 +98,7 @@ namespace DNNBasicTest
 					4,7,1,0
 				});
 
-			auto actual = input.permute({ "width", "height" });
+			auto actual = input.permute("width", "height");
 			Assert::AreEqual(expected, actual);
 		}
 		TEST_ALL_OP_TYPES(matrixPermute2x4NamedDims)
@@ -122,7 +122,7 @@ namespace DNNBasicTest
 					0,0,0,1
 				});
 
-			auto actual = input.permute({ "width", "height" });
+			auto actual = input.permute("width", "height");
 			Assert::AreEqual(expected, actual);
 		}
 		TEST_ALL_OP_TYPES(matrixPermute4x4NamedDims)
