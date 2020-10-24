@@ -154,8 +154,11 @@ namespace DNNBasicTest
 		template<typename T>
 		static void matMulTest(uint32_t aWidth, uint32_t aHeight, uint32_t bWidth, uint32_t bHeight)
 		{
-			auto aData = GetVectorWithRandomNumbers<T>(aWidth * aHeight);
-			auto bData = GetVectorWithRandomNumbers<T>(bWidth * bHeight);
+			dnnbasic::tensor<T> a = dnnbasic::tensor<T>::random({ aHeight, aWidth });
+			dnnbasic::tensor<T> b = dnnbasic::tensor<T>::random({ bHeight, bWidth });
+
+			auto aData = a.getValuesOnCPU();
+			auto bData = b.getValuesOnCPU();
 			std::vector<T> cData(aHeight * bWidth);
 
 			dnnbasic::matrix<T> aMatrix(&aData[0], aWidth, aHeight);
@@ -164,8 +167,7 @@ namespace DNNBasicTest
 
 			matMulCPU(aMatrix, bMatrix, cMatrix);
 
-			dnnbasic::tensor<T> a({ aMatrix.getRows(), aMatrix.getColumns() }, aData);
-			dnnbasic::tensor<T> b({ bMatrix.getRows(), bMatrix.getColumns() }, bData);
+
 			dnnbasic::tensor<T> expected({ cMatrix.getRows(), cMatrix.getColumns() }, cData);
 
 			auto actual = a.matMul(b);
