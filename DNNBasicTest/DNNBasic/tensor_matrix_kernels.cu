@@ -76,7 +76,7 @@ namespace dnnbasic
 			// change this so that we have min(a height, blocksize) <- is this valid?
 			// Wait untill all threads have loaded their values into shared memory.
 			__syncthreads();
-#pragma unroll 4
+//#pragma unroll 4
 			for (uint32_t k = 0; k < blockSize; ++k)
 			{
 				Csub += As[oty + shifter * blockDim.y][k + xSubBlockOffset] * Bs[k + ySubBlockOffset + shifter * blockDim.y][otx];
