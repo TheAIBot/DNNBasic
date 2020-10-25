@@ -22,5 +22,10 @@ namespace dnnbasic::datasets
 		{
 			return std::make_tuple(inputs[index], outputs[index]);
 		}
+
+		size_t getBatchCount() const
+		{
+			return inputs.size();
+		}
 	};
 }
