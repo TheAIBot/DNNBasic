@@ -1,4 +1,5 @@
 #include <cuda_runtime.h>
+#include <type_traits>
 #include "tensor_permute_kernel.cuh"
 #include "kernel_tools.h"
 #include "cudaBasics.h"
@@ -13,6 +14,7 @@ namespace dnnbasic
 
 	static const uint32_t THREADS_PER_BLOCK = 1024;
 	static const uint32_t THREADS_PER_WARP = 32;
+	static const uint32_t WARPS_PER_BLOCK = THREADS_PER_BLOCK / THREADS_PER_WARP;
 
 	template<typename T>
 	__device__ T getWarpSum(const T threadValue)
@@ -31,7 +33,6 @@ namespace dnnbasic
 		const cudabasic::span<T> input, 
 		cudabasic::span<T> output,
 		const uint32_t sumElementStride,
-		const uint32_t sumStride,
 		const uint32_t sumDimSize)
 	{
 		extern __shared__ __align__(sizeof(T)) int8_t sharedArray[];
@@ -39,12 +40,12 @@ namespace dnnbasic
 
 		const uint32_t sumElemIdx = blockIdx.x * blockDim.x + threadIdx.x;
 
-		if (sumElemIdx >= sumDimSize)
-		{
-			return;
-		}
 
-		const T value = input[sumElemIdx * sumElementStride + blockIdx.y * sumStride];
+		//if index is out of bounds then load zero instead
+		//as all threads in a warp are needed to sum
+		//and keeping all threads to begin with it the
+		//easiest way to do that
+		const T value = sumElemIdx >= sumDimSize ? 0 : input[sumElemIdx * sumElementStride + (blockIdx.y / sumElementStride) * sumElementStride * sumDimSize + (blockIdx.y % sumElementStride)];
 
 		//Make warp sum
 		const T warpSum = getWarpSum(value);
@@ -53,14 +54,14 @@ namespace dnnbasic
 		//in shared memory so the first warp can sum it up
 		if (threadIdx.x % THREADS_PER_WARP == 0)
 		{
-			sharedMemT[threadIdx.x / THREADS_PER_WARP] = warpSum;
+			sharedMemT[threadIdx.x / WARPS_PER_BLOCK] = warpSum;
 		}
 		__syncthreads();
 
 		//First warp in each block will now
 		//make a block sum
 		T blockSum = 0;
-		if (threadIdx.x < THREADS_PER_WARP)
+		if (threadIdx.x < WARPS_PER_BLOCK)
 		{
 			blockSum = getWarpSum(sharedMemT[threadIdx.x]);
 		}
@@ -82,16 +83,10 @@ namespace dnnbasic
 		}
 		else
 		{
-			uint32_t sumStride = 1;
+			uint32_t sumElementStride = 1;
 			for (size_t i = sumDimIdx + 1; i < input.getDimensions().size(); i++)
 			{
-				sumStride *= input.getDimensions()[i].dim;
-			}
-
-			uint32_t dimStride = 1;
-			for (size_t i = 0; i < sumDimIdx; i++)
-			{
-				dimStride *= input.getDimensions()[i].dim;
+				sumElementStride *= input.getDimensions()[i].dim;
 			}
 
 			const uint32_t sumDim = input.getDimensions()[sumDimIdx].dim;
@@ -102,12 +97,12 @@ namespace dnnbasic
 			if (autoGraph::isRecordingGraph())
 			{
 				autoGraph::addMemsetNode(output.getGPUArray(), 0);
-				autoGraph::addKernelNode(sumKernel<T>, blockDim, gridDim, (uint32_t)sizeof(T) * 32, input.getGPUArrayConst(), output.getGPUArray(), sumStride, dimStride, input.getDimensions()[sumDimIdx].dim);
+				autoGraph::addKernelNode(sumKernel<T>, blockDim, gridDim, (uint32_t)sizeof(T) * WARPS_PER_BLOCK, input.getGPUArrayConst(), output.getGPUArray(), sumElementStride, sumDim);
 			}
 			else
 			{
 				cudaMemset(output.getGPUArray().begin(), 0, output.elementCount() * sizeof(T));
-				cudabasic::executeKernel(sumKernel<T>, blockDim, gridDim, sizeof(T) * 32, cuda::getDefaultStream(), input.getGPUArrayConst(), output.getGPUArray(), sumStride, dimStride, input.getDimensions()[sumDimIdx].dim);
+				cudabasic::executeKernel(sumKernel<T>, blockDim, gridDim, sizeof(T) * WARPS_PER_BLOCK, cuda::getDefaultStream(), input.getGPUArrayConst(), output.getGPUArray(), sumElementStride, sumDim);
 			}
 		}
 	}
