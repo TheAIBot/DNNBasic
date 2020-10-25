@@ -155,8 +155,8 @@ namespace DNNBasicTest
 
 			dnnbasic::tensor<T> expected({ 2, 2 },
 				{
-					10, 15,
-					10, 15
+					7, 8,
+					8, 9
 				});
 			auto actual = a + b;
 
