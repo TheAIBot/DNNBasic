@@ -49,21 +49,25 @@ namespace dnnbasic
 				}
 			}
 
-
 			// error for layer L
-			const tensor<T> actualLoss = isFirstLayer ? estimatedLoss * newDerivative : estimatedLoss;
-			const tensor<T> newLoss = isFirstLayer ? actualLoss : actualLoss.matMul(this->weights.permute({ 1, 0 })) * newDerivative;
+			const tensor<T> newLoss = estimatedLoss * newDerivative;
+
+			const tensor<T> inputOuterShape = input.reshape(input.getDimension(0), input.getDimension(1), 1);
+			const tensor<T> newLossOuterShape = newLoss.reshape(newLoss.getDimension(0), 1, newLoss.getDimension(1));
+
+			const tensor<T> batchWeightGradient = inputOuterShape.matMul(newLossOuterShape);
+			const tensor<T> meanWeightGradient = batchWeightGradient.sum(0) / ((T)batchWeightGradient.getDimension(0));
 
 			// Partial derivative cost for weight
-			opti->updateWeights(this->weights, actualLoss * input);
+			opti->updateWeights(this->weights, meanWeightGradient);
 
 			// Partial derivative cost for bias
 			if (this->useBias)
 			{
-				opti->updateWeights(this->biases, actualLoss);
+				opti->updateWeights(this->biases, newLoss.sum(0)/((T)newLoss.getDimension(0)));
 			}
 
-			return newLoss;
+			return newLoss.matMul(this->weights.permute({ 1, 0 }));
 		}
 
 		template<typename T>

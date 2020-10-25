@@ -39,10 +39,10 @@ namespace dnnbasic::loss
 		autoGraph::scopeLevelDisableAutoGraph k;
 
 		tensor<T> gradient = actual - expected;
-		if (meanOverBatch)
-		{
-			gradient = gradient.sum(batchDim) / (T)gradient.getDimensions()[batchDim].dim;
-		}
+		//if (meanOverBatch)
+		//{
+		//	gradient = gradient.sum(batchDim) / (T)gradient.getDimensions()[batchDim].dim;
+		//}
 		tensor<T> error = 0.5f * (gradient * gradient);
 
 		auto errorMethod = [](const tensor<T>& ten)

@@ -33,7 +33,7 @@ namespace dnnbasic
 		for (size_t i = 0; i < dims.size(); i++)
 		{
 			newDims.push_back(dims[i].hasName() ? this->getDimension(dims[i].name) : dims[i].dim);
-			newDimNames.push_back(dims[i].hasName() ? dims[i].name : this->data->dimension[i].name);
+			newDimNames.push_back(dims[i].hasName() ? dims[i].name : "");
 		}
 
 		tensor<T> reshaped(newDims, newDimNames);
