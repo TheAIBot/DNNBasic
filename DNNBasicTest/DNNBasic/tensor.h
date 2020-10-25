@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <memory>
 #include <stdexcept>
+#include <type_traits>
 #include "optional.h"
 #include "span.h"
 #include "matrix.h"
@@ -32,13 +33,14 @@ namespace dnnbasic
 		void setNode(tensorNode<T>* inNode);
 		optional<std::shared_ptr<tensorNode<T>>> getNode();
 
-		void makeRandom(T min, T max);
 		uint32_t elementCount() const;
 		const std::vector<namedDim>& getDimensions() const;
 		cudabasic::span<T> getGPUArray() const;
 		const cudabasic::span<T> getGPUArrayConst() const;
 		std::vector<T> getValuesOnCPU() const;
 
+		bool hasDimension(const std::string& dimName) const;
+		uint32_t getDimensionIndex(const std::string& dimName) const;
 		uint32_t getDimension(const uint32_t dimIdx) const;
 		uint32_t getDimension(const std::string& dimName) const;
 
@@ -46,10 +48,8 @@ namespace dnnbasic
 
 		tensor<T> matMul(const tensor<T>& right) const;
 
-		tensor<T> permute(std::initializer_list<uint32_t> dims) const;
-		tensor<T> permute(std::vector<uint32_t> dims) const;
-		tensor<T> permute(std::initializer_list<std::string> dims) const;
-		tensor<T> permute(std::vector<std::string> dims) const;
+		tensor<T> permute(const std::initializer_list<namedDim>& dims) const;
+		tensor<T> permute(const std::vector<namedDim>& dims) const;
 
 		template<typename U>
 		tensor<U> cast() const;
@@ -57,8 +57,17 @@ namespace dnnbasic
 		tensor<T> sum(const uint32_t sumDim) const;
 		tensor<T> sum(const std::string sumDim) const;
 
-		tensor<T> reshape(std::initializer_list<namedDim> dims) const;
-		tensor<T> reshape(std::vector<namedDim> dims) const;
+		tensor<T> reshape(const std::initializer_list<namedDim>& dims) const;
+		tensor<T> reshape(const std::vector<namedDim>& dims) const;
+
+		template<typename ...Ts> tensor<T> permute(const Ts& ... args) const 
+		{ 
+			return permute({ namedDim(args)... }); 
+		}
+		template<typename ...Ts> tensor<T> reshape(const Ts& ... args) const 
+		{ 
+			return reshape({ namedDim(args)... }); 
+		}
 	};
 
 	template<typename T> bool operator==(const tensor<T>& left, const tensor<T>& right);

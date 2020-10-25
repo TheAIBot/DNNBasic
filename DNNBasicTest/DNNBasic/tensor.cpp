@@ -102,17 +102,6 @@ namespace dnnbasic
 	}
 
 	template<typename T>
-	void tensor<T>::makeRandom(T min, T max)
-	{
-		//std::default_random_engine rngGen;
-		//std::uniform_real_distribution<T> dist(min, max);
-
-		//for (uint32_t i = 0; i < arr.size(); i++)
-		//{
-		//	this->arr[i] = dist(rngGen);
-		//}
-	}
-	template<typename T>
 	uint32_t tensor<T>::elementCount() const
 	{
 		return this->data->arr.size();
@@ -138,6 +127,32 @@ namespace dnnbasic
 		return this->data->arr.copyToCPU();
 	}
 	template<typename T>
+	bool tensor<T>::hasDimension(const std::string& dimName) const
+	{
+		for (size_t i = 0; i < this->data->dimension.size(); i++)
+		{
+			if (this->data->dimension[i].name == dimName)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+	template<typename T>
+	uint32_t tensor<T>::getDimensionIndex(const std::string& dimName) const
+	{
+		for (uint32_t i = 0; i < this->data->dimension.size(); i++)
+		{
+			if (this->data->dimension[i].name == dimName)
+			{
+				return i;
+			}
+		}
+
+		throw std::runtime_error("Tensor does not have a dimension with that name.");
+	}
+	template<typename T>
 	uint32_t tensor<T>::getDimension(const uint32_t dimIdx) const
 	{
 		if (dimIdx >= this->data->dimension.size())
@@ -160,10 +175,6 @@ namespace dnnbasic
 
 		throw std::runtime_error("Tensor does not have a dimension with that name.");
 	}
-	//void transpose();
-	//void permute();
-	//void view();
-	//void resize();
 
 	template<typename T>
 	void tensor<T>::copyTo(const tensor<T>& other) const

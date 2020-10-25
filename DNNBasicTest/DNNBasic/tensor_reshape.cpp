@@ -8,13 +8,13 @@
 namespace dnnbasic
 {
 	template<typename T>
-	tensor<T> tensor<T>::reshape(std::initializer_list<namedDim> dims) const
+	tensor<T> tensor<T>::reshape(const std::initializer_list<namedDim>& dims) const
 	{
 		return reshape(std::vector<namedDim>(dims));
 	}
 
 	template<typename T>
-	tensor<T> tensor<T>::reshape(std::vector<namedDim> dims) const
+	tensor<T> tensor<T>::reshape(const std::vector<namedDim>& dims) const
 	{
 		uint32_t newTotalSize = 1;
 		for (size_t i = 0; i < dims.size(); i++)

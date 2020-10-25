@@ -13,7 +13,9 @@ namespace dnnbasic
 		linear<T>::linear(const uint32_t inputDim, const uint32_t outputDim, const bool useBias) : 
 			weights(tensor<T>::random({ inputDim, outputDim })),
 			biases(tensor<T>::random({ useBias ? outputDim : 1 })),
-			useBias(useBias)
+			useBias(useBias),
+			inputSize(inputDim),
+			outputSize(outputDim)
 		{ }
 
 		template<typename T>
@@ -62,6 +64,17 @@ namespace dnnbasic
 			}
 
 			return newLoss;
+		}
+
+		template<typename T>
+		uint32_t linear<T>::getInputSize() const
+		{
+			return this->inputSize;
+		}
+		template<typename T>
+		uint32_t linear<T>::getOutputSize() const
+		{
+			return this->outputSize;
 		}
 
 		//template class linear<bool>;

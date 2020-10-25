@@ -25,72 +25,40 @@ namespace dnnbasic
 	}
 
 	template<typename T>
-	tensor<T> tensor<T>::permute(std::initializer_list<uint32_t> dims) const
+	tensor<T> tensor<T>::permute(const std::initializer_list<namedDim>& dims) const
 	{
-		return permute(std::vector<uint32_t>(dims));
+		return permute(std::vector<namedDim>(dims));
 	}
 
 	template<typename T>
-	tensor<T> tensor<T>::permute(std::vector<uint32_t> dims) const
+	tensor<T> tensor<T>::permute(const std::vector<namedDim>& dims) const
 	{
 		if (dims.size() != this->data->dimension.size())
 		{
-			throw std::runtime_error("cannot perform permutation due to incorrect number of permute dimensions.");
+			throw std::runtime_error("Cannot perform permutation due to incorrect number of permute dimensions.");
 		}
+
+		std::vector<uint32_t> actualDims;
 		for (uint32_t i = 0; i < this->data->dimension.size(); i++)
 		{
-			if (dims[i] >= this->data->dimension.size())
-			{
-				throw std::runtime_error("permute dimensions indicies cannot be higher than tensor dimnesion count.");
-			}
-		}
-
-		tensor<T> child = createTensorWithPermutedDims(*this, dims);
-		autoGraph::handleMakeGraph(child, std::function<tensorNode<T>*()>([&]() {return new tensorNodeNoGrad<T>({ *this }); }));
-
-		// make kernel call
-		tensorPermute(*this, child, dims);
-
-		return child;
-	}
-
-	template<typename T>
-	tensor<T> tensor<T>::permute(std::initializer_list<std::string> dimNames) const
-	{
-		return permute(std::vector<std::string>(dimNames));
-	}
-
-	template<typename T>
-	tensor<T> tensor<T>::permute(std::vector<std::string> dimNames) const
-	{
-		if (dimNames.size() != this->getDimensions().size())
-		{
-			throw std::runtime_error("cannot perform permutation due to incorrect number of permute dimensions.");
-		}
-
-		std::vector<uint32_t> namedDimIndices;
-
-		auto& tensorDims = this->getDimensions();
-		for (size_t z = 0; z < dimNames.size(); z++)
-		{
-			const std::string& dimName = dimNames[z];
-			bool foundDim = false;
-			for (uint32_t i = 0; i < tensorDims.size(); i++)
-			{
-				if (tensorDims[i].name == dimName)
-				{
-					namedDimIndices.push_back(i);
-					foundDim = true;
-					break;
-				}
-			}
-
-			if (!foundDim)
+			if (dims[i].hasName() && !this->hasDimension(dims[i].name))
 			{
 				throw std::runtime_error("Tensor does not contain a dimension with the name: ");
 			}
+			if (dims[i].dim >= this->data->dimension.size())
+			{
+				throw std::runtime_error("Permute dimensions indicies cannot be higher than tensor dimnesion count.");
+			}
+
+			actualDims.push_back(dims[i].hasName() ? this->getDimensionIndex(dims[i].name) : dims[i].dim);
 		}
-		
-		return permute(namedDimIndices);
+
+		tensor<T> child = createTensorWithPermutedDims(*this, actualDims);
+		autoGraph::handleMakeGraph(child, std::function<tensorNode<T>*()>([&]() {return new tensorNodeNoGrad<T>({ *this }); }));
+
+		// make kernel call
+		tensorPermute(*this, child, actualDims);
+
+		return child;
 	}
 }
