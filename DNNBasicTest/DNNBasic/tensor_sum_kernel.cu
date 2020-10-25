@@ -70,14 +70,22 @@ namespace dnnbasic
 		//First thread in block will now atomic add the result
 		if (threadIdx.x == 0)
 		{
-			atomicAdd(&output[blockIdx.y], blockSum);
+			if constexpr (std::is_integral<T>::value && std::is_signed<T>::value)
+			{
+				using unsigned_T = typename std::make_unsigned<T>::type;
+				atomicAdd(reinterpret_cast<unsigned_T*>(&output[blockIdx.y]), (unsigned_T)blockSum);
+			}
+			else
+			{
+				atomicAdd(&output[blockIdx.y], blockSum);
+			}
 		}
 	}
 
 	template<typename T>
 	void tensorSum(const tensor<T>& input, tensor<T>& output, const uint32_t sumDimIdx)
 	{
-		if constexpr (sizeof(T) < 4 || std::is_integral<T>::value && !std::is_unsigned<T>::value)
+		if constexpr (sizeof(T) < 4)
 		{
 			throw std::runtime_error("Sum is currently not supported for that tensor type.");
 		}
