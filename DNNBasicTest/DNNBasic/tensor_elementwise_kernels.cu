@@ -9,19 +9,14 @@ namespace dnnbasic
 {
 	using gpuArray = smallGPUArray<uint32_t, tensor<uint32_t>::MAX_DIMENSION_COUNT>;
 
-	template <typename T>
-	__device__ T max(const T a, const T b)
-	{
-		return a > b ? a : b;
-	}
-
 	template<typename OP, typename T>
 	__global__ void biArgElementWiseKernelSpanSpanBroadcast(
-		const cudabasic::span<T> left, 
-		const cudabasic::span<T> right, 
-		cudabasic::span<T> output, 
-		const gpuArray leftStrides, 
-		const gpuArray rightStrides)
+		const cudabasic::span<T> left,
+		const cudabasic::span<T> right,
+		cudabasic::span<T> output,
+		const gpuArray leftStrides,
+		const gpuArray rightStrides,
+		const gpuArray outputStrides)
 	{
 		const uint32_t idx = blockIdx.x * blockDim.x + threadIdx.x;
 
@@ -33,14 +28,13 @@ namespace dnnbasic
 		uint32_t leftIndex = 0;
 		uint32_t rightIndex = 0;
 		uint32_t x = idx;
-		for (uint32_t i = 0; i < leftStrides.size(); i++)
+		for (uint32_t i = 0; i < outputStrides.size(); i++)
 		{
-			const uint32_t outputStride = max(leftStrides[i], rightStrides[i]);
-			const uint32_t index = x / outputStride;
+			const uint32_t index = x / outputStrides[i];
 			leftIndex += index * leftStrides[i];
 			rightIndex += index * rightStrides[i];
 
-			x = x % outputStride;
+			x = x % outputStrides[i];
 		}
 
 		output[idx] = OP::operation(left[leftIndex], right[rightIndex]);
@@ -85,9 +79,11 @@ namespace dnnbasic
 			{
 				std::vector<uint32_t> aDims(result.getDimensions().size());
 				std::vector<uint32_t> bDims(result.getDimensions().size());
+				std::vector<uint32_t> cDims(result.getDimensions().size());
 
 				int32_t aDimsIdx = (int32_t)left.getDimensions().size() - 1;
 				int32_t bDimsIdx = (int32_t)right.getDimensions().size() - 1;
+				int32_t cDimsIdx = (int32_t)result.getDimensions().size() - 1;
 
 				// Convert aDims and bDims into a shape tensor in which length of the tensor is
 				// the same size as the output c. The ideas is to perform an internal broadcasting of a and b
@@ -112,39 +108,43 @@ namespace dnnbasic
 						bDims[i] = right.getDimensions()[bDimsIdx].dim;
 						bDimsIdx--;
 					}
+					cDims[i] = result.getDimensions()[i].dim;
 				}
 
 				gpuArray aStrides(aDims.size());
 				gpuArray bStrides(bDims.size());
+				gpuArray cStrides(cDims.size());
 
-				for (uint32_t i = 0; i < aDims.size(); i++)
+				for (uint32_t i = 0; i < cDims.size(); i++)
 				{
 					uint32_t aStride = 1;
 					uint32_t bStride = 1;
+					uint32_t cStride = 1;
 
 					// To get the correct stride when using an array we multiply the following dimensions
 					// together such that they correspond to accessing index i of the corresponding matrix 
 					// with similar dimensions
-					for (uint32_t g = i + 1; g < aDims.size(); g++)
+					for (uint32_t g = i + 1; g < cDims.size(); g++)
 					{
 						aStride *= aDims[g];
 						bStride *= bDims[g];
+						cStride *= cDims[g];
 					}
 					// if dimension is broadcasted then the stride should be 0 to reuse the same matrix again
 					aStrides[i] = aStride * ((aDims[i] == 1 && bDims[i] != 1) ? 0 : 1);
 					bStrides[i] = bStride * ((bDims[i] == 1 && aDims[i] != 1) ? 0 : 1);
-
+					cStrides[i] = cStride;
 				}
 
 				const dim3 blockDim(256);
 				const dim3 gridDim(integerCeilDivision(result.elementCount(), blockDim.x));
 				if (autoGraph::isRecordingGraph())
 				{
-					autoGraph::addKernelNode(biArgElementWiseKernelSpanSpanBroadcast<OP, T>, blockDim, gridDim, 0u, left.getGPUArray(), right.getGPUArray(), result.getGPUArray(), aStrides, bStrides);
+					autoGraph::addKernelNode(biArgElementWiseKernelSpanSpanBroadcast<OP, T>, blockDim, gridDim, 0u, left.getGPUArray(), right.getGPUArray(), result.getGPUArray(), aStrides, bStrides, cStrides);
 				}
 				else
 				{
-					cudabasic::executeKernel(biArgElementWiseKernelSpanSpanBroadcast<OP, T>, blockDim, gridDim, 0, cuda::getDefaultStream(), left.getGPUArray(), right.getGPUArray(), result.getGPUArray(), aStrides, bStrides);
+					cudabasic::executeKernel(biArgElementWiseKernelSpanSpanBroadcast<OP, T>, blockDim, gridDim, 0, cuda::getDefaultStream(), left.getGPUArray(), right.getGPUArray(), result.getGPUArray(), aStrides, bStrides, cStrides);
 				}
 			}
 			else
