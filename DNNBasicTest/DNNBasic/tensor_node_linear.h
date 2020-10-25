@@ -1,4 +1,6 @@
 #pragma once
+
+#include <vector>
 #include "tensor.h"
 #include "optional.h"
 #include "FBPropagation.h"
@@ -19,12 +21,12 @@ namespace dnnbasic
 		tensorNodeLinearLayer(tensor<T> input, tensor<T> output, layer::linear<T>* linear) : inputNode(input.getNode()), inputTensor(input), outputTensor(output), linear(linear)
 		{ }
 
-		void backward(const tensor<T>& estimatedLoss, optimizer::optimizer* opti) const override
+		void backward(const tensor<T>& estimatedLoss, optimizer::optimizer* opti, std::vector<activations::activationFunction<T>*> actFuncs, bool isFirstLayer) const override
 		{
-			auto newLoss = linear->backward(estimatedLoss, opti, this->inputTensor);
+			auto newLoss = linear->backward(estimatedLoss, opti, this->inputTensor, this->outputTensor, actFuncs, isFirstLayer);
 			if (inputNode.has_value())
 			{
-				inputNode.value()->backward(newLoss, opti);
+				inputNode.value()->backward(newLoss, opti, std::vector<activations::activationFunction<T>*>(), false);
 			}
 		}
 

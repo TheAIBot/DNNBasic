@@ -2,6 +2,7 @@
 #include <vector>
 #include "mean_squared_loss.h"
 #include "auto_graph.h"
+#include "activation_function.h"
 
 namespace dnnbasic::loss
 {
@@ -17,7 +18,7 @@ namespace dnnbasic::loss
 	template<typename T>
 	void lossData<T>::backward(optimizer::optimizer* opti)
 	{
-		this->leafNode->backward(this->gradient, opti);
+		this->leafNode->backward(this->gradient, opti, std::vector<activations::activationFunction<T>*>(), true);
 	}
 
 	template<typename T>
@@ -38,10 +39,10 @@ namespace dnnbasic::loss
 		autoGraph::scopeLevelDisableAutoGraph k;
 
 		tensor<T> gradient = actual - expected;
-		if (meanOverBatch)
-		{
-			gradient = gradient.sum(batchDim) / (T)gradient.getDimensions()[batchDim].dim;
-		}
+		//if (meanOverBatch)
+		//{
+		//	gradient = gradient.sum(batchDim) / (T)gradient.getDimensions()[batchDim].dim;
+		//}
 		tensor<T> error = 0.5f * (gradient * gradient);
 
 		auto errorMethod = [](const tensor<T>& ten)

@@ -31,6 +31,9 @@
     <Filter Include="dnnbasic\datasets">
       <UniqueIdentifier>{e0454401-7252-42a8-8761-a59721463e75}</UniqueIdentifier>
     </Filter>
+    <Filter Include="dnnbasic\activations">
+      <UniqueIdentifier>{fb102d9e-1485-405e-b25d-277d1dbfdc7e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\CudaBasicClasses\cpuGpuArray.h">
@@ -147,6 +150,18 @@
     <ClInclude Include="supervisedDataset.h">
       <Filter>dnnbasic\datasets</Filter>
     </ClInclude>
+    <ClInclude Include="tensor_activation_kernels.cuh">
+      <Filter>dnnbasic\tensor\kernels</Filter>
+    </ClInclude>
+    <ClInclude Include="relu.h">
+      <Filter>dnnbasic\activations</Filter>
+    </ClInclude>
+    <ClInclude Include="tensor_node_activation.h">
+      <Filter>dnnbasic\tensor\tensorNodes</Filter>
+    </ClInclude>
+    <ClInclude Include="activation_function.h">
+      <Filter>dnnbasic\activations</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\CudaBasicClasses\cudaBasics.cpp">
@@ -209,6 +224,9 @@
     <ClCompile Include="tensor_reshape.cpp">
       <Filter>dnnbasic\tensor\operators</Filter>
     </ClCompile>
+    <ClCompile Include="relu.cpp">
+      <Filter>dnnbasic\activations</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="tensor_elementwise_kernels.cu">
@@ -227,6 +245,9 @@
       <Filter>dnnbasic\tensor\kernels</Filter>
     </CudaCompile>
     <CudaCompile Include="tensor_sum_kernel.cu">
+      <Filter>dnnbasic\tensor\kernels</Filter>
+    </CudaCompile>
+    <CudaCompile Include="tensor_activation_kernels.cu">
       <Filter>dnnbasic\tensor\kernels</Filter>
     </CudaCompile>
   </ItemGroup>

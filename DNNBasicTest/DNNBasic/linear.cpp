@@ -1,6 +1,8 @@
+#include <vector>
 #include "linear.h"
 #include "tensor_node_linear.h"
 #include "auto_graph.h"
+#include "activation_function.h"
 
 namespace dnnbasic
 {
@@ -30,23 +32,42 @@ namespace dnnbasic
 		}
 
 		template<typename T>
-		tensor<T> linear<T>::backward(const tensor<T>& estimatedLoss, optimizer::optimizer* opti, const tensor<T>& input)
+		tensor<T> linear<T>::backward(const tensor<T>& estimatedLoss, optimizer::optimizer* opti, const tensor<T>& input, const tensor<T>& output, std::vector<activations::activationFunction<T>*> actFuncs, bool isFirstLayer)
 		{
 			autoGraph::scopeLevelDisableAutoGraph t;
 
+
+			// compute derivative of activation function using output
+			tensor<T> newDerivative = actFuncs.size() == 0 ? tensor<T>(std::vector<uint32_t>({ 1 }), std::vector<T>({ 1 })) : actFuncs.back()->derivative(output);
+			if (actFuncs.size()>1)
+			{
+				tensor<T> forwardDerivative = actFuncs.back()->forward(output);
+				for (int i = actFuncs.size() - 2; i >= 0; i--)
+				{
+					newDerivative = newDerivative * actFuncs[i]->derivative(forwardDerivative);
+					forwardDerivative = actFuncs[i]->forward(forwardDerivative);
+				}
+			}
+
 			// error for layer L
-			const tensor<T> newLoss = estimatedLoss.matMul(this->weights.permute({ 1, 0 }));
+			const tensor<T> newLoss = estimatedLoss * newDerivative;
+
+			const tensor<T> inputOuterShape = input.reshape(input.getDimension(0), input.getDimension(1), 1);
+			const tensor<T> newLossOuterShape = newLoss.reshape(newLoss.getDimension(0), 1, newLoss.getDimension(1));
+
+			const tensor<T> batchWeightGradient = inputOuterShape.matMul(newLossOuterShape);
+			const tensor<T> meanWeightGradient = batchWeightGradient.sum(0) / ((T)batchWeightGradient.getDimension(0));
 
 			// Partial derivative cost for weight
-			opti->updateWeights(this->weights, estimatedLoss * input);
+			opti->updateWeights(this->weights, meanWeightGradient);
 
 			// Partial derivative cost for bias
 			if (this->useBias)
 			{
-				opti->updateWeights(this->biases, estimatedLoss);
+				opti->updateWeights(this->biases, newLoss.sum(0)/((T)newLoss.getDimension(0)));
 			}
 
-			return newLoss;
+			return newLoss.matMul(this->weights.permute({ 1, 0 }));
 		}
 
 		template<typename T>
