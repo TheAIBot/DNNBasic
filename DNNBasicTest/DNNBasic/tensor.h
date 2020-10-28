@@ -51,6 +51,9 @@ namespace dnnbasic
 		tensor<T> permute(const std::initializer_list<namedDim>& dims) const;
 		tensor<T> permute(const std::vector<namedDim>& dims) const;
 
+		tensor<T> transpose(const uint32_t dim0, const uint32_t dim1) const;
+		//tensor<T> transpose(const std::string& t1, const std::string& t2);
+
 		template<typename U>
 		tensor<U> cast() const;
 

@@ -61,4 +61,30 @@ namespace dnnbasic
 
 		return child;
 	}
+
+	template<typename T>
+	tensor<T> tensor<T>::transpose(const uint32_t dim0, const uint32_t dim1) const
+	{
+		if (dim0 >= this->getDimensions().size())
+		{
+			throw std::runtime_error("Transpose dimension indicie cannot be higher than tensor dimnesion count.");
+		}
+		if (dim1 >= this->getDimensions().size())
+		{
+			throw std::runtime_error("Transpose dimension indicie cannot be higher than tensor dimnesion count.");
+		}
+
+		std::vector<namedDim> dims = this->getDimensions();
+		
+		for (size_t i = 0; i < dims.size(); i++)
+		{
+			dims[i].dim = i;
+		}
+
+		const namedDim tmp = dims[dim0];
+		dims[dim0] = dims[dim1];
+		dims[dim1] = tmp;
+
+		return this->permute(dims);
+	}
 }
