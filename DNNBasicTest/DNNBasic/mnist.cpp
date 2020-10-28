@@ -2,10 +2,10 @@
 
 namespace dnnbasic::datasets::mnist
 {
-	static const std::string trainInputFile = "train-images-idx3-ubyte";
-	static const std::string trainOutputFile = "train-labels-idx1-ubyte";
-	static const std::string testInputFile = "t10k-images-idx3-ubyte";
-	static const std::string testOutputFile = "t10k-labels-idx1-ubyte";
+	static const std::string trainInputFile = "train-images.idx3-ubyte";
+	static const std::string trainOutputFile = "train-labels.idx1-ubyte";
+	static const std::string testInputFile = "t10k-images.idx3-ubyte";
+	static const std::string testOutputFile = "t10k-labels.idx1-ubyte";
 
 	static constexpr uint32_t inputHeaderSize = 4 * sizeof(uint32_t);
 	static constexpr uint32_t outputHeaderSize = 2 * sizeof(uint32_t);
@@ -33,7 +33,7 @@ namespace dnnbasic::datasets::mnist
 
 		//ignore headers
 		input.loadNext(inputHeaderSize);
-		input.loadNext(outputHeaderSize);
+		output.loadNext(outputHeaderSize);
 
 		std::vector<tensor<uint8_t>> inputs;
 		std::vector<tensor<uint8_t>> outputs;
@@ -42,7 +42,7 @@ namespace dnnbasic::datasets::mnist
 		for (size_t i = 0; i < batches; i++)
 		{
 			auto inputCharData = input.loadNext(batchSize * imageWidth * imageHeight);
-			auto outputCharData = input.loadNext(batchSize);
+			auto outputCharData = output.loadNext(batchSize);
 
 			std::vector<uint8_t> inputData(inputCharData.begin(), inputCharData.end());
 			std::vector<uint8_t> outputData((size_t)batchSize * labelsCount);

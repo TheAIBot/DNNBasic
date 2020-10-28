@@ -33,51 +33,55 @@ namespace dnnbasic
 		const cudabasic::span<T> input, 
 		cudabasic::span<T> output,
 		const uint32_t sumElementStride,
-		const uint32_t sumDimSize)
+		const uint32_t sumDimSize,
+		const uint32_t sumsToMake,
+		const uint32_t blocksMade)
 	{
 		extern __shared__ __align__(sizeof(T)) int8_t sharedArray[];
 		T* sharedMemT = reinterpret_cast<T*>(sharedArray);
 
 		const uint32_t sumElemIdx = blockIdx.x * blockDim.x + threadIdx.x;
 
-
-		//if index is out of bounds then load zero instead
-		//as all threads in a warp are needed to sum
-		//and keeping all threads to begin with it the
-		//easiest way to do that
-		const T value = sumElemIdx >= sumDimSize ? 0 : input[sumElemIdx * sumElementStride + (blockIdx.y / sumElementStride) * sumElementStride * sumDimSize + (blockIdx.y % sumElementStride)];
-
-		//Make warp sum
-		const T warpSum = getWarpSum(value);
-
-		//First thread in each warp will store their sum
-		//in shared memory so the first warp can sum it up
-		if (threadIdx.x % THREADS_PER_WARP == 0)
+		for (uint32_t i = blockIdx.y; i < sumsToMake; i += blocksMade)
 		{
-			sharedMemT[threadIdx.x / WARPS_PER_BLOCK] = warpSum;
-		}
-		__syncthreads();
+			//if index is out of bounds then load zero instead
+			//as all threads in a warp are needed to sum
+			//and keeping all threads to begin with it the
+			//easiest way to do that
+			const T value = sumElemIdx >= sumDimSize ? 0 : input[sumElemIdx * sumElementStride + (i / sumElementStride) * sumElementStride * sumDimSize + (i % sumElementStride)];
 
-		//First warp in each block will now
-		//make a block sum
-		T blockSum = 0;
-		if (threadIdx.x < WARPS_PER_BLOCK)
-		{
-			blockSum = getWarpSum(sharedMemT[threadIdx.x]);
-		}
-		__syncthreads();
+			//Make warp sum
+			const T warpSum = getWarpSum(value);
 
-		//First thread in block will now atomic add the result
-		if (threadIdx.x == 0)
-		{
-			if constexpr (std::is_integral<T>::value && std::is_signed<T>::value)
+			//First thread in each warp will store their sum
+			//in shared memory so the first warp can sum it up
+			if (threadIdx.x % THREADS_PER_WARP == 0)
 			{
-				using unsigned_T = typename std::make_unsigned<T>::type;
-				atomicAdd(reinterpret_cast<unsigned_T*>(&output[blockIdx.y]), (unsigned_T)blockSum);
+				sharedMemT[threadIdx.x / WARPS_PER_BLOCK] = warpSum;
 			}
-			else
+			__syncthreads();
+
+			//First warp in each block will now
+			//make a block sum
+			T blockSum = 0;
+			if (threadIdx.x < WARPS_PER_BLOCK)
 			{
-				atomicAdd(&output[blockIdx.y], blockSum);
+				blockSum = getWarpSum(sharedMemT[threadIdx.x]);
+			}
+			__syncthreads();
+
+			//First thread in block will now atomic add the result
+			if (threadIdx.x == 0)
+			{
+				if constexpr (std::is_integral<T>::value && std::is_signed<T>::value)
+				{
+					using unsigned_T = typename std::make_unsigned<T>::type;
+					atomicAdd(reinterpret_cast<unsigned_T*>(&output[blockIdx.y]), (unsigned_T)blockSum);
+				}
+				else
+				{
+					atomicAdd(&output[blockIdx.y], blockSum);
+				}
 			}
 		}
 	}
@@ -99,18 +103,19 @@ namespace dnnbasic
 
 			const uint32_t sumDim = input.getDimensions()[sumDimIdx].dim;
 			const uint32_t dimsToSum = output.elementCount();
+			const uint32_t blocksMade = std::min(dimsToSum, 40u);
 
 			const dim3 blockDim(THREADS_PER_BLOCK);
-			const dim3 gridDim(integerCeilDivision(sumDim, blockDim.x), dimsToSum);
+			const dim3 gridDim(integerCeilDivision(sumDim, blockDim.x), blocksMade);
 			if (autoGraph::isRecordingGraph())
 			{
 				autoGraph::addMemsetNode(output.getGPUArray(), 0);
-				autoGraph::addKernelNode(sumKernel<T>, blockDim, gridDim, (uint32_t)sizeof(T) * WARPS_PER_BLOCK, input.getGPUArrayConst(), output.getGPUArray(), sumElementStride, sumDim);
+				autoGraph::addKernelNode(sumKernel<T>, blockDim, gridDim, (uint32_t)sizeof(T) * WARPS_PER_BLOCK, input.getGPUArrayConst(), output.getGPUArray(), sumElementStride, sumDim, dimsToSum, blocksMade);
 			}
 			else
 			{
 				cudaMemset(output.getGPUArray().begin(), 0, output.elementCount() * sizeof(T));
-				cudabasic::executeKernel(sumKernel<T>, blockDim, gridDim, sizeof(T) * WARPS_PER_BLOCK, cuda::getDefaultStream(), input.getGPUArrayConst(), output.getGPUArray(), sumElementStride, sumDim);
+				cudabasic::executeKernel(sumKernel<T>, blockDim, gridDim, sizeof(T) * WARPS_PER_BLOCK, cuda::getDefaultStream(), input.getGPUArrayConst(), output.getGPUArray(), sumElementStride, sumDim, dimsToSum, blocksMade);
 			}
 		}
 	}

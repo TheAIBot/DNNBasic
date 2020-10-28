@@ -205,6 +205,11 @@ namespace dnnbasic
 		}
 		else
 		{
+			if (right == (T)0)
+			{
+				throw std::runtime_error("Can't divide by zero.");
+			}
+
 			tensor<T> child = createTensorWithSameDims(left);
 			autoGraph::handleMakeGraph(child, std::function<tensorNode<T>* ()>([&]() {return new tensorNodeNoGrad<T>({ left }); }));
 
