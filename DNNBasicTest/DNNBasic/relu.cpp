@@ -2,7 +2,6 @@
 #include "tensor_node_linear.h"
 #include "auto_graph.h"
 #include "tensor_activation_kernels.cuh"
-#include "relu.h"
 #include "tensor_node_activation.h"
 #include "tensor_node_no_grad.h"
 
@@ -56,5 +55,16 @@ namespace dnnbasic
 
 			return output;
 		}
+
+		template class relu<uint8_t>;
+		template class relu<uint16_t>;
+		template class relu<uint32_t>;
+		template class relu<uint64_t>;
+		template class relu<int8_t>;
+		template class relu<int16_t>;
+		template class relu<int32_t>;
+		template class relu<int64_t>;
+		template class relu<float>;
+		template class relu<double>;
 	}
 }
