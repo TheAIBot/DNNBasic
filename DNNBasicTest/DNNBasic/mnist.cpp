@@ -2,10 +2,10 @@
 
 namespace dnnbasic::datasets::mnist
 {
-	static const std::string trainInputFile = "train-images-idx3-ubyte";
-	static const std::string trainOutputFile = "train-labels-idx1-ubyte";
-	static const std::string testInputFile = "t10k-images-idx3-ubyte";
-	static const std::string testOutputFile = "t10k-labels-idx1-ubyte";
+	static const std::string trainInputFile = "train-images.idx3-ubyte";
+	static const std::string trainOutputFile = "train-labels.idx1-ubyte";
+	static const std::string testInputFile = "t10k-images.idx3-ubyte";
+	static const std::string testOutputFile = "t10k-labels.idx1-ubyte";
 
 	static constexpr uint32_t inputHeaderSize = 4 * sizeof(uint32_t);
 	static constexpr uint32_t outputHeaderSize = 2 * sizeof(uint32_t);
