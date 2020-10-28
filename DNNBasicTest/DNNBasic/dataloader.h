@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include <filesystem>
+#include <stdexcept>
 
 namespace dnnbasic::datasets
 {
@@ -13,8 +15,17 @@ namespace dnnbasic::datasets
 		std::ifstream fileStream;
 
 	public:
-		dataloader(const std::string& filepath) : fileStream(filepath, std::ios_base::binary)
-		{ }
+		dataloader(const std::string& filepath)
+		{ 
+			if (std::filesystem::exists(filepath))
+			{
+				fileStream = std::ifstream(filepath, std::ios_base::binary);
+			}
+			else
+			{
+				throw std::runtime_error("File does not exist.");
+			}
+		}
 
 		std::vector<char> loadNext(const uint32_t size)
 		{
