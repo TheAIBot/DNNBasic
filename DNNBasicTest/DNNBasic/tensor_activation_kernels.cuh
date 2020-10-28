@@ -6,5 +6,8 @@
 namespace dnnbasic
 {
 	template <typename T>
-	void tensorReLU(const tensor<T>& input, const tensor<T>& output);
+	void tensorReLU(const tensor<T>& input, tensor<T>& output);
+
+	template<typename T>
+	void tensorReLUDerivative(const tensor<T>& input, tensor<T>& output);
 }

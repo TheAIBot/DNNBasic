@@ -1,7 +1,7 @@
 #pragma once
 #include "FBPropagation.h"
 #include "tensor.h"
-#include "activation.h"
+#include "activation_function.h"
 
 namespace dnnbasic
 {
