@@ -52,7 +52,8 @@ namespace dnnbasic
 			// error for layer L
 			const tensor<T> newLoss = estimatedLoss * newDerivative;
 
-			const tensor<T> inputOuterShape = input.reshape(input.getDimension(0), input.getDimension(1), 1);
+			const tensor<T> awd = input.transpose(input.getDimensions().size() - 1, input.getDimensions().size() - 2);
+			const tensor<T> inputOuterShape = awd.reshape(awd.getDimension(0), awd.getDimension(1), 1);
 			const tensor<T> newLossOuterShape = newLoss.reshape(newLoss.getDimension(0), 1, newLoss.getDimension(1));
 
 			const tensor<T> batchWeightGradient = inputOuterShape.matMul(newLossOuterShape);
