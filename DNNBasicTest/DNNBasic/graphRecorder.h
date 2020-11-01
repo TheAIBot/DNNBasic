@@ -4,6 +4,7 @@
 #include <vector>
 #include <variant>
 #include <cuda_runtime.h>
+#include <unordered_map>
 #include "tensor.h"
 
 namespace dnnbasic
@@ -26,7 +27,10 @@ namespace dnnbasic
 		cudaGraph_t graph;
 		cudaGraphExec_t graphExe;
 		bool hasRecordedGraph;
-		cudaGraphNode_t prevNode;
+		std::unordered_map<const void*, cudaGraphNode_t> currNodeDeps;
+
+		std::vector<cudaGraphNode_t> getDepNodes(const std::vector<void*>& inputs) const;
+		std::vector<cudaGraphNode_t> getDepNodes(const std::vector<const void*>& inputs) const;
 
 	public:
 		graphRecorder();
@@ -39,8 +43,8 @@ namespace dnnbasic
 		template<typename T>
 		void addTensor(tensor<T>& ten);
 
-		void addKernelNode(const cudaKernelNodeParams* kernelParams);
-		void addMemsetNode(const cudaMemsetParams* memsetParams);
-		void addMemcpyNode(const cudaMemcpy3DParms* memcpyParams);
+		void addKernelNode(const std::vector<void*>& inputs, const void* output, const cudaKernelNodeParams* kernelParams);
+		void addMemsetNode(const void* input, const void* output, const cudaMemsetParams* memsetParams);
+		void addMemcpyNode(const void* input, const void* output, const cudaMemcpy3DParms* memcpyParams);
 	};
 }

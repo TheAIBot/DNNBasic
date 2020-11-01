@@ -163,7 +163,9 @@ namespace dnnbasic
 		
 		if (autoGraph::isRecordingGraph())
 		{
-			autoGraph::addKernelNode(matrixMultiplication<T>, blockDim, gridDim, sharedMemory, left, right, result, num_sub_blocks, subBlockSize);
+			const std::vector<void*> inputs = { reinterpret_cast<void*>(left.begin()), reinterpret_cast<void*>(right.begin()) };
+			const void* output = reinterpret_cast<void*>(result.begin());
+			autoGraph::addKernelNode(inputs, output, matrixMultiplication<T>, blockDim, gridDim, sharedMemory, left, right, result, num_sub_blocks, subBlockSize);
 		}
 		else
 		{

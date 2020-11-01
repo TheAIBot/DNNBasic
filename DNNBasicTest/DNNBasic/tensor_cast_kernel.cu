@@ -34,7 +34,9 @@ namespace dnnbasic
 		const dim3 gridDim(integerCeilDivision(from.elementCount(), blockDim.x));
 		if (autoGraph::isRecordingGraph())
 		{
-			autoGraph::addKernelNode(cast<From, To>, blockDim, gridDim, 0, from.getGPUArrayConst(), to.getGPUArray());
+			const std::vector<void*> inputs = { reinterpret_cast<void*>(from.getGPUArray().begin()) };
+			const void* output = reinterpret_cast<void*>(to.getGPUArray().begin());
+			autoGraph::addKernelNode(inputs, output, cast<From, To>, blockDim, gridDim, 0, from.getGPUArrayConst(), to.getGPUArray());
 		}
 		else
 		{

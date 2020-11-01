@@ -1,4 +1,5 @@
 #include <cuda_runtime.h>
+#include <vector>
 #include "tensor_activation_kernels.cuh"
 #include "kernel_tools.h"
 #include "cudaBasics.h"
@@ -46,7 +47,9 @@ namespace dnnbasic
 
 		if (autoGraph::isRecordingGraph())
 		{
-			autoGraph::addKernelNode(ReLUKernelDerivative<T>, blockDim, gridDim, 0, input.getGPUArrayConst(), output.getGPUArray());
+			const std::vector<void*> inputsPtrs = { reinterpret_cast<void*>(input.getGPUArray().begin()) };
+			const void* outputPtr = reinterpret_cast<void*>(output.getGPUArray().begin());
+			autoGraph::addKernelNode(inputsPtrs, outputPtr, ReLUKernelDerivative<T>, blockDim, gridDim, 0, input.getGPUArrayConst(), output.getGPUArray());
 		}
 		else
 		{
@@ -62,7 +65,9 @@ namespace dnnbasic
 
 		if (autoGraph::isRecordingGraph())
 		{
-			autoGraph::addKernelNode(ReLUKernel<T>, blockDim, gridDim, 0, input.getGPUArrayConst(), output.getGPUArray());
+			const std::vector<void*> inputsPtrs = { reinterpret_cast<void*>(input.getGPUArray().begin()) };
+			const void* outputPtr = reinterpret_cast<void*>(output.getGPUArray().begin());
+			autoGraph::addKernelNode(inputsPtrs, outputPtr, ReLUKernel<T>, blockDim, gridDim, 0, input.getGPUArrayConst(), output.getGPUArray());
 		}
 		else
 		{
