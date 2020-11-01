@@ -18,25 +18,26 @@ namespace dnnbasic
 	}
 
 	template<typename T>
-	tensorData<T>::tensorData(std::vector<uint32_t> dimensions) : arr(std::accumulate(dimensions.begin(), dimensions.end(), 1, std::multiplies<uint32_t>()))
-	{
-
-	}
+	tensorData<T>::tensorData(std::vector<uint32_t> dimensions) : arr(std::make_shared<cudabasic::gpuArray<T>>(std::accumulate(dimensions.begin(), dimensions.end(), 1, std::multiplies<uint32_t>())))
+	{ }
+	template<typename T>
+	tensorData<T>::tensorData(std::vector<uint32_t> dimensions, std::shared_ptr<cudabasic::gpuArray<T>> gpuArr) : arr(gpuArr)
+	{ }
 
 	template<typename T>
 	matrix<T> tensorData<T>::getMatrix() const
 	{
-		return matrix<T>(this->arr.getGPUArrayConst().begin(), this->dimension[1].dim, this->dimension[0].dim);
+		return matrix<T>(this->arr->getGPUArrayConst().begin(), this->dimension[1].dim, this->dimension[0].dim);
 	}
 	template<typename T>
 	matrix<T> tensorData<T>::getMatrixWith1Width() const
 	{
-		return matrix<T>(this->arr.getGPUArrayConst().begin(), 1, this->dimension[0].dim);
+		return matrix<T>(this->arr->getGPUArrayConst().begin(), 1, this->dimension[0].dim);
 	}
 	template<typename T>
 	matrix<T> tensorData<T>::getMatrixWith1Height() const
 	{
-		return matrix<T>(this->arr.getGPUArrayConst().begin(), this->dimension[0].dim, 1);
+		return matrix<T>(this->arr->getGPUArrayConst().begin(), this->dimension[0].dim, 1);
 	}
 
 	template class tensorData<bool>;

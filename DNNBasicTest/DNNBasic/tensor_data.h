@@ -29,11 +29,12 @@ namespace dnnbasic
 	{
 	private:
 		std::vector<namedDim> dimension;
-		cudabasic::gpuArray<T> arr;
+		std::shared_ptr<cudabasic::gpuArray<T>> arr;
 		optional<std::shared_ptr<tensorNode<T>>> tensorOp;
 
 	public:
 		tensorData(std::vector<uint32_t> dimensions);
+		tensorData(std::vector<uint32_t> dimensions, std::shared_ptr<cudabasic::gpuArray<T>> gpuArr);
 
 
 		matrix<T> getMatrix() const;
