@@ -18,7 +18,7 @@ namespace dnnbasic::loss
 		autoGraph::scopeLevelDisableAutoGraph k;
 
 		// softmax Kernel
-		tensor<T> actualExp = dnnbasic::tensor<float>::exp(actual - (float)100);
+		tensor<T> actualExp = dnnbasic::tensor<float>::exp(actual - actual.max(1));
 		tensor<T> actualSumEXP = actualExp.sum(1);
 		tensor<T> actualLogSumExp = dnnbasic::tensor<float>::log(actualSumEXP);
 		tensor<T> minusLogSoftmax = (actualLogSumExp.reshape(actualLogSumExp.getDimension(0),1) - actual);

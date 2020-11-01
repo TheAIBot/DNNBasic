@@ -1,6 +1,6 @@
 #include <cuda_runtime.h>
 #include <type_traits>
-#include "tensor_permute_kernel.cuh"
+#include "tensor_sum_kernel.cuh"
 #include "kernel_tools.h"
 #include "cudaBasics.h"
 #include "cuda_settings.h"

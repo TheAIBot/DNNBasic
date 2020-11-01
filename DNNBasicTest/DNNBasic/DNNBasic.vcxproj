@@ -50,6 +50,7 @@
     <ClInclude Include="tensor_exp_kernel.cuh" />
     <ClInclude Include="tensor_log_kernel.cuh" />
     <ClInclude Include="tensor_matrix_kernels.cuh" />
+    <ClInclude Include="tensor_max_kernel.cuh" />
     <ClInclude Include="tensor_multi_dim_matrix_mul.cuh" />
     <ClInclude Include="tensor_node.h" />
     <ClInclude Include="tensor_node_activation.h" />
@@ -80,6 +81,7 @@
     <ClCompile Include="tensor_exp.cpp" />
     <ClCompile Include="tensor_log.cpp" />
     <ClCompile Include="tensor_matrixMultiply.cpp" />
+    <ClCompile Include="tensor_max.cpp" />
     <ClCompile Include="tensor_permute.cpp" />
     <ClCompile Include="tensor.cpp" />
     <ClCompile Include="tensor_reshape.cpp" />
@@ -92,6 +94,7 @@
     <CudaCompile Include="tensor_exp_kernel.cu" />
     <CudaCompile Include="tensor_log_kernel.cu" />
     <CudaCompile Include="tensor_matrix_kernels.cu" />
+    <CudaCompile Include="tensor_max_kernel.cu" />
     <CudaCompile Include="tensor_multi_dim_matrix_mul.cu" />
     <CudaCompile Include="tensor_permute_kernel.cu" />
     <CudaCompile Include="tensor_sum_kernel.cu" />
