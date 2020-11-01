@@ -11,6 +11,8 @@
 #include "cuda_settings.h"
 #include "auto_graph.h"
 
+#include "tensor_exp.cpp"
+#include "tensor_log.cpp"
 #include "tensor_sum.cpp"
 #include "tensor_cast.cpp"
 #include "tensor_permute.cpp"
