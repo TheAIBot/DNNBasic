@@ -50,9 +50,15 @@ namespace dnnbasic
 	tensor<T>::tensor(std::vector<uint32_t> dimensions, std::vector<std::string> names) : tensor(dimensions, names, std::vector<T>())
 	{ }
 	template<typename T>
-	tensor<T>::tensor(std::vector<uint32_t> dimensions, std::vector<std::string> names, std::vector<T> values)
+	tensor<T>::tensor(std::vector<uint32_t> dimensions, std::vector<std::string> names, std::vector<T> values) : tensor(dimensions, names, values, std::make_shared<tensorData<T>>(dimensions))
+	{ }
+	template<typename T>
+	tensor<T>::tensor(std::vector<uint32_t> dimensions, std::vector<std::string> names, std::shared_ptr<cudabasic::gpuArray<T>> tData) : tensor(dimensions, names, {}, std::make_shared<tensorData<T>>(dimensions, tData))
+	{ }
+	template<typename T>
+	tensor<T>::tensor(std::vector<uint32_t> dimensions, std::vector<std::string> names, std::vector<T> values, std::shared_ptr<tensorData<T>> tData)
 	{
-		this->data = std::make_shared<tensorData <T>>(dimensions);
+		this->data = tData;
 		if (dimensions.size() == 0)
 		{
 			throw std::runtime_error("Cannot make tensor with 0 dimensions.");
@@ -73,7 +79,7 @@ namespace dnnbasic
 			throw std::runtime_error("Dimensions with size 0 are not allowed in a tensor.");
 		}
 
-		if (values.size() > this->data->arr.size())
+		if (values.size() > this->data->arr->size())
 		{
 			throw std::runtime_error("Initializtion vector contain too many values.");
 		}
@@ -85,7 +91,7 @@ namespace dnnbasic
 
 		if (values.size() > 0)
 		{
-			this->data->arr.copyToGPU(values);
+			this->data->arr->copyToGPU(values);
 		}
 	}
 
@@ -104,7 +110,7 @@ namespace dnnbasic
 	template<typename T>
 	uint32_t tensor<T>::elementCount() const
 	{
-		return this->data->arr.size();
+		return this->data->arr->size();
 	}
 	template<typename T>
 	const std::vector<namedDim>& tensor<T>::getDimensions() const
@@ -114,17 +120,17 @@ namespace dnnbasic
 	template<typename T>
 	cudabasic::span<T> tensor<T>::getGPUArray() const
 	{
-		return this->data->arr.getGPUArray();
+		return this->data->arr->getGPUArray();
 	}
 	template<typename T>
 	const cudabasic::span<T> tensor<T>::getGPUArrayConst() const
 	{
-		return this->data->arr.getGPUArrayConst();
+		return this->data->arr->getGPUArrayConst();
 	}
 	template<typename T>
 	std::vector<T> tensor<T>::getValuesOnCPU() const
 	{
-		return this->data->arr.copyToCPU();
+		return this->data->arr->copyToCPU();
 	}
 	template<typename T>
 	bool tensor<T>::hasDimension(const std::string& dimName) const
@@ -181,11 +187,13 @@ namespace dnnbasic
 	{
 		if (autoGraph::isRecordingGraph())
 		{
-			autoGraph::addMemcpyNode(this->data->arr.getGPUArray(), other.data->arr.getGPUArray());
+			const void* input = reinterpret_cast<void*>(this->getGPUArray().begin());
+			const void* output = reinterpret_cast<void*>(other.getGPUArray().begin());
+			autoGraph::addMemcpyNode(input, output, this->data->arr->getGPUArray(), other.data->arr->getGPUArray());
 		}
 		else
 		{
-			this->data->arr.copyToGPUArray(other.data->arr, cuda::getDefaultStream());
+			this->data->arr->copyToGPUArray(*other.data->arr.get(), cuda::getDefaultStream());
 		}
 	}
 

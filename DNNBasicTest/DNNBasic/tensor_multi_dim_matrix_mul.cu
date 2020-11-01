@@ -172,7 +172,9 @@ namespace dnnbasic
 
 		if (autoGraph::isRecordingGraph())
 		{
-			autoGraph::addKernelNode(multiDimMatrixMultiplication<T>, blockDim, gridDim, 0, a.getGPUArrayConst(), b.getGPUArrayConst(), c.getGPUArray(),
+			const std::vector<void*> inputs = { reinterpret_cast<void*>(a.getGPUArray().begin()), reinterpret_cast<void*>(b.getGPUArray().begin()) };
+			const void* output = reinterpret_cast<void*>(c.getGPUArray().begin());
+			autoGraph::addKernelNode(inputs, output, multiDimMatrixMultiplication<T>, blockDim, gridDim, 0, a.getGPUArrayConst(), b.getGPUArrayConst(), c.getGPUArray(),
 				aStrides, bStrides, cStrides, aWidth, aHeight, bWidth, bHeight, num_sub_blocks);
 		}
 		else

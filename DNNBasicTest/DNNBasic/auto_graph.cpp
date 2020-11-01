@@ -113,18 +113,18 @@ namespace dnnbasic::autoGraph
 		currentRecorder = recorder;
 	}
 
-	void addNodeToGraph(cudaKernelNodeParams* kernelParams)
+	void addNodeToGraph(const std::vector<void*> inputs, const void* output, cudaKernelNodeParams* kernelParams)
 	{
-		currentRecorder->addKernelNode(kernelParams);
+		currentRecorder->addKernelNode(inputs, output, kernelParams);
 	}
 
-	void addMemsetNodeToGraph(cudaMemsetParams* memsetParams)
+	void addMemsetNodeToGraph(const void* input, const void* output, cudaMemsetParams* memsetParams)
 	{
-		currentRecorder->addMemsetNode(memsetParams);
+		currentRecorder->addMemsetNode(input, output, memsetParams);
 	}
 
-	void addMemcpyNodeToGraph(cudaMemcpy3DParms* memcpyParams)
+	void addMemcpyNodeToGraph(const void* input, const void* output, cudaMemcpy3DParms* memcpyParams)
 	{
-		currentRecorder->addMemcpyNode(memcpyParams);
+		currentRecorder->addMemcpyNode(input, output, memcpyParams);
 	}
 }

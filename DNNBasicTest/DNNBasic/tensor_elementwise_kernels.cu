@@ -140,7 +140,9 @@ namespace dnnbasic
 				const dim3 gridDim(integerCeilDivision(result.elementCount(), blockDim.x));
 				if (autoGraph::isRecordingGraph())
 				{
-					autoGraph::addKernelNode(biArgElementWiseKernelSpanSpanBroadcast<OP, T>, blockDim, gridDim, 0u, left.getGPUArray(), right.getGPUArray(), result.getGPUArray(), aStrides, bStrides, cStrides);
+					const std::vector<void*> inputs = { reinterpret_cast<void*>(left.getGPUArray().begin()), reinterpret_cast<void*>(right.getGPUArray().begin()) };
+					const void* output = reinterpret_cast<void*>(result.getGPUArray().begin());
+					autoGraph::addKernelNode(inputs, output, biArgElementWiseKernelSpanSpanBroadcast<OP, T>, blockDim, gridDim, 0u, left.getGPUArray(), right.getGPUArray(), result.getGPUArray(), aStrides, bStrides, cStrides);
 				}
 				else
 				{
@@ -153,7 +155,9 @@ namespace dnnbasic
 				const dim3 gridDim(integerCeilDivision(result.elementCount(), blockDim.x));
 				if (autoGraph::isRecordingGraph())
 				{
-					autoGraph::addKernelNode(biArgElementWiseKernelSpanSpan<OP, T>, blockDim, gridDim, 0u, left.getGPUArray(), right.getGPUArray(), result.getGPUArray());
+					const std::vector<void*> inputs = { reinterpret_cast<void*>(left.getGPUArray().begin()), reinterpret_cast<void*>(right.getGPUArray().begin()) };
+					const void* output = reinterpret_cast<void*>(result.getGPUArray().begin());
+					autoGraph::addKernelNode(inputs, output, biArgElementWiseKernelSpanSpan<OP, T>, blockDim, gridDim, 0u, left.getGPUArray(), right.getGPUArray(), result.getGPUArray());
 				}
 				else
 				{
@@ -167,7 +171,9 @@ namespace dnnbasic
 			const dim3 gridDim(integerCeilDivision(result.elementCount(), blockDim.x));
 			if (autoGraph::isRecordingGraph())
 			{
-				autoGraph::addKernelNode(biArgElementWiseKernelScalarSpan<OP, T>, blockDim, gridDim, 0u, left, right.getGPUArray(), result.getGPUArray());
+				const std::vector<void*> inputs = { reinterpret_cast<void*>(right.getGPUArray().begin()) };
+				const void* output = reinterpret_cast<void*>(result.getGPUArray().begin());
+				autoGraph::addKernelNode(inputs, output, biArgElementWiseKernelScalarSpan<OP, T>, blockDim, gridDim, 0u, left, right.getGPUArray(), result.getGPUArray());
 			}
 			else
 			{
@@ -180,7 +186,9 @@ namespace dnnbasic
 			const dim3 gridDim(integerCeilDivision(result.elementCount(), blockDim.x));
 			if (autoGraph::isRecordingGraph())
 			{
-				autoGraph::addKernelNode(biArgElementWiseKernelScalarSpan<OP, T>, blockDim, gridDim, 0u, left.getGPUArray(), right, result.getGPUArray());
+				const std::vector<void*> inputs = { reinterpret_cast<void*>(left.getGPUArray().begin()) };
+				const void* output = reinterpret_cast<void*>(result.getGPUArray().begin());
+				autoGraph::addKernelNode(inputs, output, biArgElementWiseKernelScalarSpan<OP, T>, blockDim, gridDim, 0u, left.getGPUArray(), right, result.getGPUArray());
 			}
 			else
 			{

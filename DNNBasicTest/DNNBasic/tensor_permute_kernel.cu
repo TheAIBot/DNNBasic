@@ -62,7 +62,9 @@ namespace dnnbasic
 
 		if (autoGraph::isRecordingGraph())
 		{
-			autoGraph::addKernelNode(permute<T>, blockDim, gridDim, 0, input.getGPUArrayConst(), output.getGPUArray(), inSumDims, outSumDims, permutedIdx);
+			const std::vector<void*> inputPtrs = { reinterpret_cast<void*>(input.getGPUArray().begin()) };
+			const void* outputPtr = reinterpret_cast<void*>(output.getGPUArray().begin());
+			autoGraph::addKernelNode(inputPtrs, outputPtr, permute<T>, blockDim, gridDim, 0, input.getGPUArrayConst(), output.getGPUArray(), inSumDims, outSumDims, permutedIdx);
 		}
 		else
 		{
