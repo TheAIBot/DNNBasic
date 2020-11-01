@@ -29,6 +29,8 @@ namespace dnnbasic
 		tensor(std::vector<uint32_t> dims, std::vector<T> values);
 		tensor(std::vector<uint32_t> dimensions, std::vector<std::string> names);
 		tensor(std::vector<uint32_t> dimensions, std::vector<std::string> names, std::vector<T> values);
+		tensor(std::vector<uint32_t> dimensions, std::vector<std::string> names, std::shared_ptr<cudabasic::gpuArray<T>> tData);
+		tensor(std::vector<uint32_t> dimensions, std::vector<std::string> names, std::vector<T> values, std::shared_ptr<tensorData<T>> tData);
 
 		void setNode(tensorNode<T>* inNode);
 		optional<std::shared_ptr<tensorNode<T>>> getNode();

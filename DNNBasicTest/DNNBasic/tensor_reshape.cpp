@@ -36,10 +36,8 @@ namespace dnnbasic
 			newDimNames.push_back(dims[i].hasName() ? dims[i].name : "");
 		}
 
-		tensor<T> reshaped(newDims, newDimNames);
+		tensor<T> reshaped(newDims, newDimNames, this->data->arr);
 		autoGraph::handleMakeGraph(reshaped, std::function<tensorNode<T>* ()>([&]() {return new tensorNodeNoGrad<T>({ *this }); }));
-
-		this->copyTo(reshaped);
 
 		return reshaped;
 	}
