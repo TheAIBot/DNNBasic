@@ -101,7 +101,7 @@ namespace dnnbasic
 			if (val != this->currNodeDeps.end())
 			{
 				//can't have duplicate dependicies
-				if (std::find(depNodes.begin(), depNodes.end(), val->second) != depNodes.end())
+				if (std::find(depNodes.begin(), depNodes.end(), val->second) == depNodes.end())
 				{
 					depNodes.push_back(val->second);
 				}
