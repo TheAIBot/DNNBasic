@@ -23,6 +23,7 @@
     <ClInclude Include="..\..\..\CudaBasicClasses\span.h" />
     <ClInclude Include="activation_function.h" />
     <ClInclude Include="auto_graph.h" />
+    <ClInclude Include="cross_entropy_loss.h" />
     <ClInclude Include="cuda_settings.h" />
     <ClInclude Include="dataloader.h" />
     <ClInclude Include="FBPropagation.h" />
@@ -30,6 +31,7 @@
     <ClInclude Include="graphRecorder.h" />
     <ClInclude Include="kernel_tools.h" />
     <ClInclude Include="linear.h" />
+    <ClInclude Include="loss_data.h" />
     <ClInclude Include="matrix.h" />
     <ClInclude Include="mean_squared_loss.h" />
     <ClInclude Include="mnist.h" />
@@ -45,6 +47,8 @@
     <ClInclude Include="tensor_cast_kernel.cuh" />
     <ClInclude Include="tensor_data.h" />
     <ClInclude Include="tensor_elementwise_kernels.cuh" />
+    <ClInclude Include="tensor_exp_kernel.cuh" />
+    <ClInclude Include="tensor_log_kernel.cuh" />
     <ClInclude Include="tensor_matrix_kernels.cuh" />
     <ClInclude Include="tensor_multi_dim_matrix_mul.cuh" />
     <ClInclude Include="tensor_node.h" />
@@ -59,10 +63,12 @@
     <ClCompile Include="..\..\..\CudaBasicClasses\cudaStream.cpp" />
     <ClCompile Include="..\..\..\CudaBasicClasses\cudaTimer.cpp" />
     <ClCompile Include="auto_graph.cpp" />
+    <ClCompile Include="cross_entropy_loss.cpp" />
     <ClCompile Include="cuda_settings.cpp" />
     <ClCompile Include="graphRecorder.cpp" />
     <ClCompile Include="kernel_tools.cpp" />
     <ClCompile Include="linear.cpp" />
+    <ClCompile Include="loss_data.cpp" />
     <ClCompile Include="mean_squared_loss.cpp" />
     <ClCompile Include="mnist.cpp" />
     <ClCompile Include="random.cpp" />
@@ -71,6 +77,8 @@
     <ClCompile Include="tensor_basic_math_operators.cpp" />
     <ClCompile Include="tensor_cast.cpp" />
     <ClCompile Include="tensor_data.cpp" />
+    <ClCompile Include="tensor_exp.cpp" />
+    <ClCompile Include="tensor_log.cpp" />
     <ClCompile Include="tensor_matrixMultiply.cpp" />
     <ClCompile Include="tensor_permute.cpp" />
     <ClCompile Include="tensor.cpp" />
@@ -81,6 +89,8 @@
     <CudaCompile Include="tensor_activation_kernels.cu" />
     <CudaCompile Include="tensor_cast_kernel.cu" />
     <CudaCompile Include="tensor_elementwise_kernels.cu" />
+    <CudaCompile Include="tensor_exp_kernel.cu" />
+    <CudaCompile Include="tensor_log_kernel.cu" />
     <CudaCompile Include="tensor_matrix_kernels.cu" />
     <CudaCompile Include="tensor_multi_dim_matrix_mul.cu" />
     <CudaCompile Include="tensor_permute_kernel.cu" />
