@@ -30,7 +30,7 @@ namespace dnnbasic
 	template<typename T>
 	tensor<T> tensor<T>::max(const uint32_t maxDim) const
 	{
-		if (sumDim >= this->getDimensions().size())
+		if (maxDim >= this->getDimensions().size())
 		{
 			throw std::runtime_error("Sum dimension index cannot be higher than tensor dimnesion count.");
 		}
@@ -38,7 +38,7 @@ namespace dnnbasic
 		tensor<T> child = createTensorWithSameDimsButWithoutMaxDim(*this, maxDim);
 		autoGraph::handleMakeGraph(child, std::function<tensorNode<T>* ()>([&]() {return new tensorNodeNoGrad<T>({ *this }); }));
 
-		tensorSum(*this, child, sumDim);
+		tensorSum(*this, child, maxDim);
 
 		return child;
 	}
