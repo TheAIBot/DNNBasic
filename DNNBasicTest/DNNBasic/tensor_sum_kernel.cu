@@ -114,7 +114,7 @@ namespace dnnbasic
 			}
 			else
 			{
-				cudaMemset(output.getGPUArray().begin(), 0, output.elementCount() * sizeof(T));
+				cudaMemsetAsync(output.getGPUArray().begin(), 0, output.elementCount() * sizeof(T), cuda::getDefaultStream());
 				cudabasic::executeKernel(sumKernel<T>, blockDim, gridDim, sizeof(T) * WARPS_PER_BLOCK, cuda::getDefaultStream(), input.getGPUArrayConst(), output.getGPUArray(), sumElementStride, sumDim, dimsToSum, blocksMade);
 			}
 		}
