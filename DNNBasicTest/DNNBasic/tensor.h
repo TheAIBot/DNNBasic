@@ -84,6 +84,7 @@ namespace dnnbasic
 	template<typename T> tensor<T> operator*(const tensor<T>& left, const tensor<T>& right);
 	template<typename T> tensor<T> operator*(const tensor<T>& left, const T& right);
 	template<typename T> tensor<T> operator*(const T& left, const tensor<T>& right);
+	template<typename T> tensor<T> operator/(const tensor<T>& left, const tensor<T>& right);
 	template<typename T> tensor<T> operator/(const tensor<T>& left, const T& right);
 	template<typename T> tensor<T> operator+(const tensor<T>& left, const tensor<T>& right);
 	template<typename T> tensor<T> operator+(const tensor<T>& left, const T& right);

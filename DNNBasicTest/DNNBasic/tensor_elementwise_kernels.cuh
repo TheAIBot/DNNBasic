@@ -29,6 +29,18 @@ namespace dnnbasic
 	void tensorMultiply(const float left, const tensor<float>& right, const tensor<float>& result, const bool isBroadcasted);
 	void tensorMultiply(const double left, const tensor<double>& right, const tensor<double>& result, const bool isBroadcasted);
 
+	void tensorDiv(const tensor<bool>& left, const tensor<bool>& right, const tensor<bool>& result);
+	void tensorDiv(const tensor<uint8_t>& left, const tensor<uint8_t>& right, const tensor<uint8_t>& result);
+	void tensorDiv(const tensor<uint16_t>& left, const tensor<uint16_t>& right, const tensor<uint16_t>& result);
+	void tensorDiv(const tensor<uint32_t>& left, const tensor<uint32_t>& right, const tensor<uint32_t>& result);
+	void tensorDiv(const tensor<uint64_t>& left, const tensor<uint64_t>& right, const tensor<uint64_t>& result);
+	void tensorDiv(const tensor<int8_t>& left, const tensor<int8_t>& right, const tensor<int8_t>& result);
+	void tensorDiv(const tensor<int16_t>& left, const tensor<int16_t>& right, const tensor<int16_t>& result);
+	void tensorDiv(const tensor<int32_t>& left, const tensor<int32_t>& right, const tensor<int32_t>& result);
+	void tensorDiv(const tensor<int64_t>& left, const tensor<int64_t>& right, const tensor<int64_t>& result);
+	void tensorDiv(const tensor<float>& left, const tensor<float>& right, const tensor<float>& result);
+	void tensorDiv(const tensor<double>& left, const tensor<double>& right, const tensor<double>& result);
+
 	void tensorDiv(const tensor<bool>& left, const bool right, const tensor<bool>& result, const bool isBroadcasted);
 	void tensorDiv(const tensor<uint8_t>& left, const uint8_t right, const tensor<uint8_t>& result, const bool isBroadcasted);
 	void tensorDiv(const tensor<uint16_t>& left, const uint16_t right, const tensor<uint16_t>& result, const bool isBroadcasted);
