@@ -25,7 +25,7 @@ namespace dnnbasic
 
 		autoGraph::handleMakeGraph(child, std::function<tensorNode<T>* ()>([&]() {return new tensorNodeNoGrad<T>({ a }); }));
 
-		tensorExp(a, child);
+		tensorLog(a, child);
 
 		return child;
 	}
