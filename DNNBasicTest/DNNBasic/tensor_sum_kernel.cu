@@ -76,11 +76,11 @@ namespace dnnbasic
 				if constexpr (std::is_integral<T>::value && std::is_signed<T>::value)
 				{
 					using unsigned_T = typename std::make_unsigned<T>::type;
-					atomicAdd(reinterpret_cast<unsigned_T*>(&output[blockIdx.y]), (unsigned_T)blockSum);
+					atomicAdd(reinterpret_cast<unsigned_T*>(&output[i]), (unsigned_T)blockSum);
 				}
 				else
 				{
-					atomicAdd(&output[blockIdx.y], blockSum);
+					atomicAdd(&output[i], blockSum);
 				}
 			}
 		}
