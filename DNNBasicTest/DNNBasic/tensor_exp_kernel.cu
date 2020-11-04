@@ -29,7 +29,9 @@ namespace dnnbasic
 
 		if (autoGraph::isRecordingGraph())
 		{
-			autoGraph::addKernelNode(ExpKernel<T>, blockDim, gridDim, 0, input.getGPUArrayConst(), output.getGPUArray());
+			const std::vector<void*> inputPtrs = { reinterpret_cast<void*>(input.getGPUArray().begin()) };
+			const void* outputPtr = reinterpret_cast<void*>(output.getGPUArray().begin());
+			autoGraph::addKernelNode(inputPtrs, outputPtr, ExpKernel<T>, blockDim, gridDim, 0, input.getGPUArrayConst(), output.getGPUArray());
 		}
 		else
 		{

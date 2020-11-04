@@ -116,9 +116,15 @@ namespace dnnbasic
 			const dim3 gridDim(integerCeilDivision(maxDim, blockDim.x), blocksMade);
 			if (autoGraph::isRecordingGraph())
 			{
-				autoGraph::addMemsetNode(output.getGPUArray(), 0);
+				{
+					const void* outputPtr = reinterpret_cast<void*>(output.getGPUArray().begin());
+					autoGraph::addMemsetNode(outputPtr, outputPtr, output.getGPUArray(), 0);
+				}
 				output = output + std::numeric_limits<T>::lowest();
-				autoGraph::addKernelNode(maxKernel<T>, blockDim, gridDim, (uint32_t)sizeof(T) * WARPS_PER_BLOCK, input.getGPUArrayConst(), output.getGPUArray(), maxElementStride, maxDim, dimsToMax, blocksMade);
+
+				const std::vector<void*> inputPtrs = { reinterpret_cast<void*>(input.getGPUArray().begin()), reinterpret_cast<void*>(output.getGPUArray().begin()) };
+				const void* outputPtr = reinterpret_cast<void*>(output.getGPUArray().begin());
+				autoGraph::addKernelNode(inputPtrs, outputPtr, maxKernel<T>, blockDim, gridDim, (uint32_t)sizeof(T) * WARPS_PER_BLOCK, input.getGPUArrayConst(), output.getGPUArray(), maxElementStride, maxDim, dimsToMax, blocksMade);
 			}
 			else
 			{
