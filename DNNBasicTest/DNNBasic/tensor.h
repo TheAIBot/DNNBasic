@@ -59,6 +59,12 @@ namespace dnnbasic
 		template<typename U>
 		tensor<U> cast() const;
 
+		static tensor<T> exp(const tensor<T>& input);
+		static tensor<T> log(const tensor<T>& input);
+
+		tensor<T> max(const uint32_t maxDim) const;
+		tensor<T> max(const std::string maxDim) const;
+
 		tensor<T> sum(const uint32_t sumDim) const;
 		tensor<T> sum(const std::string sumDim) const;
 
@@ -80,6 +86,7 @@ namespace dnnbasic
 	template<typename T> tensor<T> operator*(const tensor<T>& left, const tensor<T>& right);
 	template<typename T> tensor<T> operator*(const tensor<T>& left, const T& right);
 	template<typename T> tensor<T> operator*(const T& left, const tensor<T>& right);
+	template<typename T> tensor<T> operator/(const tensor<T>& left, const tensor<T>& right);
 	template<typename T> tensor<T> operator/(const tensor<T>& left, const T& right);
 	template<typename T> tensor<T> operator+(const tensor<T>& left, const tensor<T>& right);
 	template<typename T> tensor<T> operator+(const tensor<T>& left, const T& right);

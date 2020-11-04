@@ -1,6 +1,6 @@
 #include <cuda_runtime.h>
 #include <type_traits>
-#include "tensor_permute_kernel.cuh"
+#include "tensor_sum_kernel.cuh"
 #include "kernel_tools.h"
 #include "cudaBasics.h"
 #include "cuda_settings.h"
@@ -76,11 +76,11 @@ namespace dnnbasic
 				if constexpr (std::is_integral<T>::value && std::is_signed<T>::value)
 				{
 					using unsigned_T = typename std::make_unsigned<T>::type;
-					atomicAdd(reinterpret_cast<unsigned_T*>(&output[blockIdx.y]), (unsigned_T)blockSum);
+					atomicAdd(reinterpret_cast<unsigned_T*>(&output[i]), (unsigned_T)blockSum);
 				}
 				else
 				{
-					atomicAdd(&output[blockIdx.y], blockSum);
+					atomicAdd(&output[i], blockSum);
 				}
 			}
 		}
@@ -116,7 +116,7 @@ namespace dnnbasic
 			}
 			else
 			{
-				cudaMemset(output.getGPUArray().begin(), 0, output.elementCount() * sizeof(T));
+				cudaMemsetAsync(output.getGPUArray().begin(), 0, output.elementCount() * sizeof(T), cuda::getDefaultStream());
 				cudabasic::executeKernel(sumKernel<T>, blockDim, gridDim, sizeof(T) * WARPS_PER_BLOCK, cuda::getDefaultStream(), input.getGPUArrayConst(), output.getGPUArray(), sumElementStride, sumDim, dimsToSum, blocksMade);
 			}
 		}

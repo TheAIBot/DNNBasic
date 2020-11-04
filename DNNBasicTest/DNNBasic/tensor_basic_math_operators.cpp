@@ -197,6 +197,23 @@ namespace dnnbasic
 	}
 
 	template<typename T>
+	tensor<T> operator/(const tensor<T>& left, const tensor<T>& right)
+	{
+		if (!hasSameDimensions(left, right))
+		{
+			throw std::runtime_error("Dimension mismatch.");
+		}
+
+		tensor<T> child = createTensorWithSameDims(left);
+		autoGraph::handleMakeGraph(child, std::function<tensorNode<T>* ()>([&]() {return new tensorNodeNoGrad<T>({ left, right }); }));
+
+		// make kernel call
+		tensorDiv(left, right, child);
+
+		return child;
+	}
+
+	template<typename T>
 	tensor<T> operator/(const tensor<T>& left, const T& right)
 	{
 		if constexpr (std::is_floating_point<T>::value)
@@ -281,6 +298,18 @@ namespace dnnbasic
 	template tensor<float> operator*(const float& left, const tensor<float>& right);
 	template tensor<double> operator*(const double& left, const tensor<double>& right);
 
+
+	//template tensor<bool> operator*(const tensor<bool>& left, const tensor<bool>& right);
+	template tensor<uint8_t> operator/(const tensor<uint8_t>& left, const tensor<uint8_t>& right);
+	template tensor<uint16_t> operator/(const tensor<uint16_t>& left, const tensor<uint16_t>& right);
+	template tensor<uint32_t> operator/(const tensor<uint32_t>& left, const tensor<uint32_t>& right);
+	template tensor<uint64_t> operator/(const tensor<uint64_t>& left, const tensor<uint64_t>& right);
+	template tensor<int8_t> operator/(const tensor<int8_t>& left, const tensor<int8_t>& right);
+	template tensor<int16_t> operator/(const tensor<int16_t>& left, const tensor<int16_t>& right);
+	template tensor<int32_t> operator/(const tensor<int32_t>& left, const tensor<int32_t>& right);
+	template tensor<int64_t> operator/(const tensor<int64_t>& left, const tensor<int64_t>& right);
+	template tensor<float> operator/(const tensor<float>& left, const tensor<float>& right);
+	template tensor<double> operator/(const tensor<double>& left, const tensor<double>& right);
 
 	//template tensor<bool> operator/(const tensor<bool>& left, const bool& right);
 	template tensor<uint8_t> operator/(const tensor<uint8_t>& left, const uint8_t& right);

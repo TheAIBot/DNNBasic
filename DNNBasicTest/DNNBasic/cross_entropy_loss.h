@@ -9,8 +9,5 @@
 namespace dnnbasic::loss
 {
 	template<typename T>
-	lossData<T> meanSquaredLoss(tensor<T> expected, tensor<T> actual);
-
-	template<typename T>
-	lossData<T> meanSquaredLoss(tensor<T> expected, tensor<T> actual, const uint32_t batchDim);
+	lossData<T> crossEntropyLoss(tensor<T> expected, tensor<T> actual);
 }
