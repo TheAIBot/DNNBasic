@@ -11,8 +11,8 @@ namespace dnnbasic
 
 		template<typename T>
 		linear<T>::linear(const uint32_t inputDim, const uint32_t outputDim, const bool useBias) : 
-			weights(tensor<T>::random({ inputDim, outputDim })),
-			biases(tensor<T>::random({ useBias ? outputDim : 1 })),
+			weights(tensor<T>::random({ inputDim, outputDim }, - std::sqrt(1.0f / inputDim), std::sqrt(1.0f / inputDim))),
+			biases(tensor<T>::random({ useBias ? outputDim : 1 }, - std::sqrt(1.0f / inputDim), std::sqrt(1.0f / inputDim))),
 			useBias(useBias),
 			inputSize(inputDim),
 			outputSize(outputDim)

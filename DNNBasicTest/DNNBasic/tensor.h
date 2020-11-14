@@ -25,6 +25,9 @@ namespace dnnbasic
 		static tensor<T> random(std::initializer_list<uint32_t> dims);
 		static tensor<T> random(std::vector<uint32_t> dims);
 
+		static tensor<T> random(std::initializer_list<uint32_t> dims, T min, T max);
+		static tensor<T> random(std::vector<uint32_t> dims, T min, T max);
+
 		tensor(std::vector<uint32_t> dims);
 		tensor(std::vector<uint32_t> dims, std::vector<T> values);
 		tensor(std::vector<uint32_t> dimensions, std::vector<std::string> names);
