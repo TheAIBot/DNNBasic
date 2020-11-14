@@ -51,7 +51,7 @@ namespace dnnbasic
 			// make new node
 			autoGraph::handleMakeGraph(output, std::function<tensorNode<T>* ()>([&]() { return new tensorNodeNoGrad<T>({ input }); }));
 
-			tensorReLU(input, output);
+			tensorReLUDerivative(input, output);
 
 			return output;
 		}
