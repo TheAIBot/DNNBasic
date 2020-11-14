@@ -18,14 +18,19 @@ namespace dnnbasic::loss
 		autoGraph::scopeLevelDisableAutoGraph k;
 
 		// softmax Kernel
-		tensor<T> actualExp = dnnbasic::tensor<float>::exp(actual - actual.max(1));
+		tensor<T> actualExp = dnnbasic::tensor<float>::exp(actual);
 		tensor<T> actualSumEXP = actualExp.sum(1);
-		tensor<T> actualLogSumExp = dnnbasic::tensor<float>::log(actualSumEXP);
-		tensor<T> minusLogSoftmax = (actualLogSumExp.reshape(actualLogSumExp.getDimension(0),1) - actual);
+		tensor<T> softmax = actualExp / (actualSumEXP.reshape(actualSumEXP.getDimension(0), 1));
+		
+		auto kage = actual.getValuesOnCPU();
+		auto fisk = softmax.getValuesOnCPU();
 
-		tensor<T> error = (minusLogSoftmax * expected).sum(1);
+		auto dfd = expected.getValuesOnCPU();
 
-		tensor<T> gradient = -dnnbasic::tensor<float>::exp(minusLogSoftmax) - expected;
+		tensor<T> error = -expected * dnnbasic::tensor<float>::log(softmax);
+		error = error.sum(1);
+
+		tensor<T> gradient = (softmax - expected);
 
 		auto errorMethod = [](const tensor<T>& ten)
 		{
