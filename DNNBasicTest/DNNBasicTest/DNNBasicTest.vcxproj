@@ -170,6 +170,7 @@
     <ClCompile Include="tensor_cast_tests.cpp" />
     <ClCompile Include="tensor_elementwise_operator_tests.cpp" />
     <ClCompile Include="tensor_mat_mul_tests.cpp" />
+    <ClCompile Include="tensor_max_tests.cpp" />
     <ClCompile Include="tensor_multi_dim_mat_mul_tests.cpp" />
     <ClCompile Include="tensor_permute_tests.cpp" />
     <ClCompile Include="tensor_sum_tests.cpp" />
