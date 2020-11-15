@@ -49,18 +49,14 @@ namespace dnnbasic
 				}
 			}
 
-			// error for layer L
-			const tensor<T> newLoss = estimatedLoss * newDerivative;
+			const tensor<T> transposedInput = input.transpose(input.getDimensions().size() - 1, input.getDimensions().size() - 2);
 
-			const tensor<T> awd = input.transpose(input.getDimensions().size() - 1, input.getDimensions().size() - 2);
-			const tensor<T> inputOuterShape = awd.reshape(awd.getDimension(0), awd.getDimension(1), 1);
-			const tensor<T> newLossOuterShape = newLoss.reshape(newLoss.getDimension(0), 1, newLoss.getDimension(1));
+			const tensor<T> batchWeightGradient = transposedInput.matMul(newLoss);
 
-			const tensor<T> batchWeightGradient = inputOuterShape.matMul(newLossOuterShape);
-			const tensor<T> meanWeightGradient = batchWeightGradient.sum(0) / ((T)batchWeightGradient.getDimension(0));
+			auto grad = newLoss.matMul(this->weights.permute({ 1, 0 }));
 
 			// Partial derivative cost for weight
-			opti->updateWeights(this->weights, meanWeightGradient);
+			opti->updateWeights(this->weights, batchWeightGradient);
 
 			// Partial derivative cost for bias
 			if (this->useBias)
@@ -68,7 +64,7 @@ namespace dnnbasic
 				opti->updateWeights(this->biases, newLoss.sum(0)/((T)newLoss.getDimension(0)));
 			}
 
-			return newLoss.matMul(this->weights.permute({ 1, 0 }));
+			return grad;
 		}
 
 		template<typename T>
