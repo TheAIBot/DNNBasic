@@ -80,15 +80,19 @@ namespace dnnbasic
 			//First thread in block will now atomic add the result
 			if (threadIdx.x == 0)
 			{
-				if constexpr (std::is_integral<T>::value && std::is_signed<T>::value)
-				{
+				//if constexpr (std::is_integral<T>::value && std::is_signed<T>::value)
+				//{
 					using unsigned_T = typename std::make_unsigned<T>::type;
-					atomicMax(reinterpret_cast<unsigned_T*>(&output[blockIdx.y]), (unsigned_T)blockSum);
-				}
-				else
-				{
-					atomicMax(&output[blockIdx.y], blockSum);
-				}
+					atomicMax(reinterpret_cast<unsigned_T*>(&output[i]), (unsigned_T)blockSum);
+				//}
+				//if constexpr (std::is_same<T,double>::value)
+				//{
+				//	atomicAdd(&output[i], blockSum);
+				//}
+				//else
+				//{
+				//	atomicAdd(&output[i], blockSum);
+				//}
 			}
 		}
 	}
@@ -96,7 +100,7 @@ namespace dnnbasic
 	template<typename T>
 	void tensorMax(const tensor<T>& input, tensor<T>& output, const uint32_t maxDimIdx)
 	{
-		if constexpr (sizeof(T) < 4 || std::is_integral<T>::value && std::is_signed<T>::value)
+		if constexpr (sizeof(T) < 4 || std::is_floating_point<T>::value)
 		{
 			throw std::runtime_error("Sum is currently not supported for that tensor type.");
 		}
@@ -117,13 +121,13 @@ namespace dnnbasic
 			if (autoGraph::isRecordingGraph())
 			{
 				autoGraph::addMemsetNode(output.getGPUArray(), 0);
-				output = output + std::numeric_limits<T>::lowest();
+				//output = output + std::numeric_limits<T>::lowest();
 				autoGraph::addKernelNode(maxKernel<T>, blockDim, gridDim, (uint32_t)sizeof(T) * WARPS_PER_BLOCK, input.getGPUArrayConst(), output.getGPUArray(), maxElementStride, maxDim, dimsToMax, blocksMade);
 			}
 			else
 			{
 				cudaMemset(output.getGPUArray().begin(), 0, output.elementCount() * sizeof(T));
-				output = output + std::numeric_limits<T>::lowest();
+				//output = output + std::numeric_limits<T>::lowest();
 				cudabasic::executeKernel(maxKernel<T>, blockDim, gridDim, sizeof(T) * WARPS_PER_BLOCK, cuda::getDefaultStream(), input.getGPUArrayConst(), output.getGPUArray(), maxElementStride, maxDim, dimsToMax, blocksMade);
 			}
 		}
