@@ -35,7 +35,7 @@ namespace dnnbasic::loss
 		tensor<T> actualSumEXP = actualExp.sum(1);
 		tensor<T> softmax = actualExp / (actualSumEXP.reshape(actualSumEXP.getDimension(0), 1));
 
-		tensor<T> error = -expected * dnnbasic::tensor<float>::log(softmax);
+		tensor<T> error = -expected * dnnbasic::tensor<float>::log(0.0000001f + softmax);
 		error = error.sum(1);
 
 		tensor<T> gradient = (softmax - expected);
