@@ -78,6 +78,12 @@ namespace dnnbasic
 			return this->outputSize;
 		}
 
+		template<typename T>
+		tensor<T> linear<T>::getWeights() const
+		{
+			return this->weights;
+		}
+
 		//template class linear<bool>;
 		//template class linear<uint8_t>;
 		//template class linear<uint16_t>;
