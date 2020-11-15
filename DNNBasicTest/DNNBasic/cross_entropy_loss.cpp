@@ -3,10 +3,10 @@
 #include "cross_entropy_loss.h"
 #include "auto_graph.h"
 #include "activation_function.h"
+#include "tensor_activation_kernels.cuh"
 
 namespace dnnbasic::loss
 {
-
 	template<typename T>
 	lossData<T> crossEntropyLoss(tensor<T> expected, tensor<T> actual, bool meanOverBatch, const uint32_t batchDim)
 	{
@@ -18,14 +18,22 @@ namespace dnnbasic::loss
 		autoGraph::scopeLevelDisableAutoGraph k;
 
 		// softmax Kernel
-		tensor<T> actualExp = dnnbasic::tensor<float>::exp(actual);
+		auto castqz = actual + 0.0f;
+		tensorReLU(actual, castqz);
+		auto castz = castqz.cast<uint32_t>();
+
+		auto castaqz = actual + 0.0f;
+		tensorReLU(-actual, castaqz);
+		auto castawdaz = castaqz.cast<uint32_t>();
+		//
+		auto maxVals = castz.max(1).cast<float>().reshape(actual.getDimension(0), 1);
+		auto minVals = castawdaz.max(1).cast<float>().reshape(actual.getDimension(0), 1);
+
+		auto diff = minVals + maxVals + 1.0f;
+
+		tensor<T> actualExp = dnnbasic::tensor<float>::exp(actual / diff);
 		tensor<T> actualSumEXP = actualExp.sum(1);
 		tensor<T> softmax = actualExp / (actualSumEXP.reshape(actualSumEXP.getDimension(0), 1));
-		
-		auto kage = actual.getValuesOnCPU();
-		auto fisk = softmax.getValuesOnCPU();
-
-		auto dfd = expected.getValuesOnCPU();
 
 		tensor<T> error = -expected * dnnbasic::tensor<float>::log(softmax);
 		error = error.sum(1);
