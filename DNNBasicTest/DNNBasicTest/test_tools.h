@@ -37,6 +37,10 @@
 	TEST_METHOD(float ## methodName) { methodName<float>(); } \
 	TEST_METHOD(double ## methodName) { methodName<double>(); }
 
+#define TEST_UNSIGNED_OP_TYPES(methodName) \
+	TEST_METHOD(uint32_t ## methodName) { methodName<uint32_t>(); } \
+	TEST_METHOD(uint64_t ## methodName) { methodName<uint64_t>(); } 
+
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace Microsoft::VisualStudio::CppUnitTestFramework
