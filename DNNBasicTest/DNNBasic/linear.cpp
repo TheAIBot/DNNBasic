@@ -49,6 +49,9 @@ namespace dnnbasic
 				}
 			}
 
+			// error for layer L
+			const tensor<T> newLoss = estimatedLoss * newDerivative;
+
 			const tensor<T> transposedInput = input.transpose(input.getDimensions().size() - 1, input.getDimensions().size() - 2);
 
 			const tensor<T> batchWeightGradient = transposedInput.matMul(newLoss);
