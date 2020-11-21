@@ -99,6 +99,21 @@ namespace dnnbasic
 	}
 
 	template<typename T>
+	bool operator<=(const tensor<T>& left, const tensor<T>& right)
+	{
+		if (!hasSameDimensions(left, right))
+		{
+			throw std::runtime_error("Dimensions of left hand side tensor do not match dimension of right hand side tensor.");
+		}
+
+		auto leftValues = left.getValuesOnCPU();
+		auto rightValues = right.getValuesOnCPU();
+
+		return leftValues <= rightValues;
+	}
+
+
+	template<typename T>
 	tensor<T> operator*(const tensor<T>& left, const tensor<T>& right)
 	{
 		auto [child, isBroadcasted] = createTensorWithSameDims(left, right);
@@ -269,6 +284,18 @@ namespace dnnbasic
 	template bool operator!=(const tensor<int64_t>& left, const tensor<int64_t>& right);
 	template bool operator!=(const tensor<float>& left, const tensor<float>& right);
 	template bool operator!=(const tensor<double>& left, const tensor<double>& right);
+
+	template bool operator<=(const tensor<bool>& left, const tensor<bool>& right);
+	template bool operator<=(const tensor<uint8_t>& left, const tensor<uint8_t>& right);
+	template bool operator<=(const tensor<uint16_t>& left, const tensor<uint16_t>& right);
+	template bool operator<=(const tensor<uint32_t>& left, const tensor<uint32_t>& right);
+	template bool operator<=(const tensor<uint64_t>& left, const tensor<uint64_t>& right);
+	template bool operator<=(const tensor<int8_t>& left, const tensor<int8_t>& right);
+	template bool operator<=(const tensor<int16_t>& left, const tensor<int16_t>& right);
+	template bool operator<=(const tensor<int32_t>& left, const tensor<int32_t>& right);
+	template bool operator<=(const tensor<int64_t>& left, const tensor<int64_t>& right);
+	template bool operator<=(const tensor<float>& left, const tensor<float>& right);
+	template bool operator<=(const tensor<double>& left, const tensor<double>& right);
 
 	//template tensor<bool> operator*(const tensor<bool>& left, const tensor<bool>& right);
 	template tensor<uint8_t> operator*(const tensor<uint8_t>& left, const tensor<uint8_t>& right);
