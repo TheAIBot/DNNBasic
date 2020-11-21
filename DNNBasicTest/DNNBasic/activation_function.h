@@ -11,7 +11,7 @@ namespace dnnbasic
 		{
 		public:
 			virtual tensor<T> forward(const tensor<T>& input)=0;
-			virtual tensor<T> derivative(const tensor<T>& input)=0;
+			virtual tensor<T> derivative(const tensor<T>& derivative_activation_function, const tensor<T>& affine_input)=0;
 		};
 	}
 }

@@ -38,19 +38,19 @@ namespace dnnbasic
 
 
 			// compute derivative of activation function using output
-			tensor<T> newDerivative = actFuncs.size() == 0 ? tensor<T>(std::vector<uint32_t>({ 1 }), std::vector<T>({ 1 })) : actFuncs.back()->derivative(output.reshape(estimatedLoss.getDimension(0), estimatedLoss.getDimension(1)));
+			tensor<T> newDerivative = actFuncs.size() == 0 ? estimatedLoss : actFuncs.back()->derivative(estimatedLoss, output.reshape(estimatedLoss.getDimension(0), estimatedLoss.getDimension(1)));
 			if (actFuncs.size()>1)
 			{
 				tensor<T> forwardDerivative = actFuncs.back()->forward(output);
 				for (int i = actFuncs.size() - 2; i >= 0; i--)
 				{
-					newDerivative = newDerivative * actFuncs[i]->derivative(forwardDerivative);
+					newDerivative =  actFuncs[i]->derivative(newDerivative, forwardDerivative);
 					forwardDerivative = actFuncs[i]->forward(forwardDerivative);
 				}
 			}
 
 			// error for layer L
-			const tensor<T> newLoss = estimatedLoss * newDerivative;
+			const tensor<T> newLoss = newDerivative;
 
 			const tensor<T> transposedInput = input.transpose(input.getDimensions().size() - 1, input.getDimensions().size() - 2);
 
