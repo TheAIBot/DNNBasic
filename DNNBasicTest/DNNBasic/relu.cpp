@@ -32,11 +32,12 @@ namespace dnnbasic
 			return output;
 		}
 
+		//tensor<T> relu<T>::derivative(const tensor<T>& input)
 		template<typename T>
-		tensor<T> relu<T>::derivative(const tensor<T>& input)
+		tensor<T> relu<T>::derivative(const tensor<T>& derivative_activation_function, const tensor<T>& affine_input)
 		{
 
-			auto& inputDims = input.getDimensions();
+			auto& inputDims = affine_input.getDimensions();
 
 			std::vector<uint32_t> new_dim;
 			std::vector<std::string> new_name;
@@ -49,9 +50,9 @@ namespace dnnbasic
 			tensor<T> output = tensor<T>(new_dim, new_name);
 
 			// make new node
-			autoGraph::handleMakeGraph(output, std::function<tensorNode<T>* ()>([&]() { return new tensorNodeNoGrad<T>({ input }); }));
+			autoGraph::handleMakeGraph(output, std::function<tensorNode<T>* ()>([&]() { return new tensorNodeNoGrad<T>({ derivative_activation_function, affine_input }); }));
 
-			tensorReLUDerivative(input, output);
+			tensorReLUDerivative(derivative_activation_function, affine_input, output);
 
 			return output;
 		}
