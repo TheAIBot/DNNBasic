@@ -12,7 +12,7 @@ namespace dnnbasic
 		{
 		public:
 			tensor<T> forward(const tensor<T>& x) override;
-			tensor<T> derivative(const tensor<T>& input) override;
+			tensor<T> derivative(const tensor<T>& derivative_activation_function, const tensor<T>& affine_input) override;
 		};
 	}
 }
