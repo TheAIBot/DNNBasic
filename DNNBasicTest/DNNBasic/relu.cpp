@@ -36,6 +36,17 @@ namespace dnnbasic
 		template<typename T>
 		tensor<T> relu<T>::derivative(const tensor<T>& derivative_activation_function, const tensor<T>& affine_input)
 		{
+			if (derivative_activation_function.getDimensions().size() != affine_input.getDimensions().size())
+			{
+				throw std::runtime_error("Dimensions of derivative_activation_function and affine_input must be the same.");
+			}
+			for (size_t i = 0; i < derivative_activation_function.getDimensions().size(); i++)
+			{
+				if (derivative_activation_function.getDimension(i) != affine_input.getDimension(i))
+				{
+					throw std::runtime_error("Dimensions of derivative_activation_function and affine_input must be the same.");
+				}
+			}
 
 			auto& inputDims = affine_input.getDimensions();
 
