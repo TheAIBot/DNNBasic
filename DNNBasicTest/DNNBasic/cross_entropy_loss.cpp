@@ -22,16 +22,9 @@ namespace dnnbasic::loss
 		tensorReLU(actual, castqz);
 		auto castz = castqz.cast<uint32_t>();
 
-		auto castaqz = actual + 0.0f;
-		tensorReLU(-actual, castaqz);
-		auto castawdaz = castaqz.cast<uint32_t>();
-		//
 		auto maxVals = castz.max(1).cast<float>().reshape(actual.getDimension(0), 1);
-		auto minVals = castawdaz.max(1).cast<float>().reshape(actual.getDimension(0), 1);
 
-		auto diff = minVals + maxVals + 1.0f;
-
-		tensor<T> actualExp = dnnbasic::tensor<float>::exp(actual / diff);
+		tensor<T> actualExp = dnnbasic::tensor<float>::exp(actual - maxVals);
 		tensor<T> actualSumEXP = actualExp.sum(1);
 		tensor<T> softmax = actualExp / (actualSumEXP.reshape(actualSumEXP.getDimension(0), 1));
 
