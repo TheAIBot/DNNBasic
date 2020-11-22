@@ -162,12 +162,14 @@
     <ClInclude Include="..\..\..\CudaBasicClasses\gpuArray.h" />
     <ClInclude Include="..\..\..\CudaBasicClasses\matrix.h" />
     <ClInclude Include="..\..\..\CudaBasicClasses\span.h" />
+    <ClInclude Include="..\DNNBasic\cross_entropy_loss.h" />
     <ClInclude Include="..\DNNBasic\FBPropagation.h" />
     <ClInclude Include="..\DNNBasic\Functions.h" />
     <ClInclude Include="..\DNNBasic\graphRecorder.h" />
     <ClInclude Include="..\DNNBasic\matrix.h" />
     <ClInclude Include="..\DNNBasic\mean_squared_loss.h" />
     <ClInclude Include="..\DNNBasic\mnist.h" />
+    <ClInclude Include="..\DNNBasic\relu.h" />
     <ClInclude Include="..\DNNBasic\sgd.h" />
     <ClInclude Include="..\DNNBasic\tensor.h" />
   </ItemGroup>

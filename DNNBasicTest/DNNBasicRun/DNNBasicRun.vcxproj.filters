@@ -80,5 +80,11 @@
     <ClInclude Include="..\DNNBasic\mnist.h">
       <Filter>Header Files\dnnbasic</Filter>
     </ClInclude>
+    <ClInclude Include="..\DNNBasic\cross_entropy_loss.h">
+      <Filter>Header Files\dnnbasic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DNNBasic\relu.h">
+      <Filter>Header Files\dnnbasic</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

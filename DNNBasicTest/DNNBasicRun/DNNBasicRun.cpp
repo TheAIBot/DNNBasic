@@ -1,6 +1,3 @@
-// DNNBasicRun.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
 #include <iostream>
 #include <string>
 #include <vector>
@@ -13,125 +10,163 @@
 #include "mean_squared_loss.h"
 #include "sgd.h"
 #include "graphRecorder.h"
+#include "mnist.h"
+#include "relu.h"
+#include "cross_entropy_loss.h"
 
-template<typename T>
-struct supervisedTestData
+void printSample(int32_t index, dnnbasic::tensor<uint8_t> input, dnnbasic::tensor<float> actual)
 {
-	dnnbasic::tensor<T> input;
-	dnnbasic::tensor<T> output;
+	std::vector<uint8_t> inVals = input.getValuesOnCPU();
+	std::vector<float> actVals = actual.getValuesOnCPU();
 
-	supervisedTestData(dnnbasic::tensor<T>& in, dnnbasic::tensor<T> out) : input(in), output(out)
-	{ }
-};
-
-template<typename T>
-class supervisedDataSet
-{
-public:
-	std::vector<supervisedTestData<T>> data;
-
-	void addData(dnnbasic::tensor<T>& in, dnnbasic::tensor<T>& out)
+	for (size_t y = 0; y < 28; y++)
 	{
-		data.push_back(supervisedTestData(in, out));
-	}
-
-	std::size_t size() const
-	{
-		return data.size();
-	}
-};
-
-template<typename T>
-supervisedDataSet<T> makeSupervisedDatasetIO1x1(std::vector<T> inputs, std::function<T(T)> inputToOutputFunc, const uint32_t batchSize = 1u)
-{
-	supervisedDataSet<T> dataset;
-	for (size_t i = 0; i + batchSize < inputs.size(); i += batchSize)
-	{
-		std::vector<T> lol;
-		std::vector<T> loll;
-		for (size_t q = 0; q < batchSize; q++)
+		for (size_t x = 0; x < 28; x++)
 		{
-			lol.push_back(inputs[i + q]);
-			loll.push_back(inputToOutputFunc(inputs[i + q]));
+			uint8_t val = inVals[index * 28 * 28 + y * 28 + x];
+			if (val < 50)
+			{
+				std::cout << ".";
+			}
+			else if (val < 200)
+			{
+				std::cout << "+";
+			}
+			else
+			{
+				std::cout << "#";
+			}
 		}
-
-		if (batchSize == 1)
+		std::cout << std::endl;
+	}
+	std::cout << std::endl;
+	size_t bestIndex = 0;
+	float bestValue = -10000;
+	for (size_t i = 0; i < 10; i++)
+	{
+		if (actVals[index * 10 + i] > bestValue)
 		{
-			dnnbasic::tensor<T> in({ 1u }, lol);
-			dnnbasic::tensor<T> out({ 1u }, loll);
-
-			dataset.addData(in, out);
-		}
-		else
-		{
-			dnnbasic::tensor<T> in({ batchSize, 1u }, lol);
-			dnnbasic::tensor<T> out({ batchSize, 1u }, loll);
-
-			dataset.addData(in, out);
+			bestValue = actVals[index * 10 + i];
+			bestIndex = i;
 		}
 	}
 
-	return dataset;
+	std::cout << bestIndex << std::endl;
+	std::cout << std::endl;
 }
 
 int main()
 {
 	{
-		std::vector<float> inputs(100000);
-		std::iota(inputs.begin(), inputs.end(), 0);
-		for (size_t i = 0; i < inputs.size(); i++)
-		{
-			inputs[i] = inputs[i] / inputs.size();
-		}
-		auto dataset = makeSupervisedDatasetIO1x1<float>(inputs, [](auto x) { return x * x + 2; }, 10000);
+		const uint32_t batchSize = 100;
+		auto dataset = dnnbasic::datasets::mnist::loadTrainingSet("C:/Users/Peter/Desktop/mnist", batchSize);
+		auto test_dataset = dnnbasic::datasets::mnist::loadTestSet("C:/Users/Peter/Desktop/mnist", batchSize);
 
-		auto* opti = new dnnbasic::optimizer::sgd(0.001f);
+		auto* opti = new dnnbasic::optimizer::sgd(0.00001f);
 
-		dnnbasic::layer::linear<float> l1(1, 10, false);
-		dnnbasic::layer::linear<float> l2(10, 1, true);
+		dnnbasic::layer::linear<float> l1(28 * 28, 256, true);
+		dnnbasic::layer::linear<float> l2(l1.getOutputSize(), 128, true);
+		dnnbasic::layer::linear<float> l3(l2.getOutputSize(), 10, true);
 
-		dnnbasic::tensor<float> input({ 10000, 1 });
-		dnnbasic::tensor<float> output({ 10000, 1 });
+		dnnbasic::activations::relu<float> dwa;
 
-		dataset.data[0].input.copyTo(input);
-		dataset.data[0].output.copyTo(output);
+		dnnbasic::tensor<uint8_t> input({ batchSize, 28, 28 }, { "batch", "height", "width" });
+		dnnbasic::tensor<uint8_t> output({ batchSize, 10 });
 
 		dnnbasic::graphRecorder recorder;
 
 		recorder.startRecording();
 
-		auto actual = l2.forward(l1.forward(input));
-		auto fisk = dnnbasic::loss::meanSquaredLoss(output, actual, 0);
+		auto x = input.cast<float>() / 255.0f;
+		x = l1.forward(x.reshape("batch", l1.getInputSize()));
+		x = dwa.forward(x);
+		x = l2.forward(x);
+		x = dwa.forward(x);
+		x = l3.forward(x);
+
+		auto y = output.cast<float>();
+		auto fisk = dnnbasic::loss::crossEntropyLoss(y, x);
 		fisk.backward(opti);
 
 		recorder.stopRecording();
 
 
-
-
-		for (size_t q = 0; q < 1; q++)
+		for (size_t epoch = 0; epoch < 100; epoch++)
 		{
 			auto start = std::chrono::system_clock::now();
 
-			for (size_t i = 0; i < 1; i++)
+			for (size_t i = 0; i < dataset.getBatchCount(); i++)
 			{
 
-				dataset.data[i].input.copyTo(input);
-				dataset.data[i].output.copyTo(output);
+				auto [in, out] = dataset[i];
+				in.copyTo(input);
+				out.copyTo(output);
 
 				recorder.replay();
 
-				//auto actual = l2.forward(l1.forward(input));
-				//auto fisk = dnnbasic::loss::meanSquaredLoss(output, actual, 0);
+				//auto x = input.cast<float>() / 255.0f;
+				//x = l1.forward(x.reshape("batch", l1.getInputSize()));
+				//x = dwa.forward(x);
+				//x = l2.forward(x);
+				//x = dwa.forward(x);
+				//x = l3.forward(x);
+				//////x = dwa.forward(x);
+				////x = x.reshape("batch", 10);
+
+
+				//auto y = output.cast<float>();
+				//auto fisk = dnnbasic::loss::crossEntropyLoss(y, x);
 				//fisk.backward(opti);
 
-				if (i == 0 && q % 10 == 0)
+				if (i == 0 && epoch % 1 == 0)
 				{
+
 					std::cout << "Error: " << fisk.getError() << std::endl;
+					//printSample(epoch % batchSize, input, x);
 				}
 			}
 
 			auto end = std::chrono::system_clock::now();
+
+			float accuracy = 0.0f;
+			float total = test_dataset.getBatchCount() * batchSize;
+
+			for (size_t i = 0; i < test_dataset.getBatchCount(); i++)
+			{
+				auto [in, out] = test_dataset[i];
+				in.copyTo(input);
+				out.copyTo(output);
+
+				recorder.replay();
+
+				auto labels = output.getValuesOnCPU();
+				auto predicted = x.getValuesOnCPU();
+
+				for (size_t j = 0; j < batchSize; j++)
+				{
+					size_t bestIndex = 0;
+					float bestValue = -10000;
+					for (size_t k = 0; k < 10; k++)
+					{
+						if (predicted[j * 10 + k] > bestValue)
+						{
+							bestValue = predicted[j * 10 + k];
+							bestIndex = k;
+						}
+					}
+					if (labels[j * 10 + bestIndex] == 1)
+					{
+						accuracy += 1.0f;
+						//std::cout << std::endl;
+						//printSample(j, input, x);
+					}
+					
+				}
+			}
+
+			std::cout << "Accuracy: " << (accuracy / total) * 100 << std::endl;
+
+			
 			auto time = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 
 			std::cout << "Time: " << time.count() << std::endl;
