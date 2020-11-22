@@ -11,6 +11,27 @@ __device__ void __syncthreads();
 namespace dnnbasic
 {
 
+	///// <summary>
+	///// https://stackoverflow.com/a/51549250
+	///// </summary>
+	///// <param name="addr"></param>
+	///// <param name="value"></param>
+	///// <returns></returns>
+	//__device__ __forceinline__ float atomicMaxFloat(float* addr, float value) {
+	//	float old;
+	//	old = (value >= 0) ? __int_as_float(atomicMax((int*)addr, __float_as_int(value))) :
+	//		__uint_as_float(atomicMin((unsigned int*)addr, __float_as_uint(value)));
+
+	//	return old;
+	//}
+
+	//__device__ __forceinline__ double atomicMaxDouble(double* addr, double value) {
+	//	float old;
+	//	old = (value >= 0) ? __longlong_as_double(atomicMax((int*)addr, __double_as_longlong(value))) :
+	//		__uint2double_rn(atomicMin((unsigned int*)addr, __double2uint_rn(value)));
+	//	return old;
+	//}
+
 	template <typename T>
 	__device__ T max(const T a, const T b)
 	{
