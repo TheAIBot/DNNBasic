@@ -9,6 +9,18 @@ namespace dnnbasic::optimizer
     template<typename T>
     void sgd::update(tensor<T>& weights, const tensor<T>& gradients)
     {
+        if (weights.getDimensions().size() != gradients.getDimensions().size())
+        {
+            throw std::runtime_error("Dimensions of Weights and gredients must be the same.");
+        }
+        for (size_t i = 0; i < weights.getDimensions().size(); i++)
+        {
+            if (weights.getDimension(i) != gradients.getDimension(i))
+            {
+                throw std::runtime_error("Dimensions of Weights and gredients must be the same.");
+            }
+        }
+
         auto lrGrad = (gradients.cast<float>() * this->learningRate).cast<T>();
         tensorSubtract(weights, lrGrad, weights, false);
     }

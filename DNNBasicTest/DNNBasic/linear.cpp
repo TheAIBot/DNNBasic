@@ -11,8 +11,8 @@ namespace dnnbasic
 
 		template<typename T>
 		linear<T>::linear(const uint32_t inputDim, const uint32_t outputDim, const bool useBias) : 
-			weights(tensor<T>::random({ inputDim, outputDim })),
-			biases(tensor<T>::random({ useBias ? outputDim : 1 })),
+			weights(tensor<T>::random({ inputDim, outputDim }, - std::sqrt(1.0f / inputDim), std::sqrt(1.0f / inputDim))),
+			biases(tensor<T>::random({ useBias ? outputDim : 1 }, - std::sqrt(1.0f / inputDim), std::sqrt(1.0f / inputDim))),
 			useBias(useBias),
 			inputSize(inputDim),
 			outputSize(outputDim)
@@ -38,29 +38,28 @@ namespace dnnbasic
 
 
 			// compute derivative of activation function using output
-			tensor<T> newDerivative = actFuncs.size() == 0 ? tensor<T>(std::vector<uint32_t>({ 1 }), std::vector<T>({ 1 })) : actFuncs.back()->derivative(output.reshape(estimatedLoss.getDimension(0), estimatedLoss.getDimension(1)));
+			tensor<T> newDerivative = actFuncs.size() == 0 ? estimatedLoss : actFuncs.back()->derivative(estimatedLoss, output.reshape(estimatedLoss.getDimension(0), estimatedLoss.getDimension(1)));
 			if (actFuncs.size()>1)
 			{
 				tensor<T> forwardDerivative = actFuncs.back()->forward(output);
 				for (int i = actFuncs.size() - 2; i >= 0; i--)
 				{
-					newDerivative = newDerivative * actFuncs[i]->derivative(forwardDerivative);
+					newDerivative =  actFuncs[i]->derivative(newDerivative, forwardDerivative);
 					forwardDerivative = actFuncs[i]->forward(forwardDerivative);
 				}
 			}
 
 			// error for layer L
-			const tensor<T> newLoss = estimatedLoss * newDerivative;
+			const tensor<T> newLoss = newDerivative;
 
-			const tensor<T> awd = input.transpose(input.getDimensions().size() - 1, input.getDimensions().size() - 2);
-			const tensor<T> inputOuterShape = awd.reshape(awd.getDimension(0), awd.getDimension(1), 1);
-			const tensor<T> newLossOuterShape = newLoss.reshape(newLoss.getDimension(0), 1, newLoss.getDimension(1));
+			const tensor<T> transposedInput = input.transpose(input.getDimensions().size() - 1, input.getDimensions().size() - 2);
 
-			const tensor<T> batchWeightGradient = inputOuterShape.matMul(newLossOuterShape);
-			const tensor<T> meanWeightGradient = batchWeightGradient.sum(0) / ((T)batchWeightGradient.getDimension(0));
+			const tensor<T> batchWeightGradient = transposedInput.matMul(newLoss);
+
+			auto grad = newLoss.matMul(this->weights.permute({ 1, 0 }));
 
 			// Partial derivative cost for weight
-			opti->updateWeights(this->weights, meanWeightGradient);
+			opti->updateWeights(this->weights, batchWeightGradient);
 
 			// Partial derivative cost for bias
 			if (this->useBias)
@@ -68,7 +67,7 @@ namespace dnnbasic
 				opti->updateWeights(this->biases, newLoss.sum(0)/((T)newLoss.getDimension(0)));
 			}
 
-			return newLoss.matMul(this->weights.permute({ 1, 0 }));
+			return grad;
 		}
 
 		template<typename T>
@@ -80,6 +79,12 @@ namespace dnnbasic
 		uint32_t linear<T>::getOutputSize() const
 		{
 			return this->outputSize;
+		}
+
+		template<typename T>
+		tensor<T> linear<T>::getWeights() const
+		{
+			return this->weights;
 		}
 
 		//template class linear<bool>;

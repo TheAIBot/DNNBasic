@@ -25,6 +25,9 @@ namespace dnnbasic
 		static tensor<T> random(std::initializer_list<uint32_t> dims);
 		static tensor<T> random(std::vector<uint32_t> dims);
 
+		static tensor<T> random(std::initializer_list<uint32_t> dims, T min, T max);
+		static tensor<T> random(std::vector<uint32_t> dims, T min, T max);
+
 		tensor(std::vector<uint32_t> dims);
 		tensor(std::vector<uint32_t> dims, std::vector<T> values);
 		tensor(std::vector<uint32_t> dimensions, std::vector<std::string> names);
@@ -83,11 +86,13 @@ namespace dnnbasic
 
 	template<typename T> bool operator==(const tensor<T>& left, const tensor<T>& right);
 	template<typename T> bool operator!=(const tensor<T>& left, const tensor<T>& right);
+	template<typename T> bool operator<=(const tensor<T>& left, const tensor<T>& right);
 	template<typename T> tensor<T> operator*(const tensor<T>& left, const tensor<T>& right);
 	template<typename T> tensor<T> operator*(const tensor<T>& left, const T& right);
 	template<typename T> tensor<T> operator*(const T& left, const tensor<T>& right);
 	template<typename T> tensor<T> operator/(const tensor<T>& left, const tensor<T>& right);
 	template<typename T> tensor<T> operator/(const tensor<T>& left, const T& right);
+	template<typename T> tensor<T> operator/(const T& left, const tensor<T>& right);
 	template<typename T> tensor<T> operator+(const tensor<T>& left, const tensor<T>& right);
 	template<typename T> tensor<T> operator+(const tensor<T>& left, const T& right);
 	template<typename T> tensor<T> operator+(const T& left, const tensor<T>& right);

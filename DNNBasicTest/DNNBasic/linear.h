@@ -24,6 +24,7 @@ namespace dnnbasic
 
 			uint32_t getInputSize() const;
 			uint32_t getOutputSize() const;
+			tensor<T> getWeights() const;
 		};
 	}
 }

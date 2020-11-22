@@ -131,7 +131,7 @@ int main()
 {
     for (uint32_t i = 1024; i <= 1024 * 16; i += 1024)
     {
-        benchMarkMatrixMultColumnsVsRows("matmul/static_block_size", "matrix_size-" + std::to_string(i), i);
+        benchMarkMatrixMultColumnsVsRows("matmul/static_dynv2_block_size", "matrix_size-" + std::to_string(i), i);
     }
 
 }

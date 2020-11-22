@@ -38,7 +38,7 @@ namespace dnnbasic
 		tensor<T> child = createTensorWithSameDimsButWithoutMaxDim(*this, maxDim);
 		autoGraph::handleMakeGraph(child, std::function<tensorNode<T>* ()>([&]() {return new tensorNodeNoGrad<T>({ *this }); }));
 
-		tensorSum(*this, child, maxDim);
+		tensorMax(*this, child, maxDim);
 
 		return child;
 	}

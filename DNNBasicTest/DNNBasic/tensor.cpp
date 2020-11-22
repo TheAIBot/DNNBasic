@@ -44,6 +44,26 @@ namespace dnnbasic
 	}
 
 	template<typename T>
+	tensor<T> tensor<T>::random(std::initializer_list<uint32_t> dims, T min, T max)
+	{
+		std::vector<uint32_t> vDims = dims;
+		return random(vDims, min, max);
+	}
+	template<typename T>
+	tensor<T> tensor<T>::random(std::vector<uint32_t> dims, T min, T max)
+	{
+		const uint32_t sum = std::accumulate(dims.begin(), dims.end(), 1, std::multiplies<uint32_t>());
+		if constexpr (std::is_unsigned<T>::value)
+		{
+			return tensor<T>(dims, random::getRandomNumbers<T>(sum, min, max));
+		}
+		else
+		{
+			return tensor<T>(dims, random::getRandomNumbers<T>(sum, min, max));
+		}
+	}
+
+	template<typename T>
 	tensor<T>::tensor(std::vector<uint32_t> dims) : tensor(dims, std::vector<std::string>(dims.size()))
 	{ }
 	template<typename T>
