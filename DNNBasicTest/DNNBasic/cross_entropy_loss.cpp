@@ -4,6 +4,7 @@
 #include "auto_graph.h"
 #include "activation_function.h"
 #include "tensor_activation_kernels.cuh"
+#include "tensor_node_no_grad.h"
 
 namespace dnnbasic::loss
 {
@@ -20,6 +21,7 @@ namespace dnnbasic::loss
 		// softmax Kernel
 		auto castqz = actual + 0.0f;
 		tensorReLU(actual, castqz);
+		autoGraph::handleMakeGraph(castqz, std::function<tensorNode<T>* ()>([&]() { return new tensorNodeNoGrad<T>({ actual }); }));
 		auto castz = castqz.cast<uint32_t>();
 
 		auto maxVals = castz.max(1).cast<float>().reshape(actual.getDimension(0), 1);
