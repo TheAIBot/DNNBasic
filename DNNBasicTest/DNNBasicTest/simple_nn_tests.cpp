@@ -39,17 +39,33 @@ namespace DNNBasicTest
 	};
 
 	template<typename T>
-	supervisedDataSet<T> makeSupervisedDatasetIO1x1(std::vector<T> inputs, std::function<T(T)> inputToOutputFunc)
+	supervisedDataSet<T> makeSupervisedDatasetIO1x1(std::vector<T> inputs, std::function<T(T)> inputToOutputFunc, const uint32_t batchSize = 1u)
 	{
 		supervisedDataSet<T> dataset;
-		for (size_t i = 0; i < inputs.size(); i++)
+		for (size_t i = 0; i + batchSize < inputs.size(); i += batchSize)
 		{
-			std::vector<T> lol = { inputs[i] };
-			std::vector<T> loll = { inputToOutputFunc(inputs[i]) };
-			dnnbasic::tensor<T> in({ 1u }, lol);
-			dnnbasic::tensor<T> out({ 1u }, loll);
+			std::vector<T> lol;
+			std::vector<T> loll;
+			for (size_t q = 0; q < batchSize; q++)
+			{
+				lol.push_back(inputs[i + q]);
+				loll.push_back(inputToOutputFunc(inputs[i + q]));
+			}
 
-			dataset.addData(in, out);
+			if (batchSize == 1)
+			{
+				dnnbasic::tensor<T> in({ 1u }, lol);
+				dnnbasic::tensor<T> out({ 1u }, loll);
+
+				dataset.addData(in, out);
+			}
+			else
+			{
+				dnnbasic::tensor<T> in({ batchSize, 1u }, lol);
+				dnnbasic::tensor<T> out({ batchSize, 1u }, loll);
+
+				dataset.addData(in, out);
+			}
 		}
 
 		return dataset;
@@ -63,10 +79,10 @@ namespace DNNBasicTest
 		TEST_METHOD(simpleNN1)
 		{
 			std::vector<float> inputs(100);
-			std::iota(inputs.begin(), inputs.end(), 0);
+			std::iota(inputs.begin(), inputs.end(), 0.0f);
 			auto dataset = makeSupervisedDatasetIO1x1<float>(inputs, [](auto x) { return x; });
 
-			auto* opti = new dnnbasic::optimizer::sgd(0.001);
+			auto* opti = new dnnbasic::optimizer::sgd(0.001f);
 
 			dnnbasic::layer::linear<float> l1(1, 1, true);
 			for (size_t q = 0; q < 100; q++)
