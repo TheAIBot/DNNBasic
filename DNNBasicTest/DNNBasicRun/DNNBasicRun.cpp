@@ -118,12 +118,6 @@ int main()
 				//auto fisk = dnnbasic::loss::crossEntropyLoss(y, x);
 				//fisk.backward(opti);
 
-				if (i == 0 && epoch % 1 == 0)
-				{
-
-					std::cout << "Error: " << fisk.getError() << std::endl;
-					//printSample(epoch % batchSize, input, x);
-				}
 			}
 
 			auto end = std::chrono::system_clock::now();
@@ -169,6 +163,8 @@ int main()
 			
 			auto time = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 
+			std::cout << "Error: " << fisk.getError() << std::endl;
+			//printSample(epoch % batchSize, input, x);
 			std::cout << "Time: " << time.count() << std::endl;
 		}
 	}
