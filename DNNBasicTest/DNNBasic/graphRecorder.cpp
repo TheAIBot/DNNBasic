@@ -112,7 +112,15 @@ namespace dnnbasic
 
 	void graphRecorder::addKernelNode(const std::vector<void*>& inputs, const void* output, const cudaKernelNodeParams* kernelParams)
 	{
-		std::vector<cudaGraphNode_t> depNodes = this->getDepNodes(inputs);
+		std::vector<const void*> input;
+		for (size_t i = 0; i < inputs.size(); i++)
+		{
+			input.push_back(inputs[i]);
+		}
+		input.push_back(output);
+
+
+		std::vector<cudaGraphNode_t> depNodes = this->getDepNodes(input);
 
 		cudaGraphNode_t node;
 		const cudaError_t status = cudaGraphAddKernelNode(&node, this->graph, depNodes.data(), depNodes.size(), kernelParams);

@@ -109,7 +109,7 @@ namespace dnnbasic
 			const dim3 gridDim(integerCeilDivision(sumDim, blockDim.x), blocksMade);
 			if (autoGraph::isRecordingGraph())
 			{
-				const std::vector<void*> inputPtrs = { reinterpret_cast<void*>(input.getGPUArray().begin()), reinterpret_cast<void*>(output.getGPUArray().begin()) };
+				const std::vector<void*> inputPtrs = { reinterpret_cast<void*>(input.getGPUArray().begin()) };
 				const void* outputPtr = reinterpret_cast<void*>(output.getGPUArray().begin());
 				autoGraph::addMemsetNode(output.getGPUArray(), 0);
 				autoGraph::addKernelNode(inputPtrs, outputPtr, sumKernel<T>, blockDim, gridDim, (uint32_t)sizeof(T) * WARPS_PER_BLOCK, input.getGPUArrayConst(), output.getGPUArray(), sumElementStride, sumDim, dimsToSum, blocksMade);
