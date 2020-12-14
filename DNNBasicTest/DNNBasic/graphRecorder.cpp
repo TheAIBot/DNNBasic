@@ -65,7 +65,6 @@ namespace dnnbasic
 	void graphRecorder::replay() const
 	{
 		cudaGraphLaunch(this->graphExe, cuda::getDefaultStream());
-		cudaStreamSynchronize(cuda::getDefaultStream());
 	}
 
 	template<typename T>

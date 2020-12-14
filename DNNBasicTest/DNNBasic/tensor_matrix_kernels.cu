@@ -103,21 +103,16 @@ namespace dnnbasic
 		uint32_t blocksWidth;
 		uint32_t blocksHeight;
 
-		template<typename T>
-		uint32_t calcSuitability(const matrix<T>& mat, const uint32_t width, const uint32_t height) const
-		{
-			return std::min(mat.getColumns(), subBlockSize * width) * std::min(mat.getRows(), subBlockSize * height);
-		}
-
 	public:
 		blockConfig(const uint32_t subBlockSize, const uint32_t width, const uint32_t height)
 			: subBlockSize(subBlockSize), blocksWidth(width), blocksHeight(height)
 		{ }
 
 		template<typename T>
-		uint32_t calcSuitability(const matrix<T>& left, const matrix<T>& right) const
+		int32_t calcSuitability(const matrix<T>& left, const matrix<T>& right) const
 		{
-			return calcSuitability(left, blocksWidth, blocksHeight) + calcSuitability(right, blocksHeight, blocksWidth);
+			return std::min(left.getColumns(), subBlockSize) * std::min(left.getRows(), subBlockSize * blocksHeight) + 
+				   std::min(right.getColumns(), subBlockSize * blocksWidth) * std::min(right.getRows(), subBlockSize);
 		}
 
 		uint32_t getSubBlockSize() const
@@ -131,22 +126,25 @@ namespace dnnbasic
 		}
 	};
 
-	const std::array<blockConfig, 4> blockConfigs =
+	const std::array<blockConfig, 7> blockConfigs =
 	{
 		blockConfig(32,  1,  1),
 		blockConfig(16,  1,  4),
 		blockConfig( 8,  1, 16),
-		blockConfig( 4,  1, 64)
+		blockConfig( 4,  1, 64),
+		blockConfig(16,  4,  1),
+		blockConfig( 8, 16,  1),
+		blockConfig( 4, 64,  1)
 	};
 
 	template <typename T>
 	void tensorMatrixMulInternal(const matrix<T>& left, const matrix<T>& right, matrix<T>& result)
 	{
 		blockConfig bestConfig(0, 0, 0);
-		uint32_t bestScore = 0;
+		int32_t bestScore = std::numeric_limits<int32_t>::min();
 		for (size_t i = 0; i < blockConfigs.size(); i++)
 		{
-			const uint32_t score = blockConfigs[i].calcSuitability(left, right);
+			const int32_t score = blockConfigs[i].calcSuitability(left, right);
 			if (score > bestScore)
 			{
 				bestConfig = blockConfigs[i];
