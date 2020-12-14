@@ -24,7 +24,7 @@ namespace DNNBasicTest
 
 			assertTensorOp<T>(expected, [&]() {return a.sum(0); });
 		}
-		TEST_ALL_OP_TYPES(sum2x2SumDim0)
+		TEST_ALL_OP_TYPES_LEAST_16_BITS(sum2x2SumDim0)
 
 		template<typename T>
 		void sum2x2SumDim1()
@@ -43,7 +43,7 @@ namespace DNNBasicTest
 
 			assertTensorOp<T>(expected, [&]() {return a.sum(1); });
 		}
-		TEST_ALL_OP_TYPES(sum2x2SumDim1)
+		TEST_ALL_OP_TYPES_LEAST_16_BITS(sum2x2SumDim1)
 
 		template<typename T>
 		void sum2x2x2SumDim0()
@@ -65,7 +65,7 @@ namespace DNNBasicTest
 
 			assertTensorOp<T>(expected, [&]() {return a.sum(0); });
 		}
-		TEST_ALL_OP_TYPES(sum2x2x2SumDim0)
+		TEST_ALL_OP_TYPES_LEAST_16_BITS(sum2x2x2SumDim0)
 
 		template<typename T>
 		void sum2x2x2SumDim1()
@@ -88,7 +88,7 @@ namespace DNNBasicTest
 
 			assertTensorOp<T>(expected, [&]() {return a.sum(1); });
 		}
-		TEST_ALL_OP_TYPES(sum2x2x2SumDim1)
+		TEST_ALL_OP_TYPES_LEAST_16_BITS(sum2x2x2SumDim1)
 
 		template<typename T>
 		void sum2x2x2SumDim2()
@@ -113,7 +113,7 @@ namespace DNNBasicTest
 
 			assertTensorOp<T>(expected, [&]() {return a.sum(2); });
 		}
-		TEST_ALL_OP_TYPES(sum2x2x2SumDim2)
+		TEST_ALL_OP_TYPES_LEAST_16_BITS(sum2x2x2SumDim2)
 
 		template<typename T>
 		void sum3x1x3x2SumDim0()
@@ -142,7 +142,7 @@ namespace DNNBasicTest
 
 			assertTensorOp<T>(expected, [&]() {return a.sum(0); });
 		}
-		TEST_ALL_OP_TYPES(sum3x1x3x2SumDim0)
+		TEST_ALL_OP_TYPES_LEAST_16_BITS(sum3x1x3x2SumDim0)
 
 		template<typename T>
 		void sum3x1x3x2SumDim1()
@@ -179,7 +179,7 @@ namespace DNNBasicTest
 
 			assertTensorOp<T>(expected, [&]() {return a.sum(1); });
 		}
-		TEST_ALL_OP_TYPES(sum3x1x3x2SumDim1)
+		TEST_ALL_OP_TYPES_LEAST_16_BITS(sum3x1x3x2SumDim1)
 
 		template<typename T>
 		void sum3x1x3x2SumDim2()
@@ -210,7 +210,7 @@ namespace DNNBasicTest
 
 			assertTensorOp<T>(expected, [&]() {return a.sum(2); });
 		}
-		TEST_ALL_OP_TYPES(sum3x1x3x2SumDim2)
+		TEST_ALL_OP_TYPES_LEAST_16_BITS(sum3x1x3x2SumDim2)
 
 		template<typename T>
 		void sum3x1x3x2SumDim3()
@@ -247,6 +247,6 @@ namespace DNNBasicTest
 
 			assertTensorOp<T>(expected, [&]() {return a.sum(3); });
 		}
-		TEST_ALL_OP_TYPES(sum3x1x3x2SumDim3)
+		TEST_ALL_OP_TYPES_LEAST_16_BITS(sum3x1x3x2SumDim3)
 	};
 }
