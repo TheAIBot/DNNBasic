@@ -210,9 +210,7 @@ namespace dnnbasic
 	{
 		if (autoGraph::isRecordingGraph())
 		{
-			const void* input = reinterpret_cast<void*>(this->getGPUArray().begin());
-			const void* output = reinterpret_cast<void*>(other.getGPUArray().begin());
-			autoGraph::addMemcpyNode(input, output, this->data->arr->getGPUArray(), other.data->arr->getGPUArray());
+			autoGraph::addMemcpyNode(this->data->arr->getGPUArray(), other.data->arr->getGPUArray());
 		}
 		else
 		{

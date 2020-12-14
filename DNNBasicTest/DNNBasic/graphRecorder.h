@@ -44,7 +44,7 @@ namespace dnnbasic
 		void addTensor(tensor<T>& ten);
 
 		void addKernelNode(const std::vector<void*>& inputs, const void* output, const cudaKernelNodeParams* kernelParams);
-		void addMemsetNode(const void* input, const void* output, const cudaMemsetParams* memsetParams);
-		void addMemcpyNode(const void* input, const void* output, const cudaMemcpy3DParms* memcpyParams);
+		void addMemsetNode(const cudaMemsetParams* memsetParams);
+		void addMemcpyNode(const cudaMemcpy3DParms* memcpyParams);
 	};
 }

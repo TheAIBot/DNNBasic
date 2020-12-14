@@ -111,7 +111,7 @@ namespace dnnbasic
 			{
 				const std::vector<void*> inputPtrs = { reinterpret_cast<void*>(input.getGPUArray().begin()), reinterpret_cast<void*>(output.getGPUArray().begin()) };
 				const void* outputPtr = reinterpret_cast<void*>(output.getGPUArray().begin());
-				autoGraph::addMemsetNode(outputPtr, outputPtr, output.getGPUArray(), 0);
+				autoGraph::addMemsetNode(output.getGPUArray(), 0);
 				autoGraph::addKernelNode(inputPtrs, outputPtr, sumKernel<T>, blockDim, gridDim, (uint32_t)sizeof(T) * WARPS_PER_BLOCK, input.getGPUArrayConst(), output.getGPUArray(), sumElementStride, sumDim, dimsToSum, blocksMade);
 			}
 			else

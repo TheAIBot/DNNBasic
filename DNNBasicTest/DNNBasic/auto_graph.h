@@ -34,8 +34,8 @@ namespace dnnbasic
 		graphRecorder* getRecordingGraph();
 		void setGraphRecorder(graphRecorder* recorder);
 		void addNodeToGraph(const std::vector<void*> inputs, const void* output, cudaKernelNodeParams* kernelParams);
-		void addMemsetNodeToGraph(const void* input, const void* output, cudaMemsetParams* memsetParams);
-		void addMemcpyNodeToGraph(const void* input, const void* output, cudaMemcpy3DParms* memcpyParams);
+		void addMemsetNodeToGraph(cudaMemsetParams* memsetParams);
+		void addMemcpyNodeToGraph(cudaMemcpy3DParms* memcpyParams);
 
 		template<typename... Args>
 		void addKernelNode(const std::vector<void*> inputs, const void* output, void(*kernel)(Args...), dim3 blockDim, dim3 gridDim, uint32_t sharedMemSize, Args... args)
@@ -61,7 +61,7 @@ namespace dnnbasic
 		}
 
 		template<typename T>
-		void addMemsetNode(const void* input, const void* output, cudabasic::span<T> dst, uint32_t value)
+		void addMemsetNode(cudabasic::span<T> dst, uint32_t value)
 		{
 			if (!isRecordingGraph())
 			{
@@ -76,11 +76,11 @@ namespace dnnbasic
 			memsetParams.value = value;
 			memsetParams.width = dst.size() * sizeof(T);
 
-			addMemsetNodeToGraph(input, output, &memsetParams);
+			addMemsetNodeToGraph(&memsetParams);
 		}
 
 		template<typename T>
-		void addMemcpyNode(const void* input, const void* output, cudabasic::span<T> from, cudabasic::span<T> to)
+		void addMemcpyNode(cudabasic::span<T> from, cudabasic::span<T> to)
 		{
 			if (!isRecordingGraph())
 			{
@@ -100,7 +100,7 @@ namespace dnnbasic
 			memcpyParams.srcPos = make_cudaPos(0, 0, 0);
 			memcpyParams.srcPtr = make_cudaPitchedPtr(reinterpret_cast<void*>(from.begin()), from.size() * sizeof(T), from.size(), 1);
 
-			addMemcpyNodeToGraph(input, output, &memcpyParams);
+			addMemcpyNodeToGraph(&memcpyParams);
 		}
 	}
 }

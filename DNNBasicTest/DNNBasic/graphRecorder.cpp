@@ -124,9 +124,10 @@ namespace dnnbasic
 		this->currNodeDeps.insert_or_assign(output, node);
 	}
 
-	void graphRecorder::addMemsetNode(const void* input, const void* output, const cudaMemsetParams* memsetParams)
+	void graphRecorder::addMemsetNode(const cudaMemsetParams* memsetParams)
 	{
-		std::vector<cudaGraphNode_t> depNodes = this->getDepNodes({ input });
+		std::vector<const void*> input = { memsetParams->dst };
+		std::vector<cudaGraphNode_t> depNodes = this->getDepNodes(input);
 
 		cudaGraphNode_t node;
 		const cudaError_t status = cudaGraphAddMemsetNode(&node, this->graph, depNodes.data(), depNodes.size(), memsetParams);
@@ -135,12 +136,13 @@ namespace dnnbasic
 			cudabasic::checkForCudaError();
 		}
 
-		this->currNodeDeps.insert_or_assign(output, node);
+		this->currNodeDeps.insert_or_assign(memsetParams->dst, node);
 	}
 
-	void graphRecorder::addMemcpyNode(const void* input, const void* output, const cudaMemcpy3DParms* memcpyParams)
+	void graphRecorder::addMemcpyNode(const cudaMemcpy3DParms* memcpyParams)
 	{
-		std::vector<cudaGraphNode_t> depNodes = this->getDepNodes({ input });
+		std::vector<const void*> input = { memcpyParams->srcPtr.ptr, memcpyParams->dstPtr.ptr };
+		std::vector<cudaGraphNode_t> depNodes = this->getDepNodes(input);
 
 		cudaGraphNode_t node;
 		const cudaError_t status = cudaGraphAddMemcpyNode(&node, this->graph, depNodes.data(), depNodes.size(), memcpyParams);
@@ -149,6 +151,6 @@ namespace dnnbasic
 			cudabasic::checkForCudaError();
 		}
 
-		this->currNodeDeps.insert_or_assign(output, node);
+		this->currNodeDeps.insert_or_assign(memcpyParams->dstPtr.ptr, node);
 	}
 }
