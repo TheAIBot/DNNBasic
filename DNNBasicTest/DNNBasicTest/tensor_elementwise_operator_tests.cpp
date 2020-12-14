@@ -192,9 +192,8 @@ namespace DNNBasicTest
 			}
 
 			dnnbasic::tensor<T> expected(dims, expectedData);
-			dnnbasic::tensor<T> actual = tenFunc(a, b);
 
-			resultCloseEnough(expected, actual);
+			assertCloseEnoughTensorOp<T>(expected, [&]() {return tenFunc(a, b); });
 		}
 
 		template<typename T>
@@ -211,9 +210,8 @@ namespace DNNBasicTest
 			}
 
 			dnnbasic::tensor<T> expected(dims, expectedData);
-			dnnbasic::tensor<T> actual = tenFunc(a, scalar);
 
-			resultCloseEnough(expected, actual);
+			assertCloseEnoughTensorOp<T>(expected, [&]() {return tenFunc(a, scalar); });
 		}
 
 		template<typename T>
@@ -230,9 +228,8 @@ namespace DNNBasicTest
 			}
 
 			dnnbasic::tensor<T> expected(dims, expectedData);
-			dnnbasic::tensor<T> actual = tenFunc(scalar, b);
 
-			resultCloseEnough(expected, actual);
+			assertCloseEnoughTensorOp<T>(expected, [&]() {return tenFunc(scalar, b); });
 		}
 
 #define GEN_TEST_TT_TYPE_DIMS_FUNC(type, dimsIdx, func, funcStr) \

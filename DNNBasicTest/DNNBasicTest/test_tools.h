@@ -6,6 +6,10 @@
 #include <string>
 #include <vector>
 #include <random>
+#include <functional>
+
+#include "tensor.h"
+#include "graphRecorder.h"
 
 #define TEST_ALL_OP_TYPES(methodName) \
 	TEST_METHOD(uint8_t ## methodName) { methodName<uint8_t>(); } \
@@ -120,5 +124,65 @@ namespace DNNBasicTest
 		{
 			Assert::IsTrue(expVals == actVals);
 		}
+	}
+
+	template<typename T>
+	void assertTensorOp(const dnnbasic::tensor<T> expected, std::function<dnnbasic::tensor<T>()> tensorOp)
+	{
+		//op gives correct result
+		auto withoutRecordingFirst = tensorOp();
+		Assert::AreEqual(expected, withoutRecordingFirst);
+
+		//running op twice should still gave the same result
+		auto withoutRecordingSecond = tensorOp();
+		Assert::AreEqual(withoutRecordingFirst, withoutRecordingSecond);
+
+		dnnbasic::graphRecorder recorder;
+		recorder.startRecording();
+
+		auto withRecording = tensorOp();
+
+		recorder.stopRecording();
+
+		//replaying should give same result
+		recorder.replay();
+		auto withRecordingFirst = withRecording + (T)0;
+		Assert::AreEqual(expected, withRecordingFirst);
+
+		//replaying twice should still give same result
+		recorder.replay();
+		auto withRecordingSecond = withRecording + (T)0;
+		Assert::AreEqual(withRecordingFirst, withRecordingSecond);
+	}
+
+	template<typename T>
+	void assertCloseEnoughTensorOp(const dnnbasic::tensor<T> expected, std::function<dnnbasic::tensor<T>()> tensorOp)
+	{
+		auto withoutRecordingFirst = tensorOp();
+
+		//op gives correct result
+		resultCloseEnough(expected, withoutRecordingFirst);
+
+		auto withoutRecordingSecond = tensorOp();
+
+		//running op twice should still gave the same result
+		resultCloseEnough(withoutRecordingFirst, withoutRecordingSecond);
+
+		dnnbasic::graphRecorder recorder;
+		recorder.startRecording();
+
+		auto withRecording = tensorOp();
+
+		recorder.stopRecording();
+
+		//replaying should give same result
+		recorder.replay();
+		auto withRecordingFirst = withRecording + (T)0;
+		resultCloseEnough(expected, withRecordingFirst);
+
+		//replaying twice should still give same result
+		recorder.replay();
+		auto withRecordingSecond = withRecording + (T)0;
+		resultCloseEnough(withRecordingFirst, withRecordingSecond);
 	}
 }

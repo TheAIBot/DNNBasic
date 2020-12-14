@@ -20,15 +20,13 @@ namespace DNNBasicTest
 					-5, 6
 				});
 
-			actual = dwa.forward(actual);
-
 			dnnbasic::tensor<T> expected({ 2, 2 },
 				{
 					3, 0,
 					0, 6
 				});
 
-			Assert::AreEqual(expected, actual);
+			assertTensorOp<T>(expected, [&]() {return dwa.forward(actual); });
 		}
 		TEST_SIGNED_OP_TYPES(relu2x2)
 

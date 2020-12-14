@@ -37,9 +37,7 @@ namespace DNNBasicTest
 			dnnbasic::tensor<From> from({ (uint32_t)cases.size() }, cases);
 			dnnbasic::tensor<To> expected({ (uint32_t)cases.size() }, castData<From, To>(cases));
 
-			auto actual = from.cast<To>();
-
-			Assert::AreEqual(expected, actual);
+			assertTensorOp<To>(expected, [&]() {return from.cast<To>(); });
 		}
 
 	public:
@@ -84,9 +82,7 @@ namespace DNNBasicTest
 			dnnbasic::tensor<From> from({ length }, values);
 			dnnbasic::tensor<To> expected({ length }, castData<From, To>(values));
 
-			auto actual = from.cast<To>();
-
-			Assert::AreEqual(expected, actual);
+			assertTensorOp<To>(expected, [&]() {return from.cast<To>(); });
 		}
 
 #define TEST_CAST_FROM_TO_WITH_LENGTH(fromTyp, toTyp, dataLength) \

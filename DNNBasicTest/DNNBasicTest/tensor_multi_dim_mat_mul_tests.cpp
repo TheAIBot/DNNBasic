@@ -56,9 +56,8 @@ namespace DNNBasicTest
 			dnnbasic::tensor<T> b(bDims, bTensorValues);
 
 			dnnbasic::tensor<T> expected(cDims, cTensorValues);
-			auto actual = a.matMul(b);
 
-			Assert::AreEqual(expected, actual);
+			assertCloseEnoughTensorOp<T>(expected, [&]() {return a.matMul(b); });
 		}
 
 #define GEN_MULTI_TEST_SPECIFY_MAT_DIMS_AND_TYPE(aH, aW, bH, bW, T) \

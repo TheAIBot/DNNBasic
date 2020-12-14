@@ -22,8 +22,7 @@ namespace DNNBasicTest
 					8, 10
 				});
 
-			auto actual = a.sum(0);
-			Assert::AreEqual(expected, actual);
+			assertTensorOp<T>(expected, [&]() {return a.sum(0); });
 		}
 		TEST_ALL_OP_TYPES(sum2x2SumDim0)
 
@@ -42,8 +41,7 @@ namespace DNNBasicTest
 					11
 				});
 
-			auto actual = a.sum(1);
-			Assert::AreEqual(expected, actual);
+			assertTensorOp<T>(expected, [&]() {return a.sum(1); });
 		}
 		TEST_ALL_OP_TYPES(sum2x2SumDim1)
 
@@ -65,8 +63,7 @@ namespace DNNBasicTest
 					7, 7
 				});
 
-			auto actual = a.sum(0);
-			Assert::AreEqual(expected, actual);
+			assertTensorOp<T>(expected, [&]() {return a.sum(0); });
 		}
 		TEST_ALL_OP_TYPES(sum2x2x2SumDim0)
 
@@ -89,8 +86,7 @@ namespace DNNBasicTest
 					7, 8
 				});
 
-			auto actual = a.sum(1);
-			Assert::AreEqual(expected, actual);
+			assertTensorOp<T>(expected, [&]() {return a.sum(1); });
 		}
 		TEST_ALL_OP_TYPES(sum2x2x2SumDim1)
 
@@ -115,8 +111,7 @@ namespace DNNBasicTest
 					3
 				});
 
-			auto actual = a.sum(2);
-			Assert::AreEqual(expected, actual);
+			assertTensorOp<T>(expected, [&]() {return a.sum(2); });
 		}
 		TEST_ALL_OP_TYPES(sum2x2x2SumDim2)
 
@@ -145,8 +140,7 @@ namespace DNNBasicTest
 					15, 14
 				});
 
-			auto actual = a.sum(0);
-			Assert::AreEqual(expected, actual);
+			assertTensorOp<T>(expected, [&]() {return a.sum(0); });
 		}
 		TEST_ALL_OP_TYPES(sum3x1x3x2SumDim0)
 
@@ -183,8 +177,7 @@ namespace DNNBasicTest
 					2, 4
 				});
 
-			auto actual = a.sum(1);
-			Assert::AreEqual(expected, actual);
+			assertTensorOp<T>(expected, [&]() {return a.sum(1); });
 		}
 		TEST_ALL_OP_TYPES(sum3x1x3x2SumDim1)
 
@@ -215,8 +208,7 @@ namespace DNNBasicTest
 					11, 19
 				});
 
-			auto actual = a.sum(2);
-			Assert::AreEqual(expected, actual);
+			assertTensorOp<T>(expected, [&]() {return a.sum(2); });
 		}
 		TEST_ALL_OP_TYPES(sum3x1x3x2SumDim2)
 
@@ -253,8 +245,7 @@ namespace DNNBasicTest
 					6
 				});
 
-			auto actual = a.sum(3);
-			Assert::AreEqual(expected, actual);
+			assertTensorOp<T>(expected, [&]() {return a.sum(3); });
 		}
 		TEST_ALL_OP_TYPES(sum3x1x3x2SumDim3)
 	};

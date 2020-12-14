@@ -22,8 +22,7 @@ namespace DNNBasicTest
 					5, 6
 				});
 
-			auto actual = a.max(0);
-			Assert::AreEqual(expected, actual);
+			assertTensorOp<T>(expected, [&]() {return a.max(0); });
 		}
 		TEST_UNSIGNED_OP_TYPES(max2x2Dim0)
 
@@ -42,8 +41,7 @@ namespace DNNBasicTest
 					6
 				});
 
-			auto actual = a.max(1);
-			Assert::AreEqual(expected, actual);
+			assertTensorOp<T>(expected, [&]() {return a.max(1); });
 		}
 		TEST_UNSIGNED_OP_TYPES(max2x2Dim1)
 
@@ -65,8 +63,7 @@ namespace DNNBasicTest
 					5, 6
 				});
 
-			auto actual = a.max(0);
-			Assert::AreEqual(expected, actual);
+			assertTensorOp<T>(expected, [&]() {return a.max(0); });
 		}
 		TEST_UNSIGNED_OP_TYPES(max2x2x2Dim0)
 
@@ -89,8 +86,7 @@ namespace DNNBasicTest
 					5, 7
 				});
 
-			auto actual = a.max(1);
-			Assert::AreEqual(expected, actual);
+			assertTensorOp<T>(expected, [&]() {return a.max(1); });
 		}
 		TEST_UNSIGNED_OP_TYPES(max2x2x2Dim1)
 
@@ -115,8 +111,7 @@ namespace DNNBasicTest
 					2
 				});
 
-			auto actual = a.max(2);
-			Assert::AreEqual(expected, actual);
+			assertTensorOp<T>(expected, [&]() {return a.max(2); });
 		}
 		TEST_UNSIGNED_OP_TYPES(max2x2x2Dim2)
 
@@ -146,8 +141,7 @@ namespace DNNBasicTest
 					8, 7
 				});
 
-			auto actual = a.max(0);
-			Assert::AreEqual(expected, actual);
+			assertTensorOp<T>(expected, [&]() {return a.max(0); });
 		}
 		TEST_UNSIGNED_OP_TYPES(max3x1x3x2Dim0)
 
@@ -184,8 +178,7 @@ namespace DNNBasicTest
 					2, 4
 				});
 
-			auto actual = a.max(1);
-			Assert::AreEqual(expected, actual);
+			assertTensorOp<T>(expected, [&]() {return a.max(1); });
 		}
 		TEST_UNSIGNED_OP_TYPES(max3x1x3x2Dim1)
 
@@ -216,8 +209,7 @@ namespace DNNBasicTest
 					6, 9
 				});
 
-			auto actual = a.max(2);
-			Assert::AreEqual(expected, actual);
+			assertTensorOp<T>(expected, [&]() {return a.max(2); });
 		}
 		TEST_UNSIGNED_OP_TYPES(max3x1x3x2Dim2)
 
@@ -254,8 +246,7 @@ namespace DNNBasicTest
 					4
 				});
 
-			auto actual = a.max(3);
-			Assert::AreEqual(expected, actual);
+			assertTensorOp<T>(expected, [&]() {return a.max(3); });
 		}
 		TEST_UNSIGNED_OP_TYPES(max3x1x3x2Dim3)
 	};

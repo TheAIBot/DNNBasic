@@ -170,9 +170,7 @@ namespace DNNBasicTest
 
 			dnnbasic::tensor<T> expected({ cMatrix.getRows(), cMatrix.getColumns() }, cData);
 
-			auto actual = a.matMul(b);
-
-			resultCloseEnough(expected, actual);
+			assertCloseEnoughTensorOp<T>(expected, [&]() {return a.matMul(b); });
 		}
 	public:
 
